@@ -1,4 +1,13 @@
-/** STUB. Replaced by the `admin-orders-list` slice in phase 4. */
+import { Suspense } from "react";
+
+import { OrdersListView } from "./orders-list-view";
+import { OrdersTableSkeleton } from "./orders-table";
+
+/** The orders list. Its filters live in the URL, so the view reads the query inside a Suspense boundary. */
 export function OrdersList() {
-  return <p>Orders</p>;
+  return (
+    <Suspense fallback={<OrdersTableSkeleton />}>
+      <OrdersListView />
+    </Suspense>
+  );
 }
