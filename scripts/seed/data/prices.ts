@@ -2,7 +2,7 @@ import type { CountryPrice } from "@giftpop/contracts";
 
 import { COUNTRIES } from "./countries";
 import { ITEM_IDS, ITEMS } from "./items";
-import { BOUQUET_ID, BOX_ID, PACKAGINGS } from "./packagings";
+import { BASKET_ID, BOUQUET_ID, BOX_ID, HAT_BOX_ID, MUG_ID, PACKAGINGS } from "./packagings";
 
 /**
  * DEV ONLY prices. Each price is a whole number of "base units" times the
@@ -44,6 +44,9 @@ const ITEM_BASE_PRICE: Record<string, number> = {
 const PACKAGING_BASE_PRICE: Record<string, number> = {
   [BOUQUET_ID]: 6,
   [BOX_ID]: 8,
+  [HAT_BOX_ID]: 9,
+  [BASKET_ID]: 10,
+  [MUG_ID]: 5,
 };
 
 interface Gap {

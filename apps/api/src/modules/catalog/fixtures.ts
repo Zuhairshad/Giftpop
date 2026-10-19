@@ -31,6 +31,7 @@ export function makePackaging(overrides: Partial<Packaging> = {}): Packaging {
     slug: `bouquet-${newId().slice(-6)}`,
     name: "Bouquet",
     description: "",
+    kind: "box",
     layoutType: "bouquet-fan",
     minItems: 6,
     maxItems: 10,

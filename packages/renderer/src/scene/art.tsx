@@ -2,8 +2,9 @@ import type { Asset } from "@giftpop/contracts";
 import { useId } from "react";
 import type { ReactNode, Ref } from "react";
 
+import { ITEM_ILLUSTRATIONS, PACKAGING_ILLUSTRATIONS } from "../illustrations";
 import { SCENE_SIZE } from "../layouts";
-import { ItemPlaceholder, PLACEHOLDER_SIZE } from "../placeholders/ItemPlaceholder";
+import { PLACEHOLDER_SIZE } from "../placeholders/ItemPlaceholder";
 import {
   PackagingBackPlaceholder,
   PackagingFrontPlaceholder,
@@ -84,9 +85,10 @@ export function SceneImage({
 /** An item's silhouette, centred on the origin like an anchored image. */
 export function ItemPlaceholderArt({ art }: { art: SceneItemArt }) {
   const half = PLACEHOLDER_SIZE / 2;
+  const Illustration = ITEM_ILLUSTRATIONS[art.shape];
   return (
     <g transform={`translate(${-half} ${-half})`}>
-      <ItemPlaceholder shape={art.shape} color={art.color} />
+      <Illustration color={art.color} />
     </g>
   );
 }
@@ -98,8 +100,13 @@ export function LayerPlaceholder({
   side: "back" | "front";
   model: Pick<SceneModel, "layoutType" | "colors">;
 }) {
-  const Placeholder = side === "back" ? PackagingBackPlaceholder : PackagingFrontPlaceholder;
-  return <Placeholder layoutType={model.layoutType} {...model.colors} />;
+  const illustration = PACKAGING_ILLUSTRATIONS[model.layoutType];
+  if (illustration) {
+    const Layer = side === "back" ? illustration.Back : illustration.Front;
+    return <Layer wrapper={model.colors.wrapper} ribbon={model.colors.ribbon} />;
+  }
+  const Fallback = side === "back" ? PackagingBackPlaceholder : PackagingFrontPlaceholder;
+  return <Fallback layoutType={model.layoutType} {...model.colors} />;
 }
 
 /** Static item art: the image if the item has one, otherwise the silhouette. */

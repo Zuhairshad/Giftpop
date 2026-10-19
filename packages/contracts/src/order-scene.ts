@@ -19,6 +19,8 @@ export function snapshotsToSceneDocs(source: {
       slug: "ordered",
       name: packaging.name,
       description: "",
+      // An order does not freeze the kind; a scene redraw does not use it.
+      kind: "other",
       layoutType: packaging.layoutType,
       minItems: packaging.minItems,
       maxItems: packaging.maxItems,

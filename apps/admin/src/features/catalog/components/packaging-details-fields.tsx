@@ -1,5 +1,6 @@
 "use client";
 
+import { PACKAGING_KINDS } from "@giftpop/contracts";
 import type { SavePackagingRequest } from "@giftpop/contracts";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
@@ -61,6 +62,29 @@ export function PackagingDetailsFields({ form, autoSlug }: PackagingDetailsField
 
       <Field label="Description" error={errors.description?.message} className="sm:col-span-2">
         {(field) => <Textarea {...field} rows={3} {...register("description")} />}
+      </Field>
+
+      <Field
+        label="Kind"
+        error={errors.kind?.message}
+        hint="Groups this packaging in the builder's first question."
+      >
+        {(field) => (
+          <Controller
+            control={control}
+            name="kind"
+            render={({ field: { value, onChange } }) => (
+              <OptionSelect
+                id={field.id}
+                value={value ?? "box"}
+                options={PACKAGING_KINDS.map((kind) => ({ value: kind, label: kind }))}
+                onValueChange={onChange}
+                invalid={field["aria-invalid"]}
+                describedBy={field["aria-describedby"]}
+              />
+            )}
+          />
+        )}
       </Field>
 
       <Field

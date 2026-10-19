@@ -75,6 +75,23 @@ describe("SavePackagingRequestSchema", () => {
     expect(SavePackagingRequestSchema.safeParse(base).success).toBe(true);
     expect(SavePackagingRequestSchema.safeParse({ ...base, minItems: 10 }).success).toBe(false);
   });
+
+  it("reads a missing kind as box and rejects an unknown kind", () => {
+    const base = {
+      slug: "hat-box",
+      name: "Hat box",
+      layoutType: "bouquet-fan",
+      minItems: 4,
+      maxItems: 9,
+      capacityUnits: 12,
+      wrapperColors: [{ name: "Pink", hex: "#ffc0cb" }],
+      ribbonColors: [{ name: "Red", hex: "#ff0000" }],
+      active: true,
+    };
+    expect(SavePackagingRequestSchema.parse(base).kind).toBe("box");
+    expect(SavePackagingRequestSchema.parse({ ...base, kind: "basket" }).kind).toBe("basket");
+    expect(SavePackagingRequestSchema.safeParse({ ...base, kind: "boat" }).success).toBe(false);
+  });
 });
 
 describe("ItemListQuerySchema", () => {

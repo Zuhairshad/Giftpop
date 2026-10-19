@@ -15,3 +15,15 @@ export {
   SCENE_SIZE,
 } from "./layouts";
 export type { KnownLayoutType, LayoutFn, LayoutInput, Placement } from "./layouts";
+export {
+  ITEM_ART_SIZE,
+  ITEM_ILLUSTRATIONS,
+  ItemIllustrationSvg,
+  PACKAGING_ILLUSTRATIONS,
+} from "./illustrations";
+export type {
+  ItemIllustration,
+  ItemIllustrationProps,
+  PackagingIllustration,
+  PackagingIllustrationProps,
+} from "./illustrations";

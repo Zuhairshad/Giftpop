@@ -10,6 +10,7 @@ export function makePackaging(overrides: Partial<Packaging> = {}): Packaging {
     slug: "classic-bouquet",
     name: "Classic bouquet",
     description: "",
+    kind: "box",
     layoutType: "bouquet-fan",
     minItems: 1,
     maxItems: 10,

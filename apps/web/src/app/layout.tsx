@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Nunito } from "next/font/google";
+import { Bricolage_Grotesque, Caveat, Inter, Pacifico } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
@@ -7,15 +7,31 @@ import { SiteHeader } from "@/components/site-header";
 
 import "./globals.css";
 
-const display = Fraunces({
+// Headlines and prices (tight tracking is set by the type tokens, not here).
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
-const body = Nunito({
+const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+// Handmade accent: the home eyebrow, the question step label, gift tags. Never body copy.
+const script = Caveat({
+  subsets: ["latin"],
+  variable: "--font-script",
+  display: "swap",
+});
+
+// Placeholder wordmark until the owner supplies the real logo.
+const brand = Pacifico({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-brand",
   display: "swap",
 });
 
@@ -27,14 +43,17 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fff8f3" },
-    { media: "(prefers-color-scheme: dark)", color: "#1d1219" },
+    { media: "(prefers-color-scheme: light)", color: "#fff8f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1020" },
   ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${script.variable} ${brand.variable}`}
+    >
       <body className="flex min-h-dvh flex-col antialiased">
         <a
           href="#main"

@@ -1,68 +1,123 @@
 /*
- * Design tokens for The Giftpop storefront.
+ * Design tokens for The Giftpop storefront (docs/design/giftpop-DESIGN.md).
  * Raw values live here as CSS variables (light and dark); globals.css maps them into Tailwind v4 @theme.
+ * Components use the names, never hex. The older names (pink, pink-soft, ...) stay as aliases for the new ones.
  */
 :root {
   color-scheme: light;
 
   /* Surfaces */
-  --gp-bg: #fff8f3;
+  --gp-bg: #fff8f4; /* canvas */
   --gp-surface: #ffffff;
-  --gp-surface-soft: #ffeef2;
-  --gp-border: #f3d9df;
+  --gp-surface-soft: #fbefea; /* warm: tile wells, alternating bands */
+  --gp-surface-deep: #f6e4de; /* warm-2: progress track, skeleton */
+  --gp-border: rgb(43 23 51 / 0.1); /* hairline */
+  --gp-border-strong: rgb(43 23 51 / 0.16);
 
   /* Text */
-  --gp-ink: #3a2230;
-  --gp-ink-soft: #6d5260;
+  --gp-ink: #2b1733;
+  --gp-ink-soft: #66506e; /* secondary text */
+  --gp-muted: #96839e; /* large text and meta only */
 
-  /* Giftpop pink accent */
-  --gp-pink: #d42760;
-  --gp-pink-strong: #b01c4f;
-  --gp-pink-soft: #ffd3e0;
+  /* The one action colour */
+  --gp-pink: #d6246e; /* primary */
+  --gp-pink-strong: #ae1659; /* primary pressed */
+  --gp-pink-soft: #ffe3ef; /* primary tint */
   --gp-on-pink: #ffffff;
 
-  /* Playful supporting colours, used in illustrations */
+  /* Supporting colours: illustration, chips, swatches. Never buttons, links or body text. */
+  --gp-lavender: #e9ddfb;
+  --gp-lavender-deep: #6b3fb5; /* text on lavender */
+  --gp-gold: #d9a92e;
+  --gp-kraft: #c69c6d;
   --gp-butter: #ffe08a;
   --gp-mint: #bfeed8;
   --gp-sky: #c9e4ff;
   --gp-lilac: #dccbff;
-  --gp-on-accent: #3a2230;
+  --gp-on-accent: #2b1733;
+
+  /* Status */
+  --gp-success: #166c45;
+  --gp-success-tint: #d9f4e6;
+  --gp-warning: #a05a00;
+  --gp-danger: #b3261e;
 
   /* Focus ring */
-  --gp-focus: #1d4ed8;
+  --gp-focus: #2b1733;
 
-  /* Shape and depth */
-  --gp-radius-sm: 0.75rem;
-  --gp-radius-md: 1.25rem;
-  --gp-radius-lg: 2rem;
-  --gp-shadow: 0 10px 30px -12px rgb(196 31 86 / 0.25);
+  /* Light pools behind the hero and the builder overview (the only gradients in the system) */
+  --gp-pool-pink: #ffe0ec;
+  --gp-pool-lavender: #eee3fc;
+  --gp-pool-opacity: 1;
+
+  /* Shape: 4 / 8 / 12 / 20 / full */
+  --gp-radius-xs: 4px;
+  --gp-radius-sm: 8px;
+  --gp-radius-md: 12px;
+  --gp-radius-lg: 20px;
+
+  /* Depth: hairline, soft lift, deep float */
+  --gp-shadow-1: 0 0 0 1px var(--gp-border);
+  --gp-shadow-2:
+    0 0.18px 1px rgb(43 23 51 / 0.02), 0 0.8px 2.9px rgb(43 23 51 / 0.03),
+    0 2px 7.8px rgb(43 23 51 / 0.04), 0 4px 18px rgb(43 23 51 / 0.06);
+  --gp-shadow-3:
+    0 0.7px 3.5px rgb(43 23 51 / 0.01), 0 2.9px 7.2px rgb(43 23 51 / 0.02),
+    0 7.2px 14.5px rgb(43 23 51 / 0.03), 0 13.9px 28px rgb(43 23 51 / 0.04),
+    0 23px 52px rgb(43 23 51 / 0.05), 0 36px 89px rgb(43 23 51 / 0.07);
+  --gp-shadow-cta: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 6px 16px -6px rgb(214 36 110 / 0.55);
+  --gp-shadow: var(--gp-shadow-2);
+
+  /* Motion (springs live in styles/motion.ts) */
+  --gp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gp-duration-fast: 120ms;
+  --gp-duration: 200ms;
+  --gp-duration-slow: 320ms;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
 
-    --gp-bg: #1d1219;
-    --gp-surface: #2a1a24;
-    --gp-surface-soft: #3a2230;
-    --gp-border: #55354a;
+    --gp-bg: #1b1020;
+    --gp-surface: #271a2e;
+    --gp-surface-soft: #33233b;
+    --gp-surface-deep: #40304a;
+    --gp-border: rgb(253 241 246 / 0.12);
+    --gp-border-strong: rgb(253 241 246 / 0.2);
 
-    --gp-ink: #fdeef3;
-    --gp-ink-soft: #d9b8c6;
+    --gp-ink: #fdf1f6;
+    --gp-ink-soft: #cdb8d6;
+    --gp-muted: #9c88a6;
 
-    --gp-pink: #ff6b98;
-    --gp-pink-strong: #ff8fb2;
-    --gp-pink-soft: #5e2a40;
+    --gp-pink: #ff6b9d;
+    --gp-pink-strong: #ff8fb5;
+    --gp-pink-soft: #4a2038;
     --gp-on-pink: #2a0f1c;
 
+    --gp-lavender: #3e2f5c;
+    --gp-lavender-deep: #cdb8ff;
+    --gp-gold: #e3b93c;
+    --gp-kraft: #c69c6d;
     --gp-butter: #d9b24a;
     --gp-mint: #4f9c7f;
     --gp-sky: #5b8fc4;
     --gp-lilac: #8c74c9;
-    --gp-on-accent: #1d1219;
+    --gp-on-accent: #1b1020;
 
-    --gp-focus: #93b4ff;
+    --gp-success: #5fd39a;
+    --gp-success-tint: #14392a;
+    --gp-warning: #f0b35a;
+    --gp-danger: #ff8a80;
 
-    --gp-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+    --gp-focus: #fdf1f6;
+
+    --gp-pool-pink: #4a2038;
+    --gp-pool-lavender: #2f2347;
+    --gp-pool-opacity: 0.14;
+
+    --gp-shadow-2: 0 0 0 1px var(--gp-border);
+    --gp-shadow-3: 0 0 0 1px var(--gp-border), 0 24px 60px rgb(0 0 0 / 0.5);
+    --gp-shadow-cta: none;
   }
 }

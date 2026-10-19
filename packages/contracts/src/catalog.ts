@@ -42,11 +42,18 @@ export type ColourOption = z.infer<typeof ColourOptionSchema>;
 export const LayoutTypeSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 export type LayoutType = z.infer<typeof LayoutTypeSchema>;
 
+/** How a packaging is grouped in the builder's first question. Data, not code: staff pick it per packaging. */
+export const PACKAGING_KINDS = ["box", "bouquet", "basket", "mug", "other"] as const;
+export const PackagingKindSchema = z.enum(PACKAGING_KINDS);
+export type PackagingKind = z.infer<typeof PackagingKindSchema>;
+
 export const PackagingFieldsSchema = z.object({
   id: ObjectIdSchema,
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   name: z.string().min(1).max(80),
   description: z.string().max(500).default(""),
+  /** Older documents have no kind and read as "box". */
+  kind: PackagingKindSchema.default("box"),
   layoutType: LayoutTypeSchema,
   minItems: z.number().int().positive(),
   maxItems: z.number().int().positive(),

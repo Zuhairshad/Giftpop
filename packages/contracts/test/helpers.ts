@@ -49,6 +49,7 @@ export function makePackaging(overrides: Partial<Packaging> = {}): Packaging {
     slug: "gift-box",
     name: "Gift box",
     description: "",
+    kind: "box",
     layoutType: "grid",
     minItems: 2,
     maxItems: 4,

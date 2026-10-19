@@ -1,0 +1,42 @@
+import type { ItemShape } from "@giftpop/contracts";
+
+import { BalloonIllustration } from "./items/balloon";
+import { BarIllustration } from "./items/bar";
+import { BottleIllustration } from "./items/bottle";
+import { BoxIllustration } from "./items/box";
+import { CardIllustration } from "./items/card";
+import { FlowerIllustration } from "./items/flower";
+import { JarIllustration } from "./items/jar";
+import { MugIllustration } from "./items/mug";
+import { OtherIllustration } from "./items/other";
+import { SoftToyIllustration } from "./items/soft-toy";
+import { BouquetFanIllustration } from "./packaging/bouquet-fan";
+import { BoxGridIllustration } from "./packaging/box-grid";
+import type { ItemIllustration, PackagingIllustration } from "./types";
+
+/**
+ * One illustration per item shape. A real uploaded image always wins over these.
+ * Adding a shape means adding one entry here (and to `ITEM_SHAPES` in contracts).
+ */
+export const ITEM_ILLUSTRATIONS: Record<ItemShape, ItemIllustration> = {
+  bar: BarIllustration,
+  bottle: BottleIllustration,
+  jar: JarIllustration,
+  box: BoxIllustration,
+  mug: MugIllustration,
+  flower: FlowerIllustration,
+  card: CardIllustration,
+  "soft-toy": SoftToyIllustration,
+  balloon: BalloonIllustration,
+  other: OtherIllustration,
+};
+
+/**
+ * One illustration per layout type. A layout type with no entry falls back to the plain tray
+ * placeholder, so adding a layout never requires touching this file (but should, for good art).
+ */
+export const PACKAGING_ILLUSTRATIONS: Readonly<Record<string, PackagingIllustration | undefined>> =
+  {
+    "bouquet-fan": BouquetFanIllustration,
+    "box-grid": BoxGridIllustration,
+  };

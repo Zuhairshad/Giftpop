@@ -38,6 +38,7 @@ function packaging(seed: PackagingSeed): PricedPackaging {
       slug: seed.name.toLowerCase().replace(/\s+/g, "-"),
       name: seed.name,
       description: seed.description ?? "",
+      kind: "box",
       layoutType: seed.layoutType,
       minItems: seed.min,
       maxItems: seed.max,

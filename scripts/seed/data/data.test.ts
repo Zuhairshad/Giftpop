@@ -109,6 +109,17 @@ describe("packagings", () => {
     expect(box).toMatchObject({ layoutType: "box-grid", minItems: 4, maxItems: 9 });
   });
 
+  it("group every packaging by kind", () => {
+    const kinds = Object.fromEntries(PACKAGINGS.map((p) => [p.slug, p.kind]));
+    expect(kinds).toEqual({
+      bouquet: "bouquet",
+      "gift-box": "box",
+      "round-hat-box": "box",
+      "gift-basket": "basket",
+      "mug-bouquet": "mug",
+    });
+  });
+
   it("list pink as the first wrapper and ribbon accent colour", () => {
     for (const packaging of PACKAGINGS) {
       expect(packaging.wrapperColors.length).toBeGreaterThan(0);

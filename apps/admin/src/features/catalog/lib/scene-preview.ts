@@ -66,6 +66,7 @@ function previewPackaging(fields: PreviewPackagingFields): Packaging {
     slug: "preview",
     name: fields.name.trim() === "" ? "Preview" : fields.name,
     description: "",
+    kind: "box",
     layoutType: fields.layoutType,
     minItems: min,
     maxItems: max,

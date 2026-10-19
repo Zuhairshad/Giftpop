@@ -61,6 +61,7 @@ const packagingSchema = new Schema(
     slug: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     description: { type: String, default: "" },
+    kind: { type: String, default: "box" },
     layoutType: { type: String, required: true },
     minItems: { type: Number, required: true },
     maxItems: { type: Number, required: true },

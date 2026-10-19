@@ -30,6 +30,7 @@ function packaging(overrides: Partial<Packaging> & Pick<Packaging, "id" | "name"
   return {
     slug: "pack",
     description: "",
+    kind: "box",
     layoutType: "fan",
     minItems: 2,
     maxItems: 4,

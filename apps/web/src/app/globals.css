@@ -17,28 +17,49 @@
   --color-sky: var(--gp-sky);
   --color-lilac: var(--gp-lilac);
   --color-on-accent: var(--gp-on-accent);
+  --color-warm: var(--gp-surface-soft);
+  --color-warm-deep: var(--gp-surface-deep);
+  --color-border-strong: var(--gp-border-strong);
+  --color-lavender: var(--gp-lavender);
+  --color-lavender-deep: var(--gp-lavender-deep);
+  --color-gold: var(--gp-gold);
+  --color-kraft: var(--gp-kraft);
+  --color-success: var(--gp-success);
+  --color-success-tint: var(--gp-success-tint);
+  --color-warning: var(--gp-warning);
+  --color-danger: var(--gp-danger);
 
-  --radius-soft: var(--gp-radius-sm);
+  --radius-xs: var(--gp-radius-xs);
+  --radius-sm: var(--gp-radius-sm);
+  --radius-md: var(--gp-radius-md);
+  --radius-lg: var(--gp-radius-lg);
+  --radius-soft: var(--gp-radius-md);
   --radius-card: var(--gp-radius-md);
   --radius-blob: var(--gp-radius-lg);
   --shadow-pop: var(--gp-shadow);
+  --shadow-hairline: var(--gp-shadow-1);
+  --shadow-lift: var(--gp-shadow-2);
+  --shadow-float: var(--gp-shadow-3);
+  --shadow-cta: var(--gp-shadow-cta);
 
-  --font-sans: var(--font-body), ui-rounded, "Segoe UI", system-ui, sans-serif;
-  --font-display: var(--font-display), ui-rounded, Georgia, serif;
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-body), system-ui, sans-serif;
+  --font-script: var(--font-script), "Segoe Script", cursive;
+  --font-brand: var(--font-brand), "Segoe Script", cursive;
 }
 
 body {
   background: var(--gp-bg);
   color: var(--gp-ink);
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 /* Visible focus for every control. */
 :focus-visible {
   outline: 3px solid var(--gp-focus);
   outline-offset: 3px;
-  border-radius: 0.375rem;
+  border-radius: var(--gp-radius-sm);
   /* The ring must be at full colour from the first frame (buttons fade outline-color otherwise). */
   transition: none;
 }
