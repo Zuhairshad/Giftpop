@@ -1,4 +1,62 @@
-import { Router } from "express";
+import {
+  CreateOrderRequestSchema,
+  TrackOrderRequestSchema,
+  type CreateOrderRequest,
+  type TrackOrderRequest,
+} from "@giftpop/contracts";
+import { Router, type RequestHandler } from "express";
+import { MemoryStore, type Store } from "express-rate-limit";
 
-/** Routes for the orders module. Filled in during phase 3. */
-export const ordersRouter: Router = Router();
+import { validateBody } from "../../lib/validate";
+import { idempotency } from "../../middleware/idempotency";
+import { createIpLimiter } from "../quotes/rate-limit";
+
+import { defaultTrackStore, TRACKS_PER_MINUTE } from "./rate-limit";
+import { createOrder, trackOrder } from "./service";
+
+export interface OrdersRouterOptions {
+  /** Replace the tracking limiter, for example with a tighter or fresh one in tests. */
+  limiter?: RequestHandler;
+  /** Counter store for the default limiter. Each limiter needs its own store. */
+  store?: Store;
+}
+
+/** Customers type numbers in any case; the contract only accepts upper case. */
+const upperCaseNumber: RequestHandler = (req, _res, next) => {
+  const body: unknown = req.body;
+  if (typeof body === "object" && body !== null && "number" in body) {
+    const { number } = body as { number: unknown };
+    if (typeof number === "string") req.body = { ...body, number: number.trim().toUpperCase() };
+  }
+  next();
+};
+
+export function createOrdersRouter({
+  store = new MemoryStore(),
+  limiter = createIpLimiter({
+    limit: TRACKS_PER_MINUTE,
+    store,
+    message: "Too many lookups. Try again in a minute.",
+  }),
+}: OrdersRouterOptions = {}): Router {
+  const router = Router();
+
+  // The schema strips unknown keys, so a price sent by the client never reaches the service.
+  router.post("/", validateBody(CreateOrderRequestSchema), idempotency(), async (req, res) => {
+    res.status(201).json(await createOrder(req.body as CreateOrderRequest));
+  });
+
+  router.post(
+    "/track",
+    limiter,
+    upperCaseNumber,
+    validateBody(TrackOrderRequestSchema),
+    async (req, res) => {
+      res.json(await trackOrder(req.body as TrackOrderRequest));
+    },
+  );
+
+  return router;
+}
+
+export const ordersRouter: Router = createOrdersRouter({ store: defaultTrackStore });
