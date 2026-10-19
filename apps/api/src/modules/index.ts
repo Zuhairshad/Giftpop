@@ -4,6 +4,8 @@ import { assetsRouter } from "./assets/router";
 import { authRouter } from "./auth/router";
 import { catalogRouter } from "./catalog/router";
 import { countriesRouter } from "./countries/router";
+import { designsRouter } from "./designs/router";
+import { quotesRouter } from "./quotes/router";
 import { staffRouter } from "./staff/router";
 
 export interface ApiModule {
@@ -19,4 +21,6 @@ export const modules: ApiModule[] = [
   { path: "/countries", router: countriesRouter },
   { path: "/catalog", router: catalogRouter },
   { path: "/assets", router: assetsRouter },
+  { path: "/designs", router: designsRouter },
+  { path: "/quotes", router: quotesRouter },
 ];

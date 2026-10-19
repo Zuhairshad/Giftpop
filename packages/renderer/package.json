@@ -14,7 +14,8 @@
     "verify": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
-    "@giftpop/contracts": "workspace:*"
+    "@giftpop/contracts": "workspace:*",
+    "motion": "14.3.0"
   },
   "peerDependencies": {
     "react": "^19",
