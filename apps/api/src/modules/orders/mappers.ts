@@ -1,6 +1,8 @@
 import type { Order } from "@giftpop/contracts";
 import { Types } from "mongoose";
 
+import { proofFileUrl } from "../payments/proof-keys";
+
 import type { OrderDoc } from "./model";
 
 const iso = (date: Date): string => date.toISOString();
@@ -54,7 +56,7 @@ export function toOrder(doc: OrderDoc): Order {
     })),
     proofs: doc.proofs.map((proof) => ({
       id: proof._id.toHexString(),
-      url: proof.url,
+      url: proofFileUrl(doc._id.toHexString(), proof._id.toHexString()),
       status: proof.status,
       uploadedAt: iso(proof.uploadedAt),
     })),

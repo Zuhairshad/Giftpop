@@ -14,11 +14,19 @@ import {
 import { Router, type Request } from "express";
 
 import { AppError } from "../../lib/errors";
+import { getPrivateStorage, PRIVATE_CACHE_CONTROL, type ReadableStorage } from "../../lib/storage";
 import { IdParamsSchema, validateBody, validateParams, validateQuery } from "../../lib/validate";
 import { requireStaff } from "../../middleware/require-staff";
 
 import { listOrders } from "./list";
-import { addNote, addPayment, changeStatus, getOrderDetail, reviewProof } from "./service";
+import {
+  addNote,
+  addPayment,
+  changeStatus,
+  getOrderDetail,
+  getProofFile,
+  reviewProof,
+} from "./service";
 
 /**
  * Not `StatusChangeRequestSchema`: its refinement would answer a missing courier,
@@ -35,56 +43,82 @@ function staffId(req: Request): string {
 
 const orderId = (req: Request): string => IdParamsSchema.parse(req.params).id;
 
-/** Staff routes, mounted at `/v1/admin/orders`. */
-export const adminOrdersRouter: Router = Router();
+/** Staff routes, mounted at `/v1/admin/orders`. Tests pass their own private storage. */
+export function createAdminOrdersRouter(
+  resolvePrivateStorage: () => ReadableStorage = getPrivateStorage,
+): Router {
+  const adminOrdersRouter = Router();
 
-adminOrdersRouter.use(requireStaff());
+  adminOrdersRouter.use(requireStaff());
 
-adminOrdersRouter.get("/", validateQuery(AdminOrderListQuerySchema), async (req, res) => {
-  // `validateQuery` replaced `req.query` with the parsed value.
-  res.json(await listOrders(req.query as unknown as AdminOrderListQuery));
-});
+  adminOrdersRouter.get("/", validateQuery(AdminOrderListQuerySchema), async (req, res) => {
+    // `validateQuery` replaced `req.query` with the parsed value.
+    res.json(await listOrders(req.query as unknown as AdminOrderListQuery));
+  });
 
-adminOrdersRouter.get("/:id", validateParams(IdParamsSchema), async (req, res) => {
-  res.json(await getOrderDetail(orderId(req)));
-});
+  adminOrdersRouter.get("/:id", validateParams(IdParamsSchema), async (req, res) => {
+    res.json(await getOrderDetail(orderId(req)));
+  });
 
-adminOrdersRouter.post(
-  "/:id/status",
-  validateParams(IdParamsSchema),
-  validateBody(StatusBodySchema),
-  async (req, res) => {
-    const { to, ...fields } = StatusBodySchema.parse(req.body);
-    res.json(await changeStatus(orderId(req), to, fields, staffId(req)));
-  },
-);
+  adminOrdersRouter.post(
+    "/:id/status",
+    validateParams(IdParamsSchema),
+    validateBody(StatusBodySchema),
+    async (req, res) => {
+      const { to, ...fields } = StatusBodySchema.parse(req.body);
+      res.json(await changeStatus(orderId(req), to, fields, staffId(req)));
+    },
+  );
 
-adminOrdersRouter.post(
-  "/:id/payments",
-  validateParams(IdParamsSchema),
-  validateBody(RecordPaymentRequestSchema),
-  async (req, res) => {
-    res.json(await addPayment(orderId(req), req.body as RecordPaymentRequest, staffId(req)));
-  },
-);
+  adminOrdersRouter.post(
+    "/:id/payments",
+    validateParams(IdParamsSchema),
+    validateBody(RecordPaymentRequestSchema),
+    async (req, res) => {
+      res.json(await addPayment(orderId(req), req.body as RecordPaymentRequest, staffId(req)));
+    },
+  );
 
-adminOrdersRouter.post(
-  "/:id/notes",
-  validateParams(IdParamsSchema),
-  validateBody(AddNoteRequestSchema),
-  async (req, res) => {
-    const { text } = req.body as AddNoteRequest;
-    res.json(await addNote(orderId(req), text, staffId(req)));
-  },
-);
+  adminOrdersRouter.post(
+    "/:id/notes",
+    validateParams(IdParamsSchema),
+    validateBody(AddNoteRequestSchema),
+    async (req, res) => {
+      const { text } = req.body as AddNoteRequest;
+      res.json(await addNote(orderId(req), text, staffId(req)));
+    },
+  );
 
-adminOrdersRouter.patch(
-  "/:id/proofs/:proofId",
-  validateParams(ProofParamsSchema),
-  validateBody(ReviewProofRequestSchema),
-  async (req, res) => {
-    const { id, proofId } = ProofParamsSchema.parse(req.params);
-    const { status } = req.body as ReviewProofRequest;
-    res.json(await reviewProof(id, proofId, status));
-  },
-);
+  adminOrdersRouter.patch(
+    "/:id/proofs/:proofId",
+    validateParams(ProofParamsSchema),
+    validateBody(ReviewProofRequestSchema),
+    async (req, res) => {
+      const { id, proofId } = ProofParamsSchema.parse(req.params);
+      const { status } = req.body as ReviewProofRequest;
+      res.json(await reviewProof(id, proofId, status));
+    },
+  );
+
+  adminOrdersRouter.get(
+    "/:id/proofs/:proofId/file",
+    validateParams(ProofParamsSchema),
+    async (req, res) => {
+      const { id, proofId } = ProofParamsSchema.parse(req.params);
+      const { body } = await getProofFile(resolvePrivateStorage(), id, proofId);
+      // Always WebP (uploads are converted); never cached, never sniffed.
+      res.set({
+        "Content-Type": "image/webp",
+        "Content-Length": String(body.length),
+        "Cache-Control": PRIVATE_CACHE_CONTROL,
+        "X-Content-Type-Options": "nosniff",
+        "Content-Disposition": "inline",
+      });
+      res.send(body);
+    },
+  );
+
+  return adminOrdersRouter;
+}
+
+export const adminOrdersRouter: Router = createAdminOrdersRouter();

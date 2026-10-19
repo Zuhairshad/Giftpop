@@ -1,17 +1,43 @@
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
-import { ASSET_CACHE_CONTROL, type Storage } from "./types";
+import { ASSET_CACHE_CONTROL, type ReadableStorage, type StoredObject } from "./types";
 
-/** The two S3 calls the driver makes. A real `S3Client` fits; tests pass a fake. */
+/** The S3 calls the driver makes. A real `S3Client` fits; tests pass a fake. */
 export interface S3Sender {
   send(command: PutObjectCommand): Promise<unknown>;
   send(command: DeleteObjectCommand): Promise<unknown>;
+  send(command: GetObjectCommand): Promise<GetObjectResult>;
+}
+
+/** The part of a GetObject response the driver reads. */
+export interface GetObjectResult {
+  Body?: { transformToByteArray(): Promise<Uint8Array> };
+  ContentType?: string;
+}
+
+function isMissing(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  if ("name" in error && (error.name === "NoSuchKey" || error.name === "NotFound")) return true;
+  const meta = "$metadata" in error ? error.$metadata : undefined;
+  return (
+    typeof meta === "object" &&
+    meta !== null &&
+    "httpStatusCode" in meta &&
+    meta.httpStatusCode === 404
+  );
 }
 
 export interface R2StorageOptions {
   client: S3Sender;
   bucket: string;
   publicBaseUrl: string;
+  /** Cache-Control stored with each object. Defaults to the public, immutable header. */
+  cacheControl?: string;
 }
 
 export interface R2Credentials {
@@ -34,15 +60,17 @@ export function createR2Client({
 }
 
 /** Production driver: objects in a Cloudflare R2 bucket, served from `publicBaseUrl`. */
-export class R2Storage implements Storage {
+export class R2Storage implements ReadableStorage {
   private readonly client: S3Sender;
   private readonly bucket: string;
   private readonly publicBaseUrl: string;
+  private readonly cacheControl: string;
 
   constructor(options: R2StorageOptions) {
     this.client = options.client;
     this.bucket = options.bucket;
     this.publicBaseUrl = options.publicBaseUrl.replace(/\/+$/, "");
+    this.cacheControl = options.cacheControl ?? ASSET_CACHE_CONTROL;
   }
 
   async put(key: string, body: Buffer, contentType: string): Promise<void> {
@@ -52,13 +80,29 @@ export class R2Storage implements Storage {
         Key: key,
         Body: body,
         ContentType: contentType,
-        CacheControl: ASSET_CACHE_CONTROL,
+        CacheControl: this.cacheControl,
       }),
     );
   }
 
   async delete(key: string): Promise<void> {
     await this.client.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
+  }
+
+  async get(key: string): Promise<StoredObject | null> {
+    try {
+      const result = await this.client.send(
+        new GetObjectCommand({ Bucket: this.bucket, Key: key }),
+      );
+      if (!result.Body) return null;
+      return {
+        body: Buffer.from(await result.Body.transformToByteArray()),
+        contentType: result.ContentType ?? "application/octet-stream",
+      };
+    } catch (error) {
+      if (isMissing(error)) return null;
+      throw error;
+    }
   }
 
   publicUrl(key: string): string {

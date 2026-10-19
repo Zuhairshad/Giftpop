@@ -13,7 +13,10 @@ export const MAX_PROOFS_PER_ORDER = 5;
 // Identical for an unknown number and a wrong contact, so numbers cannot be probed.
 const notFound = (): AppError => new AppError("NOT_FOUND", 404, "We could not find that order");
 
-/** Stores a customer's payment proof image and adds it to the order, if the order accepts one. */
+/**
+ * Stores a customer's payment proof image and adds it to the order, if the order accepts one.
+ * `storage` must be the private storage: a proof is never given a public URL.
+ */
 export async function addPaymentProof(
   storage: Storage,
   number: string,
@@ -41,7 +44,8 @@ export async function addPaymentProof(
       status: "awaiting_payment",
       [`proofs.${MAX_PROOFS_PER_ORDER - 1}`]: { $exists: false },
     },
-    { $push: { proofs: { url: storage.publicUrl(key), status: "pending", uploadedAt } } },
+    // `url` is never read back (the mapper builds the staff file route); it holds the key.
+    { $push: { proofs: { url: key, storageKey: key, status: "pending", uploadedAt } } },
     { returnDocument: "after" },
   ).lean<OrderDoc>();
   if (!updated) {

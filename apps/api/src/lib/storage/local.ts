@@ -2,12 +2,14 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, resolve, sep } from "node:path";
 
 import { isSafeKey } from "./keys";
-import type { Storage } from "./types";
+import type { ReadableStorage, StoredObject } from "./types";
 
 export interface LocalStorageOptions {
   /** Directory files are written under. */
   rootDir: string;
   publicBaseUrl: string;
+  /** First path segments this instance refuses to read, write or serve (the private folder). */
+  hiddenFolders?: readonly string[];
 }
 
 /** Content types the local driver serves, by extension. Anything else is not served. */
@@ -19,18 +21,21 @@ const CONTENT_TYPES: Record<string, string> = {
 };
 
 /** Development driver: files on disk, served by `GET /v1/assets/files/*`. */
-export class LocalStorage implements Storage {
+export class LocalStorage implements ReadableStorage {
   private readonly rootDir: string;
   private readonly publicBaseUrl: string;
+  private readonly hiddenFolders: readonly string[];
 
   constructor(options: LocalStorageOptions) {
     this.rootDir = resolve(options.rootDir);
     this.publicBaseUrl = options.publicBaseUrl.replace(/\/+$/, "");
+    this.hiddenFolders = options.hiddenFolders ?? [];
   }
 
   /** Absolute path for a key, or `undefined` if the key could escape the upload directory. */
   resolvePath(key: string): string | undefined {
     if (!isSafeKey(key)) return undefined;
+    if (this.hiddenFolders.includes(key.split("/")[0] ?? "")) return undefined;
     const path = resolve(this.rootDir, key);
     return path.startsWith(this.rootDir + sep) ? path : undefined;
   }
@@ -69,6 +74,12 @@ export class LocalStorage implements Storage {
       }
       throw error;
     }
+  }
+
+  async get(key: string): Promise<StoredObject | null> {
+    const body = await this.read(key);
+    if (!body) return null;
+    return { body, contentType: this.contentTypeFor(key) ?? "application/octet-stream" };
   }
 
   publicUrl(key: string): string {

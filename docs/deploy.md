@@ -62,6 +62,7 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 | `R2_ACCESS_KEY_ID`         | When `STORAGE_DRIVER=r2`           | `a1b2c3...`                                                      | Yes     | R2 API token key id. Scope the token to Object Read and Write on one bucket.                                                                      |
 | `R2_SECRET_ACCESS_KEY`     | When `STORAGE_DRIVER=r2`           | `...`                                                            | Yes     | R2 API token secret.                                                                                                                              |
 | `R2_BUCKET`                | When `STORAGE_DRIVER=r2`           | `giftpop-assets`                                                 | No      | Bucket name.                                                                                                                                      |
+| `R2_PRIVATE_BUCKET`        | No (set it in production)          | `giftpop-private`                                                | No      | Bucket for payment proofs. Never served publicly. Unset falls back to `R2_BUCKET`, which is only safe when the public host does not serve `proofs/`. |
 | `PUBLIC_ASSET_BASE_URL`    | Yes with R2 (not enforced, see audit) | `https://assets.<tld>`                                        | No      | Public base URL stored files are served from. Saved into each asset at upload time; changing it later does not rewrite old URLs.                  |
 | `UPLOAD_DIR`               | No (image sets `/data/uploads`)    | `/data/uploads`                                                  | No      | Folder for the local driver. Development only; unused with R2.                                                                                    |
 | `LOG_LEVEL`                | No (`info`)                        | `info`                                                           | No      | `fatal`, `error`, `warn`, `info`, `debug`, `trace` or `silent`.                                                                                   |
@@ -185,7 +186,13 @@ What was and was not verified is in `docs/audit/deploy.md`: Docker itself was no
 2. Create an API token with Object Read and Write on that bucket only. Its key id and secret are `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`; the account id is `R2_ACCOUNT_ID`.
 3. Set `STORAGE_DRIVER=r2`, `R2_BUCKET` and `PUBLIC_ASSET_BASE_URL=https://assets.<tld>` on the API.
 4. The driver is `apps/api/src/lib/storage/r2.ts` (AWS SDK S3 client, region `auto`). Uploaded images are WebP with a one-year immutable cache header.
-5. Payment proof images are stored the same way and are public unlisted URLs (decisions.md, phase 3 follow-ups). Treat the bucket as public.
+5. Payment proof images are private (see below). Create a second bucket with no custom domain and no public access, set `R2_PRIVATE_BUCKET` to it, and give the API token Object Read and Write on both buckets.
+
+### Private proofs
+
+Payment proofs (receipts can show account numbers) never get a public URL. New proofs are written to `R2_PRIVATE_BUCKET` (local driver: the `private/` folder of `UPLOAD_DIR`, which `GET /v1/assets/files/*` refuses) with `Cache-Control: private, no-store`. The order stores only the storage key. Staff see the image through `GET /v1/admin/orders/:id/proofs/:proofId/file`, which needs a staff session and streams the bytes with `private, no-store` and `nosniff`. Customers get no proof URL in any response. If `R2_PRIVATE_BUCKET` is unset the proofs go into `R2_BUCKET`; that is only safe when the public asset host does not serve the `proofs/` prefix, so set a private bucket in production.
+
+Proofs uploaded before this change still have an old public URL and their objects sit under `proofs/` in the public bucket. Staff can still open them (the key is derived from the old URL, and the file route reads it from private storage). Move them once: run `migrateProofsToPrivate(getStorage(), getPrivateStorage())` from `apps/api/src/modules/payments/migrate-proofs.ts` (for example from a small script run against production with the same env). It is idempotent, copies each object and records its key, and never deletes. When it reports `missing: 0, unreadable: 0`, delete the old `proofs/` objects from the public bucket by hand, because the old URLs stay reachable until then. It is not wired to any boot step and was not run against real data.
 
 ## First-deploy checklist
 

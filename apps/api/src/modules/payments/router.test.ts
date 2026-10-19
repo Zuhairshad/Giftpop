@@ -72,7 +72,11 @@ describe("POST /v1/orders/:number/payment-proof", () => {
     expect(body.proof.status).toBe("pending");
     const stored = await OrderModel.findOne({ number }).lean();
     expect(stored?.proofs).toHaveLength(1);
-    expect(stored?.proofs[0]?.url).toMatch(/^http:\/\/assets\.test\/files\/proofs\/[\w-]+\.webp$/);
+    const key = stored?.proofs[0]?.storageKey;
+    expect(key).toMatch(/^proofs\/[\w-]+\.webp$/);
+    // Nothing public is stored for a proof, and the response has no URL.
+    expect(JSON.stringify(stored?.proofs)).not.toContain("assets.test");
+    expect(JSON.stringify(res.body)).not.toMatch(/url|http|proofs\//);
     expect(stored?.status).toBe("awaiting_payment");
   });
 
