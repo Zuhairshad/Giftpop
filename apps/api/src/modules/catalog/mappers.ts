@@ -64,7 +64,12 @@ export function toPackaging(doc: PackagingDoc): Packaging {
 }
 
 export function toPriceEntry(doc: CountryPriceDoc): PriceEntry {
-  return { country: doc.country, priceMinor: doc.priceMinor, inStock: doc.inStock };
+  return {
+    country: doc.country,
+    priceMinor: doc.priceMinor,
+    inStock: doc.inStock,
+    ...(doc.stockQty === undefined || doc.stockQty === null ? {} : { stockQty: doc.stockQty }),
+  };
 }
 
 export function toPriceDoc(price: CountryPrice): CountryPriceDoc {
@@ -74,5 +79,6 @@ export function toPriceDoc(price: CountryPrice): CountryPriceDoc {
     targetId: toObjectId(price.kind === "item" ? price.itemId : price.packagingId),
     priceMinor: price.priceMinor,
     inStock: price.inStock,
+    ...(price.stockQty === undefined ? {} : { stockQty: price.stockQty }),
   };
 }

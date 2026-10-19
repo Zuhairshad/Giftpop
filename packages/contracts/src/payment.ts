@@ -72,3 +72,27 @@ export interface PaymentProvider {
   prepare(context: PaymentContext): Promise<PaymentPreparation>;
   instructions(context: PaymentContext): PaymentInstructions;
 }
+
+export const PaymentProofStatusSchema = z.enum(["pending", "accepted", "rejected"]);
+export type PaymentProofStatus = z.infer<typeof PaymentProofStatusSchema>;
+
+/** A customer's proof of a manual transfer. The image lives in object storage; staff review it. */
+export const PaymentProofSchema = z.object({
+  id: ObjectIdSchema,
+  url: z.string().min(1),
+  status: PaymentProofStatusSchema,
+  uploadedAt: IsoDateTimeSchema,
+});
+export type PaymentProof = z.infer<typeof PaymentProofSchema>;
+
+/** Text fields sent with the proof image (multipart field `file`). */
+export const PaymentProofUploadFieldsSchema = z.object({
+  /** The phone or email used to place the order. */
+  contact: z.string().trim().min(3).max(200),
+});
+export type PaymentProofUploadFields = z.infer<typeof PaymentProofUploadFieldsSchema>;
+
+export const PaymentProofUploadResponseSchema = z.object({
+  proof: PaymentProofSchema.pick({ id: true, status: true, uploadedAt: true }),
+});
+export type PaymentProofUploadResponse = z.infer<typeof PaymentProofUploadResponseSchema>;

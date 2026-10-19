@@ -40,6 +40,7 @@ export const TransitionFieldsSchema = z.object({
   note: z.string().max(1000).optional(),
   courier: z.string().trim().min(1).max(80).optional(),
   trackingNumber: z.string().trim().min(1).max(80).optional(),
+  trackingUrl: z.url().max(500).optional(),
   reason: z.string().trim().min(1).max(500).optional(),
 });
 export type TransitionFields = z.infer<typeof TransitionFieldsSchema>;

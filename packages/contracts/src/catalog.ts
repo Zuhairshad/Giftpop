@@ -96,10 +96,17 @@ const needsNameLimit = {
 export const ItemSchema = ItemFieldsSchema.refine(needsNameLimit.check, needsNameLimit.params);
 export type Item = z.infer<typeof ItemSchema>;
 
+/**
+ * Units left, when stock is counted. Absent means stock is not counted and only
+ * `inStock` decides. Orders decrement it; when it reaches 0, `inStock` turns false.
+ */
+const StockQtySchema = z.number().int().nonnegative().optional();
+
 const PriceBaseSchema = z.object({
   country: CountryCodeSchema,
   priceMinor: MinorUnitsSchema.nonnegative(),
   inStock: z.boolean(),
+  stockQty: StockQtySchema,
 });
 
 /** A price row: one per item or packaging per country, in that country's currency. */
@@ -170,6 +177,7 @@ export const PriceEntrySchema = z.object({
   country: CountryCodeSchema,
   priceMinor: MinorUnitsSchema.nonnegative(),
   inStock: z.boolean(),
+  stockQty: StockQtySchema,
 });
 export type PriceEntry = z.infer<typeof PriceEntrySchema>;
 

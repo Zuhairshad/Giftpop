@@ -1,11 +1,17 @@
 import { z } from "zod";
 
-import { ItemShapeSchema } from "./catalog";
+import { AssetSchema, ItemShapeSchema } from "./catalog";
 import { CountryCodeSchema, HexColorSchema, IsoDateTimeSchema, ObjectIdSchema } from "./common";
 import { DesignSchema } from "./design";
 import { MinorUnitsSchema } from "./money";
 import { OrderStatusSchema, StatusHistoryEntrySchema } from "./order-status";
-import { PaymentModeSchema, PaymentRecordSchema, PaymentStatusSchema } from "./payment";
+import {
+  PaymentModeSchema,
+  PaymentProofSchema,
+  PaymentProofStatusSchema,
+  PaymentRecordSchema,
+  PaymentStatusSchema,
+} from "./payment";
 import { QuoteSchema } from "./pricing";
 
 /** Crockford base32: digits and letters without I, L, O, U. */
@@ -45,6 +51,8 @@ export const ItemSnapshotSchema = z.object({
   sizeUnits: z.number().int().positive(),
   unitPriceMinor: MinorUnitsSchema.nonnegative(),
   qty: z.number().int().positive(),
+  /** The image as it was when ordered, so the gift can be drawn exactly as built. */
+  image: AssetSchema.optional(),
 });
 export type ItemSnapshot = z.infer<typeof ItemSnapshotSchema>;
 
@@ -53,12 +61,17 @@ export const PackagingSnapshotSchema = z.object({
   name: z.string(),
   layoutType: z.string(),
   priceMinor: MinorUnitsSchema.nonnegative(),
+  minItems: z.number().int().positive(),
+  maxItems: z.number().int().positive(),
+  capacityUnits: z.number().int().positive(),
+  layers: z.object({ back: AssetSchema.optional(), front: AssetSchema.optional() }).default({}),
 });
 export type PackagingSnapshot = z.infer<typeof PackagingSnapshotSchema>;
 
 export const ShipmentSchema = z.object({
   courier: z.string().min(1),
   trackingNumber: z.string().min(1),
+  trackingUrl: z.url().optional(),
   shippedAt: IsoDateTimeSchema,
 });
 export type Shipment = z.infer<typeof ShipmentSchema>;
@@ -82,6 +95,8 @@ export const OrderSchema = z.object({
   history: z.array(StatusHistoryEntrySchema).min(1),
   shipment: ShipmentSchema.nullable(),
   payments: z.array(PaymentRecordSchema),
+  /** Proofs of payment uploaded by the customer. */
+  proofs: z.array(PaymentProofSchema).default([]),
   createdAt: IsoDateTimeSchema,
   updatedAt: IsoDateTimeSchema,
 });
@@ -123,7 +138,25 @@ export const PublicTrackingViewSchema = z.object({
   status: OrderStatusSchema,
   paymentStatus: PaymentStatusSchema,
   history: z.array(z.object({ to: OrderStatusSchema, at: IsoDateTimeSchema })),
-  shipment: z.object({ courier: z.string(), trackingNumber: z.string() }).nullable(),
+  shipment: z
+    .object({ courier: z.string(), trackingNumber: z.string(), trackingUrl: z.url().optional() })
+    .nullable(),
   createdAt: IsoDateTimeSchema,
 });
 export type PublicTrackingView = z.infer<typeof PublicTrackingViewSchema>;
+
+/**
+ * Everything the customer's order and tracking pages show: the tracking view plus
+ * what they ordered and what to pay. Never staff notes or actor ids.
+ */
+export const PublicOrderViewSchema = PublicTrackingViewSchema.extend({
+  paymentMode: PaymentModeSchema,
+  quote: QuoteSchema,
+  /** The country's payment instructions, for orders still waiting on payment. */
+  paymentInstructions: z.string(),
+  design: DesignSchema,
+  packaging: PackagingSnapshotSchema,
+  items: z.array(ItemSnapshotSchema),
+  proofs: z.array(z.object({ uploadedAt: IsoDateTimeSchema, status: PaymentProofStatusSchema })),
+});
+export type PublicOrderView = z.infer<typeof PublicOrderViewSchema>;

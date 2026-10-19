@@ -15,6 +15,8 @@ export interface CountryPriceDoc {
   targetId: Types.ObjectId;
   priceMinor: number;
   inStock: boolean;
+  /** Units left when stock is counted; absent when only `inStock` decides. */
+  stockQty?: number;
 }
 
 /** Image metadata only; the file itself lives in object storage. */
@@ -83,6 +85,7 @@ const countryPriceSchema = new Schema(
     targetId: { type: Schema.Types.ObjectId, required: true },
     priceMinor: { type: Number, required: true },
     inStock: { type: Boolean, required: true },
+    stockQty: { type: Number, min: 0 },
   },
   { versionKey: false, collection: "countryPrices" },
 );

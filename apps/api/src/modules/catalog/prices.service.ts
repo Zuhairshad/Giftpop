@@ -10,10 +10,11 @@ import { CountryPriceModel, type CountryPriceDoc } from "./model";
 export async function upsertPrices(prices: CountryPrice[]): Promise<void> {
   if (prices.length === 0) return;
   await CountryPriceModel.bulkWrite(
-    prices.map(toPriceDoc).map(({ country, kind, targetId, priceMinor, inStock }) => ({
+    prices.map(toPriceDoc).map(({ country, kind, targetId, priceMinor, inStock, stockQty }) => ({
       updateOne: {
         filter: { country, kind, targetId },
-        update: { $set: { priceMinor, inStock } },
+        // `stockQty` is only written when given, so saving prices never wipes a count.
+        update: { $set: { priceMinor, inStock, ...(stockQty === undefined ? {} : { stockQty }) } },
         upsert: true,
       },
     })),

@@ -12,6 +12,7 @@ export const API_ERROR_CODES = [
   "INVALID_TRANSITION",
   "MISSING_TRANSITION_FIELD",
   "DESIGN_INVALID",
+  "NOT_AVAILABLE",
   "INTERNAL",
 ] as const;
 export const ApiErrorCodeSchema = z.enum(API_ERROR_CODES);
