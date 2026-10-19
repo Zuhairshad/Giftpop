@@ -70,6 +70,7 @@ export function AnimatedGiftScene({
       <SceneSvg
         label={model.label}
         layoutType={model.layoutType}
+        bounds={model.bounds}
         className={className}
         svgRef={ref}
       >

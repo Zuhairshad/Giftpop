@@ -3,10 +3,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { LAYOUT_TYPES } from "../layouts";
-import { shade } from "../placeholders/color";
+import { mix, shade } from "../placeholders/color";
 
 import { ruffleEdge } from "./packaging/ruffle";
-import { wrapTones } from "./packaging/tones";
+import { boxTones, wrapTones } from "./packaging/tones";
 import { itemPalette, luma } from "./palette";
 
 import {
@@ -179,6 +179,45 @@ describe("wrapTones", () => {
     }
     expect(wrapTones("#111111").lit).not.toEqual("#111111");
     expect(wrapTones("#ffffff").lit).toEqual("#f5f5f5");
+  });
+});
+
+describe("mix", () => {
+  it("blends between two colours and clamps the amount", () => {
+    expect(mix("#000000", "#ffffff", 0)).toBe("#000000");
+    expect(mix("#000000", "#ffffff", 1)).toBe("#ffffff");
+    expect(mix("#000000", "#ffffff", 0.5)).toBe("#808080");
+    expect(mix("#102030", "#ffffff", 2)).toBe("#ffffff");
+    expect(mix("#fff", "#000", -1)).toBe("#ffffff");
+  });
+});
+
+describe("boxTones", () => {
+  // The seeded gift box colours, plus near-black and near-white.
+  const wrappers = ["#f9c6d3", "#f3ead8", "#3b3b3f", "#c8a27a", "#111111", "#ffffff"];
+
+  it("lines the floor with tissue paler than the wrapper and the warm tile well", () => {
+    for (const color of wrappers) {
+      const t = boxTones(color);
+      expect(luma(t.tissue), color).toBeGreaterThan(0.85);
+      // Paper is a warm off-white, so only a pure white wrapper is brighter than its tissue.
+      if (color !== "#ffffff") expect(luma(t.tissue), color).toBeGreaterThanOrEqual(luma(color));
+    }
+  });
+
+  it("keeps walls, creases and outline distinct from the tissue", () => {
+    for (const color of wrappers) {
+      const t = boxTones(color);
+      expect(new Set([t.tissue, t.crease, t.wall, t.side, t.edge]).size, color).toBe(5);
+      expect(luma(t.edge), color).toBeLessThan(luma(t.tissue) - 0.3);
+    }
+  });
+
+  it("darkens walls towards the ink colour, not black, so pinks stay warm", () => {
+    const wall = boxTones("#f9c6d3").wall;
+    const blackened = shade("#f9c6d3", -0.16);
+    // Ink is aubergine, so the wall keeps more blue than plain darkening would.
+    expect(parseInt(wall.slice(5, 7), 16)).toBeGreaterThan(parseInt(blackened.slice(5, 7), 16));
   });
 });
 

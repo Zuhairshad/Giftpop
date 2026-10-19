@@ -1,8 +1,8 @@
 import type { Asset, Design, Item, Packaging } from "@giftpop/contracts";
 
 import { describeGift, FALLBACK_ITEM } from "../describe";
-import { computePlacements, expandDesignItems } from "../layouts";
-import type { Placement } from "../layouts";
+import { computePlacements, expandDesignItems, sceneBounds } from "../layouts";
+import type { Placement, SceneBounds } from "../layouts";
 
 /** What a scene needs to know to draw one item. */
 export type SceneItemArt = Pick<Item, "shape" | "color"> & { image?: Asset };
@@ -17,6 +17,8 @@ export interface SceneEntry {
 export interface SceneModel {
   label: string;
   layoutType: string;
+  /** The part of the scene square to show: the SVG's viewBox and aspect ratio. */
+  bounds: SceneBounds;
   colors: { wrapper: string; ribbon: string };
   layers: { back?: Asset; front?: Asset };
   /** In paint order, lowest `z` first. */
@@ -44,6 +46,10 @@ export function buildSceneModel({ design, packaging, items }: SceneInput): Scene
   return {
     label: describeGift(design, packaging, items),
     layoutType: packaging.layoutType,
+    bounds: sceneBounds(
+      packaging.layoutType,
+      Boolean(packaging.layers.back ?? packaging.layers.front),
+    ),
     colors: { wrapper: design.wrapperColor, ribbon: design.ribbonColor },
     layers: packaging.layers,
     entries,

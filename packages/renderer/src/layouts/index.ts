@@ -2,6 +2,8 @@ import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
 import type { LayoutFn, LayoutInput, Placement } from "./types";
 
+export { FULL_SCENE, sceneBounds } from "./bounds";
+export type { SceneBounds } from "./bounds";
 export { ITEM_BASE_SIZE, SCENE_SIZE, expandDesignItems } from "./types";
 export type { LayoutFn, LayoutInput, Placement } from "./types";
 

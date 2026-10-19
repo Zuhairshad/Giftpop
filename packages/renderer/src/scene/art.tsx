@@ -3,7 +3,7 @@ import { useId } from "react";
 import type { ReactNode, Ref } from "react";
 
 import { ITEM_ART_SIZE, ITEM_ILLUSTRATIONS, PACKAGING_ILLUSTRATIONS } from "../illustrations";
-import { SCENE_SIZE } from "../layouts";
+import type { SceneBounds } from "../layouts";
 import {
   PackagingBackPlaceholder,
   PackagingFrontPlaceholder,
@@ -15,16 +15,19 @@ import type { SceneItemArt, SceneModel } from "./model";
 
 // Everything here is a pure render with no state or effects, so Server Components can use it.
 
-/** The `<svg>` both variants share: same viewBox, aspect box, label and layer order. */
+/** The `<svg>` both variants share: same viewBox (the layout's bounds), aspect box, label and layer order. */
 export function SceneSvg({
   label,
   layoutType,
+  bounds,
   className,
   svgRef,
   children,
 }: {
   label: string;
   layoutType: string;
+  /** The part of the scene square to show; sets the viewBox and the box's aspect ratio. */
+  bounds: SceneBounds;
   className?: string | undefined;
   svgRef?: Ref<SVGSVGElement>;
   children: ReactNode;
@@ -35,9 +38,14 @@ export function SceneSvg({
       ref={svgRef}
       role="img"
       aria-labelledby={titleId}
-      viewBox={`0 0 ${SCENE_SIZE} ${SCENE_SIZE}`}
+      viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}
       className={className}
-      style={{ display: "block", width: "100%", height: "auto", aspectRatio: "1 / 1" }}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "auto",
+        aspectRatio: `${bounds.width} / ${bounds.height}`,
+      }}
       data-layout={layoutType}
     >
       <title id={titleId}>{label}</title>
