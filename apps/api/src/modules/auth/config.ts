@@ -21,7 +21,13 @@ let cached: AuthConfig | undefined;
 export function getAuthConfig(): AuthConfig {
   if (!cached) {
     const env = parseEnv({ MONGODB_URI: "mongodb://unused", ...process.env });
-    cached = { sessionSecret: env.SESSION_SECRET, secureCookies: env.NODE_ENV === "production" };
+    const https = [env.ADMIN_ORIGIN, env.WEB_ORIGIN].some((origin) =>
+      origin.startsWith("https://"),
+    );
+    cached = {
+      sessionSecret: env.SESSION_SECRET,
+      secureCookies: env.NODE_ENV === "production" || https,
+    };
   }
   return cached;
 }

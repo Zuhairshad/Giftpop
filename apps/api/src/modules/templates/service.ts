@@ -142,7 +142,13 @@ export async function listPublicTemplates(country: CountryCode): Promise<PublicT
 
   const result: PublicTemplate[] = [];
   for (const doc of docs) {
-    const design = parseStoredDesign(doc.design);
+    // One template that no longer parses must not take the whole list down.
+    let design: Design;
+    try {
+      design = parseStoredDesign(doc.design);
+    } catch {
+      continue;
+    }
     if (!isSellable(catalog, design)) continue;
     const packaging = catalog.packagings.find((p) => p.packaging.id === design.packagingId);
     if (!packaging) continue;

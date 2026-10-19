@@ -4,6 +4,7 @@ import {
   TemplateStartResponseSchema,
   type Design,
 } from "@giftpop/contracts";
+import { Types } from "mongoose";
 import request from "supertest";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -245,6 +246,19 @@ describe("GET /v1/templates", () => {
     );
     expect((await list("PK")).body).toEqual([]);
     expect(((await list("GB")).body as unknown[]).length).toBe(1);
+  });
+
+  it("skips a template whose stored design no longer parses and still lists the others", async () => {
+    const { shareId } = await setup();
+    await featured(shareId, { title: "Good" });
+    const broken = await featured(shareId, { title: "Broken" });
+    await TemplateModel.collection.updateOne(
+      { _id: new Types.ObjectId(broken.id) },
+      { $set: { design: { nonsense: true } } },
+    );
+    const res = await list("PK");
+    expect(res.status).toBe(200);
+    expect((res.body as { title: string }[]).map((t) => t.title)).toEqual(["Good"]);
   });
 
   it("drops a template when an item is deactivated", async () => {

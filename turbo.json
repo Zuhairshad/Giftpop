@@ -6,13 +6,19 @@
     "test": {},
     "build": {
       "dependsOn": ["^build"],
-      "env": ["API_URL"],
+      "env": ["API_URL", "PUBLIC_ASSET_BASE_URL"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["API_URL", "NOTIFICATIONS_WORKER", "SENTRY_DSN", "SENTRY_TRACES_SAMPLE_RATE"]
+      "env": [
+        "API_URL",
+        "PUBLIC_ASSET_BASE_URL",
+        "NOTIFICATIONS_WORKER",
+        "SENTRY_DSN",
+        "SENTRY_TRACES_SAMPLE_RATE"
+      ]
     },
     "verify": { "dependsOn": ["lint", "typecheck", "test"] }
   }

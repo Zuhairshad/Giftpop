@@ -89,6 +89,13 @@ const EnvSchema = EnvObjectSchema.superRefine((env, ctx) => {
     });
   }
   if (env.STORAGE_DRIVER === "r2") {
+    if (new URL(env.PUBLIC_ASSET_BASE_URL).hostname === "localhost") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["PUBLIC_ASSET_BASE_URL"],
+        message: "PUBLIC_ASSET_BASE_URL must be the public asset host when STORAGE_DRIVER=r2",
+      });
+    }
     for (const key of R2_KEYS) {
       if (!env[key])
         ctx.addIssue({
