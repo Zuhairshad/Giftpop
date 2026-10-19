@@ -1,4 +1,13 @@
-/** STUB. Replaced by the `personalise` step slice in phase 2. */
+"use client";
+
+import { PersonaliseView } from "./personalise-view";
+
+import { useBuilder, useStepGuard } from "@/features/builder/state";
+
+
+/** Step 5: card message, recipient name and names on personalizable items. All optional. */
 export function PersonaliseStep() {
-  return <p>Make it personal</p>;
+  useStepGuard("personalise");
+  const builder = useBuilder();
+  return <PersonaliseView builder={builder} />;
 }
