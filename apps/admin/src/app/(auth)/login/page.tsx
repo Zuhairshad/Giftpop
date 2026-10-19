@@ -4,10 +4,17 @@ import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { safeNextPath } from "@/features/auth/safe-next";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { next } = await searchParams;
+
   return (
     <main className="flex min-h-svh items-center justify-center p-4">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -23,7 +30,7 @@ export default function LoginPage() {
             <CardDescription>Use your staff email and password.</CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            <LoginForm next={safeNextPath(next)} />
           </CardContent>
         </Card>
       </div>
