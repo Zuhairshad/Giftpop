@@ -57,10 +57,16 @@ export function toPackagingDoc(packaging: Packaging): PackagingDoc {
   return { ...rest, _id: toObjectId(id), layers: presentLayers(layers) };
 }
 
-export function toPackaging(doc: PackagingDoc): Packaging {
-  const { _id, layers, ...rest } = doc;
+/**
+ * Lean reads skip schema defaults, so a packaging saved before `kind` existed
+ * comes back without one. It reads as "box" (docs/product.md).
+ */
+type StoredPackagingDoc = Omit<PackagingDoc, "kind"> & Partial<Pick<PackagingDoc, "kind">>;
+
+export function toPackaging(doc: StoredPackagingDoc): Packaging {
+  const { _id, layers, kind, ...rest } = doc;
   // Mongoose drops empty objects, so a packaging with no layers comes back without `layers`.
-  return { ...rest, id: _id.toHexString(), layers: presentLayers(layers) };
+  return { ...rest, id: _id.toHexString(), kind: kind ?? "box", layers: presentLayers(layers) };
 }
 
 export function toPriceEntry(doc: CountryPriceDoc): PriceEntry {

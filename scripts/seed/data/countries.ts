@@ -8,8 +8,12 @@ import type { Country } from "@giftpop/contracts";
  * made-up values for local development. Real values are set by the owner in the
  * admin app. SA has a free-shipping threshold and PK has none, so both pricing
  * paths exist in dev data.
+ *
+ * The payment instructions read like real ones so screenshots look finished,
+ * but the account number is all zeros: it is not a real account.
  */
-const DEV_PAYMENT_INSTRUCTIONS = "DEV ONLY: bank transfer details go here";
+const DEV_PAYMENT_INSTRUCTIONS =
+  "Bank transfer to The Giftpop, account 0000 0000 0000, reference: your order number";
 
 export const COUNTRIES: Country[] = [
   {
