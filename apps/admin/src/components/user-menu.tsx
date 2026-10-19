@@ -37,18 +37,21 @@ export function UserMenu({ user }: UserMenuProps) {
     router.refresh();
   }
 
+  const roleLabel = user.role === "owner" ? "Owner" : "Staff";
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
-            {/* No aria-label: the name starts with the visible text, so voice control matches it. */}
+          <DropdownMenuTrigger
+            render={
+              // Starts with the visible name and role, so voice control matches it.
+              <SidebarMenuButton size="lg" aria-label={`${user.name} ${roleLabel}, account menu`} />
+            }
+          >
             <span className="flex min-w-0 flex-1 flex-col text-left leading-tight">
               <span className="truncate font-medium">{user.name}</span>
-              <span className="text-muted-foreground truncate text-xs">
-                {user.role === "owner" ? "Owner" : "Staff"}
-                <span className="sr-only">, account menu</span>
-              </span>
+              <span className="text-muted-foreground truncate text-xs">{roleLabel}</span>
             </span>
             <ChevronsUpDownIcon aria-hidden="true" className="ml-auto" />
           </DropdownMenuTrigger>

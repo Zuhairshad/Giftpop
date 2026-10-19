@@ -245,7 +245,7 @@ Checked with axe 4.14 plus the contrast walker on 19 store screens in light and 
 | W6 | fixed | `--gp-on-accent` token and `text-on-accent` on mint and butter (dark 5.55:1 and 9.04:1, computed). The Delivered pill was not re-rendered. |
 | W7 | fixed | `:focus-visible { transition: none }`. |
 | W8 | fixed | `InertChrome` sets `inert` on header, footer and skip link while the share overlay is mounted. Not Tab-walked. |
-| W9 | fixed | Format strip cards and item cards pass axe. Follow-up: the stepper buttons are named "Plus: add one more X" and "Minus: remove one X"; the template link has no `aria-label` (visible "Start from this" plus a screen-reader-only ": <title>"). axe on the items step: no violations. |
+| W9 | fixed | Format strip cards and item cards pass axe. Follow-up: the stepper buttons are named "Plus: add one more X" and "Minus: remove one X"; the template link's `aria-label` "Start from this: <title>" begins with its visible text (an `sr-only` span made Chrome add a space before the colon). axe on the items step: no violations. |
 | W10 | fixed | Success heading is an `h1`. |
 | W11 | fixed | `grid-cols-1` on card grids, hero, how-it-works, price copy and the items mobile bar wrap at 200% text. |
 | W12 | not needed | The reduced-motion rule already exists in web `globals.css`. |
@@ -276,7 +276,7 @@ Measured against a separate stack (admin 3601, api 4600, database `giftpop_admin
 | L5 | fixed | Packaging page h1 is "Packaging". |
 | L6 | fixed | Partner sheet opens on the status select. |
 | L4 | fixed | Orders now snapshot the palette names of the chosen colours (`packaging.wrapperColorName`, `ribbonColorName`, optional in the contract). Order detail shows swatch (hidden), name, hex; the packing sheet prefers the saved name over the nearest-colour word. Older orders fall back to the nearest word. Checked in the browser: "Kraft #C8A27A", "Hot pink #E8467C". |
-| Dashboard / header label mismatch | fixed | Tile `aria-label`s and the "Toggle navigation" label removed. The account menu button has no `aria-label`; its name is the visible name and role plus a screen-reader-only ", account menu". axe on dashboard and order detail at 1280: no violations. |
+| Dashboard / header label mismatch | fixed | Tile `aria-label`s and the "Toggle navigation" label removed. The account menu button's `aria-label` is "<name> <role>, account menu", beginning with its visible text. axe on dashboard and order detail at 1280: no violations. |
 
 Edits to generated `components/ui/*` (re-apply if regenerated): `dialog.tsx`, `sheet.tsx` (A2 keydown), `table.tsx` (A6), `sidebar.tsx` (A3 `aside`, A8 classes), `switch.tsx` (A7), and `ring-ring/50` to `ring-ring` in button, input, select, textarea, checkbox, badge.
 Note: a native date input showed no ring in one Tab-walk sample; a direct check shows its 3 px ring is present, so this was a timing artefact of the script.

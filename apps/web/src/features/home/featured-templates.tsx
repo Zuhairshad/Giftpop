@@ -37,10 +37,12 @@ export function FeaturedTemplates({
               ) : null}
               <Link
                 href={card.href}
+                // Starts with the visible text, so voice control matches it (W9). An sr-only span
+                // would not do: Chrome adds a space before it ("Start from this : …").
+                aria-label={`Start from this: ${card.title}`}
                 className="bg-pink-strong text-on-pink hover:bg-pink mt-4 inline-block self-start rounded-full px-5 py-2.5 text-sm font-bold transition-colors"
               >
-                {/* The name is the visible text plus the title, so voice control matches it (W9). */}
-                Start from this<span className="sr-only">: {card.title}</span>
+                Start from this
               </Link>
             </div>
           </li>
