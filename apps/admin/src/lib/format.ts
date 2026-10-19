@@ -1,7 +1,15 @@
+import { minorDigits } from "@giftpop/contracts";
+
 /** Shows integer minor units as a price in its own currency, for display only. Never feed it back into any calculation. */
 export function formatMoney(amountMinor: number, currency: string, locale = "en"): string {
-  const formatter = new Intl.NumberFormat(locale, { style: "currency", currency });
-  const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
+  // Digits come from ISO 4217 (contracts), and are pinned so Intl never rounds for display.
+  const digits = minorDigits(currency);
+  const formatter = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
   return formatter.format(amountMinor / 10 ** digits);
 }
 

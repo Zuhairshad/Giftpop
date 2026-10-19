@@ -13,6 +13,43 @@ export const MoneySchema = z.object({
 });
 export type Money = z.infer<typeof MoneySchema>;
 
+/**
+ * ISO 4217 currencies whose minor unit is not 2 digits. Every launch currency uses 2.
+ * This is the standard's table, not CLDR's display digits: CLDR 48 shows PKR with 0
+ * decimals, but PKR prices are stored in paisa (2 digits), so asking `Intl` would
+ * show them 100 times too high.
+ */
+const NON_DEFAULT_MINOR_DIGITS: Readonly<Record<string, number>> = {
+  BIF: 0,
+  CLP: 0,
+  DJF: 0,
+  GNF: 0,
+  ISK: 0,
+  JPY: 0,
+  KMF: 0,
+  KRW: 0,
+  PYG: 0,
+  RWF: 0,
+  UGX: 0,
+  VND: 0,
+  VUV: 0,
+  XAF: 0,
+  XOF: 0,
+  XPF: 0,
+  BHD: 3,
+  IQD: 3,
+  JOD: 3,
+  KWD: 3,
+  LYD: 3,
+  OMR: 3,
+  TND: 3,
+};
+
+/** How many digits the minor unit of `currency` has (2 for USD and PKR, 0 for JPY). */
+export function minorDigits(currency: CurrencyCode): number {
+  return NON_DEFAULT_MINOR_DIGITS[currency] ?? 2;
+}
+
 function assertMinor(value: number): void {
   if (!Number.isSafeInteger(value)) {
     throw new RangeError(`Expected an integer amount in minor units, got ${value}`);

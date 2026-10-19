@@ -154,8 +154,8 @@ describe("staff routes", () => {
         contactName: "C",
         email: "c@example.com",
         phone: "+92 300 1234567",
-        createdAt: new Date(2026, 0, n),
-        updatedAt: new Date(2026, 0, n),
+        createdAt: new Date(Date.UTC(2026, 0, n)),
+        updatedAt: new Date(Date.UTC(2026, 0, n)),
         ...extra,
       });
     await mk(1, {

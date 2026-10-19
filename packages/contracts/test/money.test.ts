@@ -5,6 +5,7 @@ import {
   MinorUnitsSchema,
   MoneySchema,
   addMoney,
+  minorDigits,
   money,
   multiplyMoney,
   percentOfMinor,
@@ -170,5 +171,23 @@ describe("MoneySchema and friends", () => {
   it("MinorUnitsSchema is integer-only", () => {
     expect(MinorUnitsSchema.safeParse(5).success).toBe(true);
     expect(MinorUnitsSchema.safeParse(5.01).success).toBe(false);
+  });
+});
+
+describe("minorDigits()", () => {
+  it.each(["USD", "GBP", "SAR", "INR", "PKR", "CNY", "AUD", "TRY", "CAD"])(
+    "gives launch currency %s two minor digits (ISO 4217, not the CLDR display digits)",
+    (code) => {
+      expect(minorDigits(code)).toBe(2);
+    },
+  );
+
+  it("knows currencies with zero or three minor digits", () => {
+    expect(minorDigits("JPY")).toBe(0);
+    expect(minorDigits("KWD")).toBe(3);
+  });
+
+  it("defaults to two for any other code", () => {
+    expect(minorDigits("AED")).toBe(2);
   });
 });
