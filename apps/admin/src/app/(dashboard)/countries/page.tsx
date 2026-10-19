@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 
-import { PlaceholderPage } from "@/components/placeholder-page";
+import { PageHeader } from "@/components/page-header";
+import { loadCountries, loadViewerRole } from "@/features/catalog/api/server";
+import { CountriesTable } from "@/features/catalog/components/countries-table";
 
 export const metadata: Metadata = { title: "Countries" };
 
-export default function CountriesPage() {
+export default async function CountriesPage() {
+  const [countries, role] = await Promise.all([loadCountries(), loadViewerRole()]);
+
   return (
-    <PlaceholderPage
-      title="Countries"
-      description="Currency, shipping, payment modes and launch status for each country."
-    />
+    <>
+      <PageHeader
+        title="Countries"
+        description="Currency, shipping, payment modes and launch status for each country."
+      />
+      <div className="p-4 md:p-6">
+        <CountriesTable countries={countries} canEdit={role !== "staff"} />
+      </div>
+    </>
   );
 }
