@@ -19,8 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
-
 interface CountriesTableProps {
   countries: readonly Country[];
   /** Owners can add and edit. Anyone else sees the table only (the API refuses their writes). */

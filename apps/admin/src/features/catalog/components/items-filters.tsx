@@ -3,7 +3,6 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-
 import { itemsQueryString } from "../lib/items-query";
 import type { ItemsUrlState } from "../lib/items-query";
 

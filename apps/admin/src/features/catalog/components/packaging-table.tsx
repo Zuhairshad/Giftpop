@@ -14,7 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 export function PackagingTable({ packagings }: { packagings: readonly Packaging[] }) {
   return (
     <div className="rounded-lg border">

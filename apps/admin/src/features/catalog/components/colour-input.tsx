@@ -4,7 +4,6 @@ import { toColorInputValue } from "../lib/colour";
 
 import { Input } from "@/components/ui/input";
 
-
 interface ColourInputProps {
   id: string;
   value: string;

@@ -10,7 +10,6 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
-
 import { saveItem, savePrices, updateAssetAnchor } from "../api/client";
 import { applyApiError, readApiError } from "../lib/api-errors";
 import { commitImageDraft, draftFromAsset, markCommitted } from "../lib/image-draft";
@@ -56,7 +55,10 @@ export function ItemForm({ item, countries, prices, categories }: ItemFormProps)
   const priceRows = usePriceRows(countries, prices);
   const { isSubmitting } = form.formState;
 
-  const [name, shape, color] = useWatch({ control: form.control, name: ["name", "shape", "color"] });
+  const [name, shape, color] = useWatch({
+    control: form.control,
+    name: ["name", "shape", "color"],
+  });
   const scene = buildItemPreview({ name, shape, color, image: image?.asset }, previewLayout);
 
   async function onSubmit(values: SaveItemRequest) {

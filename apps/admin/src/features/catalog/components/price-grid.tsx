@@ -14,7 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 interface PriceGridProps {
   rows: readonly PriceRow[];
   errors: Record<string, string>;

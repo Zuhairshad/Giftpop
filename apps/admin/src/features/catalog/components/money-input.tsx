@@ -6,7 +6,6 @@ import { inputToMinor, minorToInput } from "../lib/country-form";
 
 import { Input } from "@/components/ui/input";
 
-
 interface MoneyInputProps {
   id: string;
   /** Integer minor units. `undefined` is empty and `NaN` is text that is not an amount. */

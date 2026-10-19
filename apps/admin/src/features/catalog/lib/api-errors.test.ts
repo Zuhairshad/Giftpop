@@ -4,7 +4,6 @@ import { fieldErrorsFromDetails, readApiError } from "./api-errors";
 
 import { ApiError } from "@/lib/api";
 
-
 describe("fieldErrorsFromDetails", () => {
   it("reads a list of zod issues", () => {
     expect(

@@ -2,7 +2,6 @@
 
 import { useId, useRef, useState } from "react";
 
-
 import { uploadAsset } from "../api/client";
 import { readApiError } from "../lib/api-errors";
 import { draftFromUpload, moveAnchor } from "../lib/image-draft";

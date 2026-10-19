@@ -9,7 +9,6 @@ import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
-
 import { savePackaging, savePrices, updateAssetAnchor } from "../api/client";
 import { applyApiError, readApiError } from "../lib/api-errors";
 import { commitImageDraft, draftFromAsset, markCommitted } from "../lib/image-draft";

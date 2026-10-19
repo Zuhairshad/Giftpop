@@ -17,8 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
-
 interface ItemsTableProps {
   items: readonly Item[];
   page: number;

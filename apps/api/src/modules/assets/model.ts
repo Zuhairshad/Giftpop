@@ -1,4 +1,4 @@
-import { model, models, Schema, type Model } from "mongoose";
+import mongoose, { model, Schema, type Model } from "mongoose";
 
 /** Asset metadata. The image bytes live in object storage under `key`, never here. */
 export interface AssetDoc {
@@ -25,4 +25,5 @@ const assetSchema = new Schema<AssetDoc>(
 );
 
 export const AssetModel: Model<AssetDoc> =
-  (models["Asset"] as Model<AssetDoc> | undefined) ?? model<AssetDoc>("Asset", assetSchema);
+  (mongoose.models["Asset"] as Model<AssetDoc> | undefined) ??
+  model<AssetDoc>("Asset", assetSchema);

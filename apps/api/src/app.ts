@@ -13,7 +13,7 @@ import { errorHandler, notFoundHandler } from "./middleware/error";
 import { modules as registry, type ApiModule } from "./modules";
 
 export interface AppOptions {
-  env: Pick<Env, "CORS_ORIGINS">;
+  env: Pick<Env, "CORS_ORIGINS"> & Partial<Pick<Env, "TRUST_PROXY_HOPS">>;
   logger: Logger;
   /** Defaults to the registry; tests pass their own routers. */
   modules?: ApiModule[];
@@ -22,6 +22,7 @@ export interface AppOptions {
 export function createApp({ env, logger, modules = registry }: AppOptions): Express {
   const app = express();
   app.disable("x-powered-by");
+  if (env.TRUST_PROXY_HOPS) app.set("trust proxy", env.TRUST_PROXY_HOPS);
 
   app.use(
     pinoHttp({

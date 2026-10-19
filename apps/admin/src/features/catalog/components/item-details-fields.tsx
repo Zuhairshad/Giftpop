@@ -5,7 +5,6 @@ import type { SaveItemRequest } from "@giftpop/contracts";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 
-
 import { DEFAULT_PERSONALIZATION_MAX_LENGTH } from "../lib/item-form";
 import type { ItemFormInput } from "../lib/item-form";
 

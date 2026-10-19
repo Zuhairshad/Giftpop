@@ -4,7 +4,6 @@ import type { SavePackagingRequest } from "@giftpop/contracts";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 
-
 import { layoutOptions, slugify } from "../lib/packaging-form";
 import type { PackagingFormInput } from "../lib/packaging-form";
 

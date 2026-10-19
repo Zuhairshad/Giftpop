@@ -15,7 +15,6 @@ import {
 
 import { apiFetch, isApiError } from "@/lib/api";
 
-
 /** Server Component loaders. They forward the incoming session cookie to the API. */
 
 async function getRaw<S extends z.ZodType>(path: string, schema: S): Promise<z.infer<S>> {
