@@ -37,7 +37,7 @@ export function SharedGiftScreen({ view }: { view: SharedDesignView }): ReactEle
         }}
       />
       <InertChrome />
-      <div className="relative mx-auto flex min-h-full w-full max-w-5xl flex-col px-4 py-5 sm:px-6">
+      <div className="relative mx-auto flex min-h-full w-full max-w-5xl flex-col px-4 py-5 md:px-10">
         <header>
           <Link
             href="/"

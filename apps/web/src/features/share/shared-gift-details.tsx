@@ -2,6 +2,7 @@ import type { SharedDesignView } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
 import { makeYourOwnHref, orderThisGiftHref } from "./links";
+import { MessageTag } from "./message-tag";
 import { buildSharedItemRows, describeSharedGiftState } from "./shared-gift-view";
 import type { SharedItemRow } from "./shared-gift-view";
 
@@ -36,21 +37,6 @@ function ItemList({ rows }: { rows: readonly SharedItemRow[] }): ReactElement {
   );
 }
 
-/** The recipient's card message as a handwritten gift tag. Customer text, so it wraps anywhere. */
-function MessageTag({ message }: { message: string }): ReactElement {
-  return (
-    <figure className="bg-surface shadow-lift relative max-w-md min-w-0 -rotate-1 rounded-md py-5 pr-5 pl-12 motion-reduce:rotate-0">
-      <span
-        aria-hidden="true"
-        className="bg-background shadow-hairline absolute top-1/2 left-4 size-4 -translate-y-1/2 rounded-full"
-      />
-      <blockquote className="font-script text-foreground text-3xl leading-snug font-bold wrap-anywhere whitespace-pre-line">
-        {message}
-      </blockquote>
-    </figure>
-  );
-}
-
 /** The words, the item list and the two actions that sit beside the gift. */
 export function SharedGiftDetails({ view }: { view: SharedDesignView }): ReactElement {
   const { cardMessage, recipientName } = view.design.personalisation;
@@ -65,7 +51,7 @@ export function SharedGiftDetails({ view }: { view: SharedDesignView }): ReactEl
         <p className="font-script text-pink-strong text-2xl leading-none font-bold">
           Someone made this for you
         </p>
-        <h1 className="font-display mt-2 text-4xl leading-none font-bold tracking-tight wrap-anywhere sm:text-5xl">
+        <h1 className="display-lg mt-2 wrap-anywhere">
           {recipient ? `A gift for ${recipient}` : "A Giftpop gift"}
         </h1>
       </div>
