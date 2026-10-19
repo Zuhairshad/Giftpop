@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { redirectToBuilder } from "../redirect-to-builder";
 
-import { PersonaliseStep } from "@/features/builder/steps/personalise";
+type StepPageProps = Parameters<typeof redirectToBuilder>[0];
 
-export const metadata: Metadata = { title: "Make it personal" };
-
-export default function PersonaliseStepPage() {
-  return <PersonaliseStep />;
+/** The builder is one page now; old step links land there. */
+export default async function PersonaliseStepPage(props: StepPageProps) {
+  return redirectToBuilder(props);
 }

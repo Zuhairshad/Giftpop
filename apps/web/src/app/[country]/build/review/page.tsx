@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { redirectToBuilder } from "../redirect-to-builder";
 
-import { ReviewStep } from "@/features/builder/steps/review";
+type StepPageProps = Parameters<typeof redirectToBuilder>[0];
 
-export const metadata: Metadata = { title: "Review your gift" };
-
-export default function ReviewStepPage() {
-  return <ReviewStep />;
+/** The builder is one page now; old step and share links (`?from=`) land there. */
+export default async function ReviewStepPage(props: StepPageProps) {
+  return redirectToBuilder(props);
 }

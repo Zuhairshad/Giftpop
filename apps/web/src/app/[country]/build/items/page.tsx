@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { redirectToBuilder } from "../redirect-to-builder";
 
-import { ItemsStep } from "@/features/builder/steps/items";
+type StepPageProps = Parameters<typeof redirectToBuilder>[0];
 
-export const metadata: Metadata = { title: "Pick your items" };
-
-export default function ItemsStepPage() {
-  return <ItemsStep />;
+/** The builder is one page now; old step links land there. */
+export default async function ItemsStepPage(props: StepPageProps) {
+  return redirectToBuilder(props);
 }

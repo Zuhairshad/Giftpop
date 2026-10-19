@@ -1,13 +1,26 @@
 import type { CatalogResponse, CountryCode, QuoteResponse } from "@giftpop/contracts";
 import { createStore } from "zustand/vanilla";
 
+import {
+  nextQuestion as questionAfter,
+  previousQuestion as questionBefore,
+} from "../questions/ids";
+import type { QuestionId } from "../questions/ids";
+
 import { emptyData, randomSeed } from "./data";
 import type { BuilderData } from "./data";
 import { deriveView } from "./derive";
 import type { BuilderView } from "./derive";
 import { dataFromDesign } from "./design-data";
-import { getSessionStorage, readStoredDesign, writeStoredDesign } from "./persistence";
+import {
+  getSessionStorage,
+  readStoredDesign,
+  readStoredQuestion,
+  writeStoredDesign,
+  writeStoredQuestion,
+} from "./persistence";
 import type { StorageLike } from "./persistence";
+import { reachableQuestion } from "./question-guard";
 import { createQuoteScheduler } from "./quote-scheduler";
 import type { QuoteSchedulerDeps } from "./quote-scheduler";
 import { addBlockedReason } from "./rules";
@@ -43,6 +56,8 @@ export interface BuilderStore {
 
 interface StoreState {
   data: BuilderData;
+  /** The question being shown. Always one the design can reach: see `syncQuestion`. */
+  question: QuestionId;
   catalog: CatalogResponse;
   hydrated: boolean;
   quote: QuoteResponse | null;
@@ -56,6 +71,7 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
 
   const store = createStore<StoreState>(() => ({
     data: emptyData(),
+    question: "packaging",
     catalog: options.catalog,
     hydrated: false,
     quote: null,
@@ -80,12 +96,43 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
     return next;
   }
 
-  /** After any change to the data or catalog: save it and refresh the quote. */
+  /** The question that can be shown for this data: the asked-for one, or the first one it still needs. */
+  function reachable(state: StoreState, question: QuestionId): QuestionId {
+    return reachableQuestion(question, view(state));
+  }
+
+  // What sessionStorage holds for the question; "packaging" also stands for nothing saved.
+  let savedQuestion: QuestionId = "packaging";
+  function saveQuestion(): void {
+    const state = store.getState();
+    if (!state.hydrated || state.question === savedQuestion) return;
+    savedQuestion = state.question;
+    writeStoredQuestion(getStorage(), country, state.question);
+  }
+
+  /** Moves the visitor back when the data no longer reaches their question (items removed, packaging gone). */
+  function syncQuestion(): void {
+    const state = store.getState();
+    const question = reachable(state, state.question);
+    if (question !== state.question) store.setState({ question });
+    saveQuestion();
+  }
+
+  /** After any change to the data or catalog: save it, keep the question reachable and refresh the quote. */
   function afterChange(): void {
     const state = store.getState();
     const { design, problems } = view(state);
     if (state.hydrated) writeStoredDesign(getStorage(), country, design);
+    syncQuestion();
     scheduler.update({ country, design, hasProblems: problems.length > 0 });
+  }
+
+  function goToQuestion(id: QuestionId): void {
+    const state = store.getState();
+    const question = reachable(state, id);
+    if (question === state.question) return;
+    store.setState({ question });
+    saveQuestion();
   }
 
   function commit(next: BuilderData): void {
@@ -121,6 +168,15 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
     loadDesign: (design: Parameters<BuilderApi["loadDesign"]>[0]) =>
       commit(dataFromDesign(design, catalog())),
     reset: () => commit(emptyData()),
+    goToQuestion,
+    nextQuestion() {
+      const to = questionAfter(current().question);
+      if (to) goToQuestion(to);
+    },
+    previousQuestion() {
+      const to = questionBefore(current().question);
+      if (to) goToQuestion(to);
+    },
   } satisfies Partial<BuilderApi>;
 
   let snapshotCache: { state: StoreState; api: BuilderApi } | null = null;
@@ -133,6 +189,7 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
       ...actions,
       country,
       catalog: state.catalog,
+      question: state.question,
       packaging: derived.packaging,
       lines: data.lines,
       wrapperColor: derived.wrapperColor,
@@ -169,9 +226,12 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
       const stored = readStoredDesign(getStorage(), country, state.catalog);
       // Anything the visitor already did this session wins over what was saved.
       const untouched = state.data.packagingId === null;
+      const storedQuestion = readStoredQuestion(getStorage(), country);
+      savedQuestion = storedQuestion ?? "packaging";
       store.setState({
         hydrated: true,
         data: stored && untouched ? dataFromDesign(stored, state.catalog) : state.data,
+        question: untouched && storedQuestion ? storedQuestion : state.question,
       });
       afterChange();
     },

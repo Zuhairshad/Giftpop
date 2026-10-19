@@ -1,6 +1,9 @@
 import { DesignSchema } from "@giftpop/contracts";
 import type { CatalogResponse, CountryCode, Design } from "@giftpop/contracts";
 
+import { isQuestionId } from "../questions/ids";
+import type { QuestionId } from "../questions/ids";
+
 import { designFitsCatalog } from "./design-data";
 
 /** The part of `Storage` the builder uses, so tests can pass a fake. */
@@ -58,6 +61,46 @@ function forget(storage: StorageLike, key: string): void {
     storage.removeItem(key);
   } catch {
     // Blocked storage: nothing to clean up.
+  }
+}
+
+export function questionStorageKey(country: CountryCode): string {
+  return `gp-builder-question:${country}`;
+}
+
+/**
+ * Reads the question this tab was on. Anything that is not a known question id (an old value, a
+ * hand-edited one) is forgotten and read as missing.
+ */
+export function readStoredQuestion(
+  storage: StorageLike | null,
+  country: CountryCode,
+): QuestionId | null {
+  if (!storage) return null;
+  const key = questionStorageKey(country);
+  let raw: string | null;
+  try {
+    raw = storage.getItem(key);
+  } catch {
+    return null;
+  }
+  if (raw === null) return null;
+  if (isQuestionId(raw)) return raw;
+  forget(storage, key);
+  return null;
+}
+
+/** Saves the current question. Never throws. */
+export function writeStoredQuestion(
+  storage: StorageLike | null,
+  country: CountryCode,
+  question: QuestionId,
+): void {
+  if (!storage) return;
+  try {
+    storage.setItem(questionStorageKey(country), question);
+  } catch {
+    // Storage is full or blocked: the builder keeps working without it.
   }
 }
 
