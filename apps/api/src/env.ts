@@ -22,6 +22,15 @@ const EnvObjectSchema = z.object({
     .min(1, "MONGODB_URI is required")
     .refine((uri) => /^mongodb(\+srv)?:\/\//.test(uri), "MONGODB_URI must start with mongodb://"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
+  /** Sentry error reporting; empty or unset means off and the SDK is never loaded. */
+  SENTRY_DSN: z
+    .string()
+    .trim()
+    .optional()
+    .transform((value) => (value ? value : undefined))
+    .refine((value) => value === undefined || URL.canParse(value), "SENTRY_DSN must be a URL"),
+  /** Share of requests Sentry traces, 0 to 1. 0 sends no traces. */
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
   /** Comma separated browser origins allowed to call the API. Defaults to WEB_ORIGIN and ADMIN_ORIGIN. */
   CORS_ORIGINS: csv.default(() => []),
   /** How many times to try the first MongoDB connection before giving up. */

@@ -87,3 +87,35 @@ describe("parseEnv", () => {
     });
   });
 });
+
+describe("observability env", () => {
+  it("defaults Sentry off and traces to 0", () => {
+    const env = parseEnv(valid);
+    expect(env.SENTRY_DSN).toBeUndefined();
+    expect(env.SENTRY_TRACES_SAMPLE_RATE).toBe(0);
+  });
+
+  it("treats an empty SENTRY_DSN as off", () => {
+    expect(parseEnv({ ...valid, SENTRY_DSN: "  " }).SENTRY_DSN).toBeUndefined();
+  });
+
+  it("accepts a DSN and a sample rate", () => {
+    const env = parseEnv({
+      ...valid,
+      SENTRY_DSN: "https://key@o0.ingest.sentry.io/1",
+      SENTRY_TRACES_SAMPLE_RATE: "0.5",
+    });
+    expect(env.SENTRY_DSN).toBe("https://key@o0.ingest.sentry.io/1");
+    expect(env.SENTRY_TRACES_SAMPLE_RATE).toBe(0.5);
+  });
+
+  it.each(["1.5", "-0.1", "abc"])("rejects SENTRY_TRACES_SAMPLE_RATE=%s", (rate) => {
+    expect(() => parseEnv({ ...valid, SENTRY_TRACES_SAMPLE_RATE: rate })).toThrow(
+      /SENTRY_TRACES_SAMPLE_RATE/,
+    );
+  });
+
+  it("rejects a DSN that is not a URL", () => {
+    expect(() => parseEnv({ ...valid, SENTRY_DSN: "not a url" })).toThrow(/SENTRY_DSN/);
+  });
+});
