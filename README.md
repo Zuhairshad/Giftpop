@@ -30,7 +30,7 @@ docker compose up -d        # MongoDB as a replica set (rs0) on port 27017
 cp apps/api/.env.example   apps/api/.env
 cp apps/web/.env.example   apps/web/.env.local
 cp apps/admin/.env.example apps/admin/.env.local
-pnpm seed                   # countries, packaging, items and prices
+pnpm seed                   # no-op until phase 1 adds the seed data
 pnpm dev                    # starts all three apps
 ```
 
@@ -52,7 +52,7 @@ MongoDB URL: `mongodb://localhost:27017/giftpop?replicaSet=rs0`. The replica set
 | `pnpm verify`                | Lint, typecheck and tests for the whole repo. Run before saying work is done    |
 | `pnpm build`                 | Builds every app and package                                                    |
 | `pnpm --filter <pkg> verify` | Same as verify for one package, for example `pnpm --filter @giftpop/api verify` |
-| `pnpm seed`                  | Loads local dev data                                                            |
+| `pnpm seed`                  | Loads local dev data (phase 1)                                                  |
 | `pnpm format`                | Formats the repo with Prettier                                                  |
 
 CI (`.github/workflows/ci.yml`) runs `pnpm verify` and `pnpm build` on every pull request and on pushes to `main`.

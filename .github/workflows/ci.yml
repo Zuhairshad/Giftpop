@@ -34,6 +34,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # mongodb-memory-server downloads mongod on first use; keep it between runs.
+      - name: Cache mongod binary
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cache/mongodb-binaries
+            node_modules/.cache/mongodb-memory-server
+          key: mongod-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: mongod-${{ runner.os }}-
+
+      - name: Check formatting
+        run: pnpm format:check
+
       - name: Lint, typecheck and test
         run: pnpm verify
 

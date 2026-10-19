@@ -4,3 +4,9 @@ node_modules
 dist
 coverage
 pnpm-lock.yaml
+# Kit files owned by the project owner and the lead
+CLAUDE.md
+prompts
+.claude
+docs
+AGENTS.md

@@ -6,9 +6,10 @@
     "test": {},
     "build": {
       "dependsOn": ["^build"],
+      "env": ["API_URL"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "dev": { "cache": false, "persistent": true },
+    "dev": { "cache": false, "persistent": true, "env": ["API_URL"] },
     "verify": { "dependsOn": ["lint", "typecheck", "test"] }
   }
 }

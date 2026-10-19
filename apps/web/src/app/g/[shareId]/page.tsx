@@ -2,7 +2,6 @@ import { ShareIdSchema } from "@giftpop/contracts";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-
 import { PlaceholderPage } from "@/components/placeholder-page";
 
 type SharedGiftPageProps = { params: Promise<{ shareId: string }> };

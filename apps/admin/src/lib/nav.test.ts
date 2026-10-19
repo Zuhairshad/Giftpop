@@ -4,7 +4,6 @@ import { isActiveHref } from "./nav";
 
 import { navItems } from "@/config/nav";
 
-
 describe("isActiveHref", () => {
   it("matches the dashboard only on /", () => {
     expect(isActiveHref("/", "/")).toBe(true);

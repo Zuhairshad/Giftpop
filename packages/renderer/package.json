@@ -14,10 +14,12 @@
     "verify": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "dependencies": {
-    "@giftpop/contracts": "workspace:*",
-    "motion": "14.3.0"
+    "@giftpop/contracts": "workspace:*"
   },
-  "peerDependencies": { "react": "^19", "react-dom": "^19" },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
   "devDependencies": {
     "@giftpop/config": "workspace:*",
     "@testing-library/react": "16.3.3",

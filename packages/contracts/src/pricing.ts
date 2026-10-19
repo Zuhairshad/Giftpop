@@ -60,13 +60,13 @@ export const QuoteSchema = z.object({
   currency: CurrencyCodeSchema,
   mode: PaymentModeSchema,
   /** Packaging + items + personalisation, before any discount. */
-  goodsMinor: MinorUnitsSchema,
-  discountMinor: MinorUnitsSchema,
-  shippingMinor: MinorUnitsSchema,
+  goodsMinor: MinorUnitsSchema.nonnegative(),
+  discountMinor: MinorUnitsSchema.nonnegative(),
+  shippingMinor: MinorUnitsSchema.nonnegative(),
   /** goods - discount + shipping. */
-  totalMinor: MinorUnitsSchema,
-  dueNowMinor: MinorUnitsSchema,
-  dueOnDeliveryMinor: MinorUnitsSchema,
+  totalMinor: MinorUnitsSchema.nonnegative(),
+  dueNowMinor: MinorUnitsSchema.nonnegative(),
+  dueOnDeliveryMinor: MinorUnitsSchema.nonnegative(),
 });
 export type Quote = z.infer<typeof QuoteSchema>;
 
