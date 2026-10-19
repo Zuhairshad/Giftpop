@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-
 import { HeroStage } from "./hero3d";
 import { HOME_EYEBROW, HOME_LEDE, type HomeHeadline } from "./home-copy";
 

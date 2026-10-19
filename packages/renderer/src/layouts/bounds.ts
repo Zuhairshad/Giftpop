@@ -1,3 +1,5 @@
+import type { Packaging } from "@giftpop/contracts";
+
 import { SCENE_SIZE } from "./types";
 
 /** The part of the 0 to 1000 scene square a scene shows, in scene units. */
@@ -31,4 +33,14 @@ const CROPS: Readonly<Record<string, SceneBounds>> = {
 export function sceneBounds(layoutType: string, hasLayerImages = false): SceneBounds {
   if (hasLayerImages) return FULL_SCENE;
   return (Object.hasOwn(CROPS, layoutType) ? CROPS[layoutType] : undefined) ?? FULL_SCENE;
+}
+
+/** `sceneBounds` for a packaging, so callers can size a container to the scene it will draw. */
+export function packagingSceneBounds(
+  packaging: Pick<Packaging, "layoutType" | "layers">,
+): SceneBounds {
+  return sceneBounds(
+    packaging.layoutType,
+    Boolean(packaging.layers.back ?? packaging.layers.front),
+  );
 }

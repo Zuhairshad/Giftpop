@@ -7,11 +7,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent, useState } from "react";
 import type { ReactElement } from "react";
 
-import { stepHref, useBuilder } from "../../state";
+import { builderHref, useBuilder } from "../../state";
 
 import { describeFromError, unavailableItemNames } from "./from-param";
 
-import { reviewHref } from "@/features/share/links";
 import { apiRequest } from "@/lib/api";
 
 type FromLoaderProps = {
@@ -41,7 +40,7 @@ export function FromLoader({
   const onFetched = useEffectEvent((view: SharedDesignView) => {
     loadDesign(view.design);
     onLoaded(unavailableItemNames(view));
-    router.replace(reviewHref(country));
+    router.replace(builderHref(country));
   });
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export function FromLoader({
           {error}
         </p>
         <Link
-          href={stepHref(country, "format")}
+          href={builderHref(country)}
           className="bg-pink text-on-pink hover:bg-pink-strong mt-6 inline-block rounded-full px-6 py-2.5 font-bold transition-colors"
         >
           Start from scratch

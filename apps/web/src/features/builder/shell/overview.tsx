@@ -1,5 +1,6 @@
 "use client";
 
+import { FULL_SCENE, packagingSceneBounds } from "@giftpop/renderer";
 import { useMemo } from "react";
 import type { ReactElement } from "react";
 
@@ -67,10 +68,17 @@ function SwatchPill(): ReactElement | null {
 function Scene(): ReactElement {
   const { design, packaging, catalog } = useBuilder();
   const items = useMemo(() => catalog.items.map((entry) => entry.item), [catalog.items]);
+  // The box has the scene's own shape (a bouquet is wider than tall), as big as the free area
+  // allows, so the scene never sits behind the sheet, scrolls, or leaves an empty band.
+  const { width, height } = packaging ? packagingSceneBounds(packaging) : FULL_SCENE;
   return (
-    // A square as big as the free area allows, so the scene never sits behind the sheet or scrolls.
     <div className="grid min-h-0 flex-1 [container-type:size] place-items-center">
-      <div className="size-[min(100cqw,100cqh)]">
+      <div
+        style={{
+          width: `min(100cqw, calc(100cqh * ${width / height}))`,
+          aspectRatio: `${width} / ${height}`,
+        }}
+      >
         {design && packaging ? (
           <SafeScene
             design={design}

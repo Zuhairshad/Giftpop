@@ -22,11 +22,6 @@ export function makeYourOwnHref(country: CountryCode): string {
   return builderHref(country);
 }
 
-/** The builder without any `?from=`, where a loaded design lands. */
-export function reviewHref(country: CountryCode): string {
-  return builderHref(country);
-}
-
 /** Checkout page (arrives in phase 3). */
 export function checkoutHref(country: CountryCode): string {
   return `/${country.toLowerCase()}/checkout`;

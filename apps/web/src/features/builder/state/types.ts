@@ -11,10 +11,6 @@ import type {
 
 import type { QuestionId } from "../questions/ids";
 
-/** @deprecated The old one-screen-per-step flow; the builder is one route with questions now. */
-export const BUILDER_STEPS = ["format", "items", "arrange", "personalise", "review"] as const;
-export type BuilderStep = (typeof BUILDER_STEPS)[number];
-
 export type QuoteStatus = "idle" | "loading" | "ready" | "error";
 
 export interface ChoosePackagingResult {

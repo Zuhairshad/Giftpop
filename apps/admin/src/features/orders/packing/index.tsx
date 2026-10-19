@@ -150,12 +150,13 @@ export async function PackingSheet({ id }: { id: string }) {
 
       <div className="packing-grid grid gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div className="flex flex-col gap-3">
-          <div className="packing-scene mx-auto aspect-square w-full max-w-sm">
+          {/* Width only: the scene takes its height from its layout's bounds (a bouquet is wider than tall). */}
+          <div className="packing-scene mx-auto w-full max-w-sm">
             <GiftScene
               design={order.design}
               packaging={docs.packaging}
               items={docs.items}
-              className="size-full"
+              className="w-full"
             />
           </div>
           <section aria-labelledby="packing-wrap" className="packing-keep flex flex-col gap-1">

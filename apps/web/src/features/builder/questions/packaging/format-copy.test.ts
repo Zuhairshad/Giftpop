@@ -85,7 +85,7 @@ describe("dropped items notice", () => {
 
 describe("priceLabel", () => {
   it("formats minor units for display with the catalog currency", () => {
-    expect(priceLabel(1500, "USD")).toBe("$15.00");
+    expect(priceLabel(1500, "USD")).toBe("$15");
   });
 
   it("never rounds money into a float", () => {

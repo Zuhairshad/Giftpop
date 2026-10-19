@@ -7,6 +7,7 @@ import {
   FULL_SCENE,
   ITEM_BASE_SIZE,
   LAYOUT_TYPES,
+  packagingSceneBounds,
   SCENE_SIZE,
   sceneBounds,
 } from "./index";
@@ -59,5 +60,19 @@ describe("sceneBounds", () => {
         }
       }
     }
+  });
+});
+
+describe("packagingSceneBounds", () => {
+  it("crops a bouquet with no layer images and shows the full square once one is uploaded", () => {
+    const bouquet = makePackaging({ layoutType: "bouquet-fan" });
+    expect(packagingSceneBounds(bouquet)).toEqual(sceneBounds("bouquet-fan"));
+    const front = {
+      url: "https://cdn.example/f.webp",
+      width: 10,
+      height: 10,
+      anchor: { x: 0.5, y: 1 },
+    };
+    expect(packagingSceneBounds({ ...bouquet, layers: { front } })).toEqual(FULL_SCENE);
   });
 });

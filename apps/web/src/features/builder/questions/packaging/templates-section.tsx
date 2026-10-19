@@ -28,12 +28,16 @@ export function TemplatesSection({
       <ul className="mt-2 grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
         {templates.map((card) => (
           <li key={card.id} className="bg-surface rounded-md shadow-hairline flex gap-3 p-2">
-            <div className="bg-warm rounded-sm size-24 shrink-0 p-1" aria-hidden="true">
+            <div
+              className="bg-warm rounded-sm grid size-24 shrink-0 place-items-center p-1"
+              aria-hidden="true"
+            >
               <SafeScene
                 design={card.design}
                 packaging={card.packaging}
                 items={card.items}
-                className="size-full"
+                className="w-full"
+                fallbackClassName="size-full"
               />
             </div>
             <div className="flex min-w-0 flex-1 flex-col items-start gap-1 py-1 pr-1">

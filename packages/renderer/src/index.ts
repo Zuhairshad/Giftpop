@@ -14,6 +14,7 @@ export {
   ITEM_BASE_SIZE,
   SCENE_SIZE,
   FULL_SCENE,
+  packagingSceneBounds,
   sceneBounds,
 } from "./layouts";
 export type { KnownLayoutType, LayoutFn, LayoutInput, Placement, SceneBounds } from "./layouts";

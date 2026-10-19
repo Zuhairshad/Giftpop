@@ -1,7 +1,7 @@
 import type { Asset, Design, Item, Packaging } from "@giftpop/contracts";
 
 import { describeGift, FALLBACK_ITEM } from "../describe";
-import { computePlacements, expandDesignItems, sceneBounds } from "../layouts";
+import { computePlacements, expandDesignItems, packagingSceneBounds } from "../layouts";
 import type { Placement, SceneBounds } from "../layouts";
 
 /** What a scene needs to know to draw one item. */
@@ -46,10 +46,7 @@ export function buildSceneModel({ design, packaging, items }: SceneInput): Scene
   return {
     label: describeGift(design, packaging, items),
     layoutType: packaging.layoutType,
-    bounds: sceneBounds(
-      packaging.layoutType,
-      Boolean(packaging.layers.back ?? packaging.layers.front),
-    ),
+    bounds: packagingSceneBounds(packaging),
     colors: { wrapper: design.wrapperColor, ribbon: design.ribbonColor },
     layers: packaging.layers,
     entries,

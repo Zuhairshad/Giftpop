@@ -50,13 +50,16 @@ export function PackagingTile({
       >
         <span
           aria-hidden="true"
-          className={`bg-warm rounded-sm block p-1.5 ${availability.available ? "" : "opacity-50"}`}
+          // A fixed-height well with the scene centred, so a bouquet (wider than tall) and a box
+          // (square) give tiles of the same height.
+          className={`bg-warm rounded-sm grid h-27 place-items-center p-1.5 min-[560px]:h-35 ${availability.available ? "" : "opacity-50"}`}
         >
           <SafeScene
             design={design}
             packaging={packaging}
             items={items}
-            className="mx-auto w-full max-w-24 min-[560px]:max-w-32"
+            className="w-24 min-[560px]:w-32"
+            fallbackClassName="size-full"
           />
         </span>
         <span className="text-foreground px-1 text-sm leading-tight font-medium wrap-anywhere">
