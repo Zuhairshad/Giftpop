@@ -8,16 +8,17 @@ import { StepProgressView } from "../../components/progress";
 import { stepHref } from "../../state";
 import type { BuilderApi } from "../../state";
 
+import { SafeScene } from "./safe-scene";
+
 import {
   droppedItemNames,
   droppedItemsNotice,
   packagingAvailability,
   pickRangeCopy,
   visiblePackagings,
-} from "./format-copy";
-import { priceLabel } from "./price-label";
-import { SafeScene } from "./safe-scene";
-import { buildSampleDesign } from "./sample-design";
+} from "@/features/builder/questions/packaging/format-copy";
+import { buildSampleDesign } from "@/features/builder/questions/packaging/sample-design";
+import { priceLabel } from "@/features/builder/questions/price-label";
 
 interface FormatViewProps {
   builder: BuilderApi;

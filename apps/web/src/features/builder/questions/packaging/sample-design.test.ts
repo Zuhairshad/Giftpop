@@ -1,7 +1,7 @@
 import { DesignSchema, validateDesign } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
-import { FIXTURE_ITEMS, FIXTURE_PACKAGINGS, fixtureCatalog } from "../items/_dev/fixtures";
+import { FIXTURE_ITEMS, FIXTURE_PACKAGINGS, fixtureCatalog } from "../_dev/fixtures";
 
 import { buildSampleDesign, sampleItemCount } from "./sample-design";
 

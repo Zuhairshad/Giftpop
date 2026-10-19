@@ -41,9 +41,9 @@ function Column({ column }: { column: PriceColumn }): ReactElement {
       aria-labelledby={headingId}
       className="bg-surface border-border rounded-card flex flex-col border p-3 sm:p-5"
     >
-      <h3 id={headingId} className="font-display text-lg font-bold sm:text-xl">
+      <h4 id={headingId} className="text-foreground text-sm font-semibold sm:text-base">
         {column.title}
-      </h3>
+      </h4>
       <p className="text-muted mt-1 text-xs sm:text-sm">{column.summary}</p>
       <dl className="mt-3 space-y-1.5 text-sm sm:text-base">
         {column.rows.map((row) => (
@@ -86,9 +86,9 @@ export function PriceSection({ quote, status }: PriceSectionProps): ReactElement
 
   return (
     <section aria-labelledby="prices-heading" aria-busy={!failed && columns.length === 0}>
-      <h2 id="prices-heading" className="font-display text-2xl font-bold">
+      <h3 id="prices-heading" className="text-foreground text-base font-semibold">
         What it costs
-      </h2>
+      </h3>
       <div className="mt-3">
         {failed ? (
           <p

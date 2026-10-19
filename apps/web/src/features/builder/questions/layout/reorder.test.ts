@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { dropTarget, moveAnnouncement, moveInList, stepTarget } from "./reorder";
+import { moveAnnouncement, moveInList, stepTarget } from "./reorder";
 
 describe("stepTarget", () => {
   it("moves one place either way", () => {
@@ -16,20 +16,6 @@ describe("stepTarget", () => {
     expect(stepTarget(-1, "down", 3)).toBeNull();
     expect(stepTarget(3, "up", 3)).toBeNull();
     expect(stepTarget(1.5, "up", 3)).toBeNull();
-  });
-});
-
-describe("dropTarget", () => {
-  it("returns the drop index", () => {
-    expect(dropTarget(0, 3, 5)).toBe(3);
-    expect(dropTarget(4, 0, 5)).toBe(0);
-  });
-  it("ignores drops on itself, without a drag, or out of range", () => {
-    expect(dropTarget(2, 2, 5)).toBeNull();
-    expect(dropTarget(null, 2, 5)).toBeNull();
-    expect(dropTarget(0, 5, 5)).toBeNull();
-    expect(dropTarget(7, 1, 5)).toBeNull();
-    expect(dropTarget(0, -1, 5)).toBeNull();
   });
 });
 

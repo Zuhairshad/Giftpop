@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import type { KeyboardEvent, ReactElement } from "react";
 
-import { isTabKey, nextTabIndex } from "./items-copy";
+import { isTabKey, nextTabIndex } from "@/features/builder/questions/items/items-copy";
 
 interface CategoryTabsProps {
   tabs: readonly string[];

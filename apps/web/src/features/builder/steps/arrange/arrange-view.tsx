@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ColourSwatches } from "./colour-swatches";
-import { moveAnnouncement } from "./reorder";
-import { ReorderList } from "./reorder-list";
-import type { ReorderRow } from "./reorder-list";
 
 import { StepProgress } from "@/features/builder/components/progress";
+import { moveAnnouncement } from "@/features/builder/questions/layout/reorder";
+import { ReorderList } from "@/features/builder/questions/layout/reorder-list";
+import type { ReorderRow } from "@/features/builder/questions/layout/reorder-list";
 import type { BuilderApi } from "@/features/builder/state";
 import { stepHref } from "@/features/builder/state";
 import { optimisedImageUrl } from "@/lib/image-url";

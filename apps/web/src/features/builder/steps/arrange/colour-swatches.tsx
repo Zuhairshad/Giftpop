@@ -3,7 +3,7 @@
 import type { ColourOption, HexColor } from "@giftpop/contracts";
 import { useId } from "react";
 
-import { readableInk, sameColour } from "./colours";
+import { readableInk, sameColour } from "@/features/builder/questions/colours/colours";
 
 interface ColourSwatchesProps {
   legend: string;

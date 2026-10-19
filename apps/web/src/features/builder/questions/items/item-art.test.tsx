@@ -2,7 +2,7 @@ import type { Item } from "@giftpop/contracts";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { FIXTURE_ITEMS } from "./_dev/fixtures";
+import { FIXTURE_ITEMS } from "../_dev/fixtures";
 
 const base = FIXTURE_ITEMS[0]!.item;
 const withImage = (url: string): Item => ({

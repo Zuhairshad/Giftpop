@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { CardPreview } from "./card-preview";
-import { LimitedField } from "./limited-field";
-import { nameableItems } from "./limits";
 
 import { StepProgress } from "@/features/builder/components/progress";
+import { LimitedField } from "@/features/builder/questions/personalise/limited-field";
+import { nameableItems } from "@/features/builder/questions/personalise/limits";
 import { stepHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
 import { optimisedImageUrl } from "@/lib/image-url";
