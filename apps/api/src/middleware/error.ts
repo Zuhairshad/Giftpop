@@ -6,17 +6,22 @@ import { AppError, isDuplicateKeyError } from "../lib/errors";
 
 interface HttpError {
   status: number;
-  type: string;
+  type?: string;
 }
 
+/**
+ * Errors from body-parser and friends carry a numeric `status`. Not all have a `type`
+ * (a corrupt compressed body is `{ status: 400 }` only), so `type` is optional: requiring it
+ * turned a client mistake into a logged 500.
+ */
 function isHttpError(error: unknown): error is HttpError {
   return (
     typeof error === "object" &&
     error !== null &&
     "status" in error &&
     typeof error.status === "number" &&
-    "type" in error &&
-    typeof error.type === "string"
+    Number.isInteger(error.status) &&
+    (!("type" in error) || typeof error.type === "string")
   );
 }
 
@@ -55,6 +60,11 @@ function normaliseError(error: unknown): Normalised {
     if (error.status >= 400 && error.status < 500) {
       return respond("VALIDATION_ERROR", 400, "Request body could not be read");
     }
+  }
+  // A malformed id or value that reached a query. The Mongoose message quotes the input and
+  // the schema path, so it is never forwarded. (Matched by name: Mongoose is CommonJS.)
+  if (error instanceof Error && error.name === "CastError") {
+    return respond("VALIDATION_ERROR", 400, "Request contained an invalid value");
   }
   if (isDuplicateKeyError(error)) {
     return respond("CONFLICT", 409, "That record already exists");

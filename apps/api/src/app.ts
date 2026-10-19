@@ -10,6 +10,8 @@ import type { Env } from "./env";
 import { createHealthRouter } from "./health";
 import type { Logger } from "./logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
+import { createLoginIpLimiter } from "./middleware/login-ip-limit";
+import { rejectOperatorKeys } from "./middleware/reject-operator-keys";
 import { modules as registry, type ApiModule } from "./modules";
 
 export interface AppOptions {
@@ -39,8 +41,12 @@ export function createApp({ env, logger, modules = registry }: AppOptions): Expr
   app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
   app.use(express.json({ limit: "100kb" }));
   app.use(cookieParser());
+  app.use(rejectOperatorKeys());
 
   app.use(createHealthRouter());
+
+  // Security: sign-in attempts per IP across all emails (the auth module limits per IP and email).
+  app.use("/v1/auth/login", createLoginIpLimiter());
 
   for (const module of modules) {
     app.use(`/v1${module.path}`, module.router);
