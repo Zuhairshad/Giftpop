@@ -9,6 +9,9 @@ import type {
   QuoteResponse,
 } from "@giftpop/contracts";
 
+import type { QuestionId } from "../questions/ids";
+
+/** @deprecated The old one-screen-per-step flow; the builder is one route with questions now. */
 export const BUILDER_STEPS = ["format", "items", "arrange", "personalise", "review"] as const;
 export type BuilderStep = (typeof BUILDER_STEPS)[number];
 
@@ -27,7 +30,10 @@ export interface BuilderApi {
   country: CountryCode;
   catalog: CatalogResponse;
 
-  /** The chosen packaging, or null before step 1. */
+  /** The question being shown. Always one the design can reach, so it never runs ahead of the answers. */
+  question: QuestionId;
+
+  /** The chosen packaging, or null before the first question is answered. */
   packaging: Packaging | null;
   /** Item lines in slot order. A line's `slot` always equals its index. */
   lines: readonly DesignItem[];
@@ -70,4 +76,10 @@ export interface BuilderApi {
   /** Replaces everything with a saved design (share link, template). */
   loadDesign(design: Design): void;
   reset(): void;
+
+  /** Shows a question. A question whose answers are missing shows the first one that still needs an answer. */
+  goToQuestion(id: QuestionId): void;
+  /** Shows the question after this one, when its answers are in. */
+  nextQuestion(): void;
+  previousQuestion(): void;
 }

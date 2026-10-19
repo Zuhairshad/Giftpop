@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { redirectToBuilder } from "../redirect-to-builder";
 
-import { FormatStep } from "@/features/builder/steps/format";
+type StepPageProps = Parameters<typeof redirectToBuilder>[0];
 
-export const metadata: Metadata = { title: "Choose a format" };
-
-export default function FormatStepPage() {
-  return <FormatStep />;
+/** The builder is one page now; old step links land there. */
+export default async function FormatStepPage(props: StepPageProps) {
+  return redirectToBuilder(props);
 }

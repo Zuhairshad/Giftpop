@@ -200,5 +200,9 @@ export function useFakeBuilder(catalog: CatalogResponse, start: FakeBuilderStart
     setItemName: noop,
     loadDesign: noop,
     reset: noop,
+    question: "items",
+    goToQuestion: noop,
+    nextQuestion: noop,
+    previousQuestion: noop,
   };
 }
