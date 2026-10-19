@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { parseWebOrigin } from "@/lib/env";
 
 import "./globals.css";
 
@@ -36,6 +37,8 @@ const brand = Pacifico({
 });
 
 export const metadata: Metadata = {
+  // Canonical and Open Graph URLs on the pages are relative; this is their base.
+  metadataBase: parseWebOrigin(),
   title: { default: "The Giftpop", template: "%s | The Giftpop" },
   description:
     "Build a gift piece by piece, see it come together, and have it made and sent by hand.",

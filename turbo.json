@@ -6,7 +6,7 @@
     "test": {},
     "build": {
       "dependsOn": ["^build"],
-      "env": ["API_URL", "PUBLIC_ASSET_BASE_URL"],
+      "env": ["API_URL", "PUBLIC_ASSET_BASE_URL", "WEB_ORIGIN"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
@@ -15,6 +15,7 @@
       "env": [
         "API_URL",
         "PUBLIC_ASSET_BASE_URL",
+        "WEB_ORIGIN",
         "NOTIFICATIONS_WORKER",
         "SENTRY_DSN",
         "SENTRY_TRACES_SAMPLE_RATE"

@@ -11,6 +11,23 @@ const ServerEnvSchema = z.object({
 });
 type ServerEnv = z.infer<typeof ServerEnvSchema>;
 
+/**
+ * The public address of the store, used as the base of canonical and Open Graph URLs.
+ * Blank means unset (the example file ships it blank). A value that is not an http(s) URL is a
+ * config error, so the app refuses to start.
+ */
+export function parseWebOrigin(
+  source: Record<string, string | undefined> = process.env,
+): URL | undefined {
+  const raw = source.WEB_ORIGIN?.trim();
+  if (!raw) return undefined;
+  const result = z.url({ protocol: /^https?$/ }).safeParse(raw);
+  if (!result.success) {
+    throw new Error(`Invalid environment: WEB_ORIGIN must be an http(s) URL`);
+  }
+  return new URL(result.data);
+}
+
 /** Parses the environment and throws a readable error, so the app refuses to start on bad config. */
 export function parseServerEnv(
   source: Record<string, string | undefined> = process.env,

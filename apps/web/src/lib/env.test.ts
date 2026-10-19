@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseServerEnv } from "./env";
+import { parseServerEnv, parseWebOrigin } from "./env";
 
 describe("parseServerEnv", () => {
   it("defaults API_URL to the local API", () => {
@@ -29,5 +29,23 @@ describe("parseServerEnv", () => {
 
   it("rejects a value that is not a URL", () => {
     expect(() => parseServerEnv({ API_URL: "not a url" })).toThrow(/Invalid environment/);
+  });
+});
+
+describe("parseWebOrigin", () => {
+  it("is unset when blank or missing", () => {
+    expect(parseWebOrigin({})).toBeUndefined();
+    expect(parseWebOrigin({ WEB_ORIGIN: "  " })).toBeUndefined();
+  });
+
+  it("parses an http(s) origin", () => {
+    expect(parseWebOrigin({ WEB_ORIGIN: "https://thegiftpop.example" })?.origin).toBe(
+      "https://thegiftpop.example",
+    );
+  });
+
+  it("refuses anything else", () => {
+    expect(() => parseWebOrigin({ WEB_ORIGIN: "not a url" })).toThrow(/WEB_ORIGIN/);
+    expect(() => parseWebOrigin({ WEB_ORIGIN: "ftp://example.com" })).toThrow(/WEB_ORIGIN/);
   });
 });
