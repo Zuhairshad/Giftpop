@@ -5,6 +5,7 @@ import type { PartnerRequestKind } from "@giftpop/contracts";
 import { useReducer, useRef, useState } from "react";
 import type { FormEvent } from "react";
 
+import { shouldValidateOnBlur } from "./blur-policy";
 import { emptyValues, fieldsFor, partnerFieldId } from "./fields";
 import type { PartnerFieldErrors, PartnerFieldName, PartnerValues } from "./fields";
 import { fieldMessage, firstInvalidField, validatePartnerForm, withHoneypot } from "./request";
@@ -47,8 +48,11 @@ export function usePartnerForm(
   const [state, dispatch] = useReducer(submitReducer, INITIAL_SUBMIT_STATE);
   // Blocks a second submit in the same tick, before React has re-rendered the disabled button.
   const inFlight = useRef(false);
+  const edited = useRef(new Set<PartnerFieldName>());
+  const submitAttempted = useRef(false);
 
   function setField(name: PartnerFieldName, value: string): void {
+    edited.current.add(name);
     setValues((current) => ({ ...current, [name]: value }));
     setErrors((current) => {
       if (current[name] === undefined) return current;
@@ -57,6 +61,7 @@ export function usePartnerForm(
   }
 
   function blurField(name: PartnerFieldName): void {
+    if (!shouldValidateOnBlur(edited.current.has(name), submitAttempted.current)) return;
     const result = validatePartnerForm(kind, values);
     const message = result.ok ? undefined : result.errors[name];
     setErrors((current) => {
@@ -71,6 +76,7 @@ export function usePartnerForm(
   function submit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (inFlight.current || state.status !== "idle") return;
+    submitAttempted.current = true;
 
     const result = validatePartnerForm(kind, values);
     if (!result.ok) {

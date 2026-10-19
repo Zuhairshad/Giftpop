@@ -16,7 +16,7 @@ export function FeaturedTemplates({
         {countryName ? `Gift ideas for ${countryName}` : "Gift ideas"}
       </h2>
       <p className="text-muted mt-2">Start from a gift we love and make it your own.</p>
-      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <li
             key={card.id}

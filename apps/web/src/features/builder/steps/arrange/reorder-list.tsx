@@ -19,7 +19,7 @@ interface ReorderListProps {
 }
 
 const ARROW_BUTTON =
-  "border-border bg-surface text-foreground hover:bg-surface-soft flex size-10 items-center justify-center rounded-full border text-lg font-bold transition-colors aria-disabled:cursor-not-allowed aria-disabled:opacity-40 aria-disabled:hover:bg-surface";
+  "border-border bg-surface text-foreground hover:bg-surface-soft flex size-11 items-center justify-center rounded-full border text-lg font-bold transition-colors aria-disabled:cursor-not-allowed aria-disabled:opacity-40 aria-disabled:hover:bg-surface";
 
 function Arrow({ direction }: { direction: MoveDirection }) {
   return (

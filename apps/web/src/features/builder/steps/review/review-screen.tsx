@@ -54,7 +54,7 @@ export function ReviewScreen({ builder, leftOutNotice }: ReviewScreenProps): Rea
       <h1 className="font-display text-3xl font-bold sm:text-4xl">Review your gift</h1>
 
       {leftOutNotice ? (
-        <p role="note" className="bg-butter text-foreground rounded-soft p-3 text-sm font-semibold">
+        <p role="note" className="bg-butter text-on-accent rounded-soft p-3 text-sm font-semibold">
           {leftOutNotice}
         </p>
       ) : null}

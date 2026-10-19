@@ -21,9 +21,9 @@ function Success({ email }: { email: string }): ReactElement {
   useEffect(() => heading.current?.focus(), []);
   return (
     <div role="status" className="space-y-3">
-      <h2 ref={heading} tabIndex={-1} className="font-display text-2xl font-bold outline-none">
+      <h1 ref={heading} tabIndex={-1} className="font-display text-2xl font-bold outline-none">
         Request sent
-      </h2>
+      </h1>
       <p>{SUCCESS_MESSAGE}</p>
       {email ? (
         <p className="text-muted wrap-anywhere">

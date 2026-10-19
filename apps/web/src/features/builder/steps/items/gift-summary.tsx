@@ -61,7 +61,7 @@ function Counter({ packaging, itemCount }: Pick<GiftSummaryProps, "packaging" | 
     <p
       aria-live="polite"
       aria-atomic="true"
-      className="text-foreground text-base font-bold whitespace-nowrap sm:text-lg"
+      className="text-foreground text-base font-bold sm:text-lg sm:whitespace-nowrap"
     >
       {counterText(itemCount, packaging.minItems, packaging.maxItems)}
     </p>
@@ -107,7 +107,7 @@ export function MobileSummary(props: GiftSummaryProps): ReactElement {
   return (
     <section
       aria-label="Your gift so far"
-      className="bg-surface/95 border-border fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 border-t-2 px-4 py-3 backdrop-blur"
+      className="bg-surface/95 border-border fixed inset-x-0 bottom-0 z-30 flex flex-wrap items-center gap-x-3 gap-y-2 border-t-2 px-4 py-3 backdrop-blur"
     >
       <div className="bg-surface-soft rounded-card w-20 shrink-0 p-1">
         <SafeScene design={design} packaging={packaging} items={items} motion />

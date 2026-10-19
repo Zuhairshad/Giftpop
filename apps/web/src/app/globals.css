@@ -16,6 +16,7 @@
   --color-mint: var(--gp-mint);
   --color-sky: var(--gp-sky);
   --color-lilac: var(--gp-lilac);
+  --color-on-accent: var(--gp-on-accent);
 
   --radius-soft: var(--gp-radius-sm);
   --radius-card: var(--gp-radius-md);
@@ -38,6 +39,13 @@ body {
   outline: 3px solid var(--gp-focus);
   outline-offset: 3px;
   border-radius: 0.375rem;
+  /* The ring must be at full colour from the first frame (buttons fade outline-color otherwise). */
+  transition: none;
+}
+
+/* Headings that receive focus from code (step changes, form results) show no ring: they are not controls. */
+:is(h1, h2)[tabindex="-1"]:focus {
+  outline: none;
 }
 
 /* Gentle float for illustrations, only when the visitor has not asked for less motion. */

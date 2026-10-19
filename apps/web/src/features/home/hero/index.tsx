@@ -12,7 +12,7 @@ export function Hero({ country }: { country?: CountryCode }) {
   return (
     <section className="bg-pink-soft rounded-blob relative overflow-hidden px-6 py-10 sm:px-12 sm:py-16">
       <div className="max-w-lg">
-        <h1 className="font-display text-4xl leading-tight font-bold sm:text-5xl">
+        <h1 className="font-display text-4xl leading-tight font-bold wrap-anywhere sm:text-5xl">
           Build a gift they will remember
         </h1>
         <p className="text-muted mt-4 text-lg">
@@ -26,7 +26,7 @@ export function Hero({ country }: { country?: CountryCode }) {
           Start building
         </a>
       </div>
-      <GiftIllustration className="gp-float pointer-events-none mx-auto mt-8 w-48 sm:absolute sm:top-1/2 sm:right-12 sm:mt-0 sm:w-64 sm:-translate-y-1/2" />
+      <GiftIllustration className="gp-float pointer-events-none mx-auto mt-8 w-48 max-w-full sm:absolute sm:top-1/2 sm:right-12 sm:mt-0 sm:w-64 sm:-translate-y-1/2" />
     </section>
   );
 }

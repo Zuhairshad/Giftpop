@@ -231,3 +231,27 @@ Admin: every page has one h1 and a unique title; status and payment pills are wo
 - The 200% text test at 390 px stopped after the format screen (see W11); the 1280 px run covered everything and the 640 px run (equivalent to 200% browser zoom at 1280) covered all 29 screens with no overflow.
 - Pastel pill colours in dark (W6) only show on the states that use them (delivered, issue notices); the scan only reports what was on screen, so also check the "Proof accepted" message (`proof-panel.tsx:136`) and the "items dropped" notice once the fix lands.
 - The partner request list, template list and staff list had no rows (except the one partner request I created), so the row-level screens for templates could only be checked through the empty state and the create dialog.
+
+## Fix status: web
+
+Checked with axe 4.14 plus the contrast walker on 19 store screens in light and dark at 1280 and 390 px (own stack, ports 3500/4500): zero axe violations and zero contrast failures after the fixes. Overflow at 390 px with root font 200%: before +94 / +110 / +123 px on home, countries, format; after 0 on all 12 screens measured.
+
+| Id | Status | Note |
+|---|---|---|
+| W1 | fixed | `--gp-pink` `#e8336d` to `#d42760`: white on pink 4.10 to 4.93. `--gp-pink-strong` `#c41f56` to `#b01c4f`: done tick on pink-soft 4.25 to 5.01. Dark tokens unchanged. |
+| W3 | fixed | `StepFocus` in the build and checkout layouts moves focus to the h1 after a step change when focus was lost; never on a fresh load. Pure logic tested (`decide.test.ts`). Not Tab-walked in a browser. |
+| W4 | fixed | Inner `<main>` became `<div>` in arrange, personalise and share; one `main#main` per page. |
+| W5 | fixed | `Row` and `Line` take `className`; invalid wrapper divs gone. The other files named in the report were already valid. |
+| W6 | fixed | `--gp-on-accent` token and `text-on-accent` on mint and butter (dark 5.55:1 and 9.04:1, computed). The Delivered pill was not re-rendered. |
+| W7 | fixed | `:focus-visible { transition: none }`. |
+| W8 | fixed | `InertChrome` sets `inert` on header, footer and skip link while the share overlay is mounted. Not Tab-walked. |
+| W9 | partly fixed | Format strip cards and item cards pass axe. The "+" stepper name and template cards untouched. |
+| W10 | fixed | Success heading is an `h1`. |
+| W11 | fixed | `grid-cols-1` on card grids, hero, how-it-works, price copy and the items mobile bar wrap at 200% text. |
+| W12 | not needed | The reduced-motion rule already exists in web `globals.css`. |
+| W13 | fixed | `min-h-11` on header links, country button, banner buttons; Move buttons `size-11`. |
+| W14 | fixed | Blur validates only edited fields or after a submit attempt. |
+| W15 | fixed | Suggestion hidden under `/<cc>/build` and `/<cc>/checkout`. |
+| L1 | fixed | 404 title "Page not found"; country home "Gifts to PK". |
+| L2 | not fixed | Checkout error summary is not a one-line change. |
+| CLS | not measured | Banner is now absolutely positioned under the header (cannot push content) and absent in the builder. No `loading.tsx` for items added. Before: 0.445 on Fast 3G (performance report). After: not measured. |

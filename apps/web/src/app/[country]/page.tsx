@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { HomeSections } from "@/features/home";
@@ -5,6 +6,11 @@ import { Hero } from "@/features/home/hero";
 import { parseCountryParam } from "@/lib/country-param";
 
 type CountryHomeProps = { params: Promise<{ country: string }> };
+
+export async function generateMetadata({ params }: CountryHomeProps): Promise<Metadata> {
+  const country = parseCountryParam((await params).country);
+  return { title: country ? `Gifts to ${country}` : "The Giftpop" };
+}
 
 /** The home page for one country: its featured templates and formats. Unknown codes are a 404 (the layout checks the rest). */
 export default async function CountryHome({ params }: CountryHomeProps) {
