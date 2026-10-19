@@ -1,22 +1,19 @@
 import type { AdminOrderDetail } from "@giftpop/contracts";
 
-/**
- * STUB. Replaced by the `admin-order-actions` slice in phase 4: change status, record
- * payment, with dialogs. The detail page renders this one component and refreshes itself
- * after any action (the actions call `router.refresh()`).
- */
-export function OrderActions(_props: { order: AdminOrderDetail }) {
-  return null;
-}
+import { RecordPayment } from "./components/payment-dialog";
+import { StatusMenu } from "./components/status-menu";
+
+export { ProofReview } from "./components/proof-review";
 
 /**
- * STUB. Accept / reject buttons for one payment proof, rendered by the detail page next to
- * each proof. Calls `PATCH /admin/orders/:id/proofs/:proofId` and then `router.refresh()`.
+ * The staff actions for one order: change status and record payment. The detail page
+ * renders this one component; each action calls `router.refresh()` so the page re-reads.
  */
-export function ProofReview(_props: {
-  orderId: string;
-  proofId: string;
-  status: "pending" | "accepted" | "rejected";
-}) {
-  return null;
+export function OrderActions({ order }: { order: AdminOrderDetail }) {
+  return (
+    <div className="flex flex-wrap items-start gap-3">
+      <StatusMenu order={order} />
+      <RecordPayment order={order} />
+    </div>
+  );
 }
