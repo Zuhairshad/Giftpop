@@ -14,13 +14,13 @@ All six phases are built and merged on one branch. `pnpm verify` (lint, typechec
 | 3 | Checkout, orders, payments, tracking, notifications outbox | Done |
 | 4 | Admin orders, shipment statuses, dashboard, packing sheet | Done |
 | 5 | Home, countries, partners, templates | Done |
-| 6 | Hardening and deploy readiness | Mostly done, see below |
+| 6 | Hardening and deploy readiness | Done except the items below |
 
 Phase 6 done: Playwright flows (`e2e/`, 4 flows, passed 3 runs in a row in isolated mode), security route-walk test and hardening, observability (request ids, masked logs, optional Sentry, `GET /v1/admin/metrics`), performance report and indexes, deploy files (`apps/api/Dockerfile`, `docs/deploy.md`, disabled deploy workflows), private payment proofs, accessibility audit.
 
 ## Not finished (do these next)
 
-1. **Accessibility fixes.** The audit is `docs/audit/accessibility.md`. Two builders were applying the fixes when the session ended. Check `git log` for `fix(web): accessibility` and `fix(admin): accessibility` commits and the `## Fix status` sections at the end of that file. If they are missing, apply the patches in the report. Highest priority: **A2**, admin dialogs do not trap Tab when opened with the keyboard (`apps/admin/src/components/ui/dialog.tsx` and `sheet.tsx`). Then the medium items (primary pink contrast W1, admin focus rings A1, skip link A3, destructive button contrast A5, focus after step change W3, nested `<main>` W4).
+1. **Accessibility leftovers.** The fixes for web and admin are merged (see the two `## Fix status` sections at the end of `docs/audit/accessibility.md`). Not done: layout shift on the items step (footer shifts, no `loading.tsx`), checkout error summary (L2), colour names on the packing sheet (L4), the "+" stepper and template card names (W9), and one axe `label-content-name-mismatch` on admin pages. Re-run `pnpm e2e` once, since item card labels changed.
 2. **Run the `verifier` agent across the whole repo** against every phase's definition of done, fix "Must fix", then run the `code-simplifier` agent (never run across the whole repo yet).
 3. **Record in `docs/decisions.md`** the Phase 6 decisions and low findings: proof `url` now holds the staff file path and the real key is in the Mongoose-only `storageKey`; R2 proofs use `R2_PRIVATE_BUCKET` (falls back to the public bucket when unset); `ReadableStorage` is separate from `Storage` (merge later); login limiter per IP (30 a minute) added; the global guard rejects any `$` or dotted key in bodies and queries; staff writes need an `Origin` equal to `ADMIN_ORIGIN`; deploy assumptions listed in `docs/audit/deploy.md`; the low findings in `docs/audit/security.md` (S11 to S21) and `docs/audit/e2e.md`.
 4. **Performance follow-ups** (not done, in `docs/audit/performance.md`): swap `<img>` for `next/image` in `apps/web/src/features/builder/steps/items/item-art.tsx`; `LazyMotion` in the renderer (about 30 kB); zod is 37 kB on every route through the contracts barrel; admin order search still scans (needs lowercase email plus a `phoneDigits` field and backfill); the admin order list now has the compound indexes.
