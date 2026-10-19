@@ -21,7 +21,7 @@ interface MoneyInputProps {
 
 /**
  * Staff type major units ("12.50"); the form holds integer minor units (1250).
- * The text stays as typed while editing, and tidies to two decimals on blur.
+ * The text stays as typed while editing, and tidies to the currency's decimals on blur.
  */
 export function MoneyInput({
   id,
@@ -33,8 +33,8 @@ export function MoneyInput({
   describedBy,
   disabled = false,
 }: MoneyInputProps) {
-  const [text, setText] = useState(() => minorToInput(value));
-  const notAnAmount = text.trim() !== "" && Number.isNaN(inputToMinor(text));
+  const [text, setText] = useState(() => minorToInput(value, currency));
+  const notAnAmount = text.trim() !== "" && Number.isNaN(inputToMinor(text, currency));
 
   return (
     <div className="flex items-center gap-2">
@@ -48,11 +48,11 @@ export function MoneyInput({
         aria-describedby={describedBy}
         onChange={(event) => {
           setText(event.target.value);
-          onChange(inputToMinor(event.target.value));
+          onChange(inputToMinor(event.target.value, currency));
         }}
         onBlur={() => {
-          const minor = inputToMinor(text);
-          if (minor !== undefined && !Number.isNaN(minor)) setText(minorToInput(minor));
+          const minor = inputToMinor(text, currency);
+          if (minor !== undefined && !Number.isNaN(minor)) setText(minorToInput(minor, currency));
           onBlur?.();
         }}
       />

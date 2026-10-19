@@ -1,34 +1,29 @@
+import { majorToMinor, minorDigits, minorToMajor } from "@giftpop/contracts";
 import type { AdminOrderDetail, PaymentRecordKind } from "@giftpop/contracts";
-
-/** Every launch currency has two minor digits (see docs/decisions.md). */
-const MINOR_DIGITS = 2;
-const FACTOR = 10 ** MINOR_DIGITS;
 
 export type AmountFailure =
   "empty" | "invalid" | "too_many_decimals" | "not_positive" | "too_large";
 
 export type AmountParse = { ok: true; minor: number } | { ok: false; reason: AmountFailure };
 
-const AMOUNT_PATTERN = /^(\d*)(?:\.(\d*))?$/;
-
 /**
- * Turns typed major units ("12.50") into integer minor units (1250) by reading the decimal
- * string. It never uses a float and never rounds: three decimals is an error. Zero and
- * negative amounts are errors too.
+ * Turns typed major units ("12.50") into integer minor units of the order's currency (1250) by
+ * reading the decimal string (`majorToMinor` in contracts). It never uses a float and never
+ * rounds: more decimals than the currency has is an error. Zero and negative amounts are errors.
  */
-export function parseAmountToMinor(input: string): AmountParse {
+export function parseAmountToMinor(input: string, currency: string): AmountParse {
   const text = input.trim();
   if (text === "") return { ok: false, reason: "empty" };
-  const negative = text.startsWith("-");
-  const match = AMOUNT_PATTERN.exec(negative ? text.slice(1) : text);
-  const whole = match?.[1] ?? "";
-  const fraction = match?.[2] ?? "";
-  if (!match || (whole === "" && fraction === "")) return { ok: false, reason: "invalid" };
-  if (negative) return { ok: false, reason: "not_positive" };
-  if (fraction.length > MINOR_DIGITS) return { ok: false, reason: "too_many_decimals" };
-  const minor =
-    Number(whole === "" ? "0" : whole) * FACTOR + Number(fraction.padEnd(MINOR_DIGITS, "0"));
-  if (!Number.isSafeInteger(minor)) return { ok: false, reason: "too_large" };
+  if (text.startsWith("-")) {
+    return majorToMinor(text.slice(1), currency) === null
+      ? { ok: false, reason: "invalid" }
+      : { ok: false, reason: "not_positive" };
+  }
+  if (!/^\d*(?:\.\d*)?$/.test(text) || text === ".") return { ok: false, reason: "invalid" };
+  const fraction = text.split(".")[1] ?? "";
+  if (fraction.length > minorDigits(currency)) return { ok: false, reason: "too_many_decimals" };
+  const minor = majorToMinor(text, currency);
+  if (minor === null) return { ok: false, reason: "too_large" };
   if (minor <= 0) return { ok: false, reason: "not_positive" };
   return { ok: true, minor };
 }
@@ -36,14 +31,14 @@ export function parseAmountToMinor(input: string): AmountParse {
 export const AMOUNT_MESSAGES: Record<AmountFailure, string> = {
   empty: "Enter the amount",
   invalid: "Enter an amount like 1250 or 1250.50",
-  too_many_decimals: "Use at most 2 decimal places",
+  too_many_decimals: "Too many decimal places for this currency",
   not_positive: "The amount must be more than zero",
   too_large: "That amount is too large",
 };
 
-/** Minor units as a plain major-unit string for an input ("1250" becomes "12.50"). */
-export function minorToInput(minor: number): string {
-  return `${Math.floor(minor / FACTOR)}.${String(minor % FACTOR).padStart(MINOR_DIGITS, "0")}`;
+/** Minor units as a plain major-unit string for an input ("1250" USD becomes "12.50"). */
+export function minorToInput(minor: number, currency: string): string {
+  return minorToMajor(minor, currency);
 }
 
 type PaymentsView = Pick<AdminOrderDetail, "payments" | "quote" | "paymentMode" | "status">;
@@ -87,7 +82,7 @@ export function suggestedAmountMinor(order: PaymentsView, kind: PaymentRecordKin
 /** The suggested amount as typed text; empty when there is nothing to suggest (a refund). */
 export function suggestedAmountInput(order: PaymentsView, kind: PaymentRecordKind): string {
   const minor = suggestedAmountMinor(order, kind);
-  return minor > 0 ? minorToInput(minor) : "";
+  return minor > 0 ? minorToInput(minor, order.quote.currency) : "";
 }
 
 /** Why payments cannot be recorded, or null when they can. */

@@ -144,7 +144,7 @@ describe("parseAmountToMinor", () => {
     ["0.10", 10],
     ["90071992547409.91", 9007199254740991],
   ])("reads %s as %i", (input, minor) => {
-    expect(parseAmountToMinor(input)).toEqual({ ok: true, minor });
+    expect(parseAmountToMinor(input, "PKR")).toEqual({ ok: true, minor });
   });
   it.each([
     ["", "empty"],
@@ -160,7 +160,12 @@ describe("parseAmountToMinor", () => {
     ["-5", "not_positive"],
     ["999999999999999999", "too_large"],
   ])("rejects %j as %s", (input, reason) => {
-    expect(parseAmountToMinor(input)).toEqual({ ok: false, reason });
+    expect(parseAmountToMinor(input, "PKR")).toEqual({ ok: false, reason });
+  });
+  it("uses the order currency's minor unit (rule 7)", () => {
+    expect(parseAmountToMinor("500", "JPY")).toEqual({ ok: true, minor: 500 });
+    expect(parseAmountToMinor("500.5", "JPY")).toEqual({ ok: false, reason: "too_many_decimals" });
+    expect(parseAmountToMinor("1.250", "KWD")).toEqual({ ok: true, minor: 1250 });
   });
 });
 

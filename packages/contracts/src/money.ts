@@ -103,3 +103,43 @@ export function percentOfMinor(amountMinor: number, percent: number): number {
 export function percentOfMoney(amount: Money, percent: number): Money {
   return money(percentOfMinor(amount.amountMinor, percent), amount.currency);
 }
+
+const PLAIN_AMOUNT = /^(\d*)(?:\.(\d*))?$/;
+const GROUPED_AMOUNT = /^\d{1,3}(?:,\d{3})+(?:\.\d*)?$/;
+
+/**
+ * Turns typed major units ("12.50", "1,200") into integer minor units of `currency`
+ * (1250, 120000; "500" yen is 500). Works on the decimal string, never on a float, and
+ * never rounds: more decimals than the currency has is rejected. Returns null for anything
+ * that is not a non-negative amount.
+ */
+export function majorToMinor(input: string, currency: CurrencyCode): number | null {
+  const digits = minorDigits(currency);
+  const trimmed = input.trim();
+  if (trimmed === "") return null;
+  const text = GROUPED_AMOUNT.test(trimmed) ? trimmed.replaceAll(",", "") : trimmed;
+
+  const match = PLAIN_AMOUNT.exec(text);
+  if (!match) return null;
+  const whole = match[1] ?? "";
+  const fraction = match[2] ?? "";
+  if (whole === "" && fraction === "") return null;
+  if (fraction.length > digits) return null;
+
+  const wholeUnits = whole === "" ? 0 : Number(whole);
+  const kept = digits === 0 ? 0 : Number(fraction.padEnd(digits, "0"));
+  const minor = wholeUnits * 10 ** digits + kept;
+  return Number.isSafeInteger(minor) ? minor : null;
+}
+
+/** Integer minor units as a plain major-unit string ("1250" USD is "12.50", 500 JPY is "500"). */
+export function minorToMajor(minor: number, currency: CurrencyCode): string {
+  assertMinor(minor);
+  const digits = minorDigits(currency);
+  const sign = minor < 0 ? "-" : "";
+  const abs = Math.abs(minor);
+  if (digits === 0) return `${sign}${abs}`;
+  const factor = 10 ** digits;
+  const fraction = String(abs % factor).padStart(digits, "0");
+  return `${sign}${Math.floor(abs / factor)}.${fraction}`;
+}

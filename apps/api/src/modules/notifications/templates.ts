@@ -1,4 +1,9 @@
-import { ORDER_STATUSES, type NotificationType, type OrderStatus } from "@giftpop/contracts";
+import {
+  ORDER_STATUSES,
+  minorToMajor,
+  type NotificationType,
+  type OrderStatus,
+} from "@giftpop/contracts";
 
 import type { OrderDoc } from "../orders/model";
 
@@ -18,12 +23,10 @@ export interface RenderedMessage {
   text: string;
 }
 
-/** Plain text amount from integer minor units, two minor digits (see docs/decisions.md). */
+/** Plain text amount from integer minor units, in the currency's own minor-unit digits. */
 export function formatMinor(amountMinor: number, currency: string): string {
-  const sign = amountMinor < 0 ? "-" : "";
-  const abs = Math.abs(amountMinor);
-  const cents = String(abs % 100).padStart(2, "0");
-  return `${sign}${currency} ${Math.trunc(abs / 100)}.${cents}`;
+  const major = minorToMajor(amountMinor, currency);
+  return major.startsWith("-") ? `-${currency} ${major.slice(1)}` : `${currency} ${major}`;
 }
 
 export function trackingLink(order: TemplateOrder, options: TemplateOptions): string {

@@ -48,6 +48,10 @@ export const PublicTemplateSchema = z.object({
 export type PublicTemplate = z.infer<typeof PublicTemplateSchema>;
 
 /** `POST /templates/:id/start`: a fresh copy of the design for the builder to load. */
+/** `POST /templates/:id/start`. Without a country the API picks the first listed live country that can make the gift. */
+export const TemplateStartRequestSchema = z.object({ country: CountryCodeSchema.optional() });
+export type TemplateStartRequest = z.infer<typeof TemplateStartRequestSchema>;
+
 export const TemplateStartResponseSchema = z.object({
   country: CountryCodeSchema,
   design: DesignSchema,

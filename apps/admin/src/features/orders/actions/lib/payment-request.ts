@@ -32,11 +32,11 @@ export function defaultPaymentMethod(
 
 /** Builds the request. There is never a currency: the API uses the order's own. */
 export function validatePaymentForm(
-  order: Pick<AdminOrderDetail, "payments">,
+  order: Pick<AdminOrderDetail, "payments" | "quote">,
   values: PaymentFormValues,
 ): PaymentValidation {
   const errors: Partial<Record<PaymentFieldName, string>> = {};
-  const amount = parseAmountToMinor(values.amount);
+  const amount = parseAmountToMinor(values.amount, order.quote.currency);
   if (!amount.ok) {
     return { ok: false, errors: { amount: AMOUNT_MESSAGES[amount.reason] } };
   }

@@ -178,11 +178,14 @@ describe("country form mapping", () => {
   });
 
   it("converts money inputs to integer minor units, empty or invalid aside", () => {
-    expect(inputToMinor("250")).toBe(25000);
-    expect(inputToMinor("")).toBeUndefined();
-    expect(inputToMinor("abc")).toBeNaN();
-    expect(minorToInput(25000)).toBe("250.00");
-    expect(minorToInput(undefined)).toBe("");
+    expect(inputToMinor("250", "PKR")).toBe(25000);
+    expect(inputToMinor("", "PKR")).toBeUndefined();
+    expect(inputToMinor("abc", "PKR")).toBeNaN();
+    expect(minorToInput(25000, "PKR")).toBe("250.00");
+    expect(minorToInput(undefined, "PKR")).toBe("");
+    // The currency's own minor unit: yen have none, so 250 is 250.
+    expect(inputToMinor("250", "JPY")).toBe(250);
+    expect(minorToInput(250, "JPY")).toBe("250");
   });
 
   it("toggles payment modes without duplicates", () => {

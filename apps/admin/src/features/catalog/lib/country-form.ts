@@ -1,7 +1,5 @@
-import { UpdateCountryRequestSchema } from "@giftpop/contracts";
+import { majorToMinor, minorToMajor, UpdateCountryRequestSchema } from "@giftpop/contracts";
 import type { Country, UpdateCountryRequest } from "@giftpop/contracts";
-
-import { majorToMinor, minorToMajor } from "./minor-units";
 
 export type CountryFormValues = Country;
 
@@ -33,14 +31,14 @@ export function toUpdateCountryRequest(values: CountryFormValues): UpdateCountry
 }
 
 /** Money fields for display. Used to seed the money inputs. */
-export function minorToInput(minor: number | undefined): string {
-  return minor === undefined || !Number.isSafeInteger(minor) ? "" : minorToMajor(minor);
+export function minorToInput(minor: number | undefined, currency: string): string {
+  return minor === undefined || !Number.isSafeInteger(minor) ? "" : minorToMajor(minor, currency);
 }
 
 /** Parses a money input. Empty is `undefined`, invalid is `NaN` (the schema then rejects it). */
-export function inputToMinor(text: string): number | undefined {
+export function inputToMinor(text: string, currency: string): number | undefined {
   if (text.trim() === "") return undefined;
-  return majorToMinor(text) ?? Number.NaN;
+  return majorToMinor(text, currency) ?? Number.NaN;
 }
 
 export function toggleMode<T extends string>(modes: readonly T[], mode: T, on: boolean): T[] {

@@ -25,6 +25,8 @@ describe("formatMinor", () => {
   it("formats integer minor units without floats", () => {
     expect(formatMinor(41_000, "PKR")).toBe("PKR 410.00");
     expect(formatMinor(5, "USD")).toBe("USD 0.05");
+    expect(formatMinor(500, "JPY")).toBe("JPY 500");
+    expect(formatMinor(1250, "KWD")).toBe("KWD 1.250");
     expect(formatMinor(0, "USD")).toBe("USD 0.00");
   });
 });

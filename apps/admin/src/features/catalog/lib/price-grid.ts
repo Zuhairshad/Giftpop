@@ -1,6 +1,5 @@
+import { majorToMinor, minorToMajor } from "@giftpop/contracts";
 import type { Country, PriceEntry } from "@giftpop/contracts";
-
-import { majorToMinor, minorToMajor } from "./minor-units";
 
 /** One editable row of the per-country price and stock grid. */
 export interface PriceRow {
@@ -26,7 +25,7 @@ export function buildPriceRows(
       country: country.code,
       countryName: country.name,
       currency: country.currency,
-      priceText: entry ? minorToMajor(entry.priceMinor) : "",
+      priceText: entry ? minorToMajor(entry.priceMinor, country.currency) : "",
       inStock: entry ? entry.inStock : true,
       existing: entry !== undefined,
     };
@@ -51,7 +50,7 @@ export function rowsToPriceEntries(rows: readonly PriceRow[]): PriceRowsResult {
       }
       continue;
     }
-    const priceMinor = majorToMinor(row.priceText);
+    const priceMinor = majorToMinor(row.priceText, row.currency);
     if (priceMinor === null) {
       errors[row.country] = "Enter an amount like 12.50.";
       continue;

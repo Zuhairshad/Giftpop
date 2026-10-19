@@ -1,5 +1,5 @@
 import {
-  CountryCodeSchema,
+  TemplateStartRequestSchema,
   CountryParamSchema,
   CreateTemplateRequestSchema,
   UpdateTemplateRequestSchema,
@@ -32,7 +32,6 @@ import {
 const PUBLIC_CACHE = "public, max-age=60, stale-while-revalidate=300";
 
 const ListQuerySchema = z.object({ country: CountryParamSchema });
-const StartBodySchema = z.object({ country: CountryCodeSchema.optional() });
 
 export interface TemplatesRouterOptions {
   /** Replace the start limiter, for example with a tighter or fresh one in tests. */
@@ -84,7 +83,7 @@ export function createTemplatesRouter({
     startLimiter,
     validateParams(IdParamsSchema),
     async (req: Request<IdParams>, res) => {
-      const { country } = StartBodySchema.parse(req.body ?? {});
+      const { country } = TemplateStartRequestSchema.parse(req.body ?? {});
       res.json(await startTemplate(req.params.id, country));
     },
   );
