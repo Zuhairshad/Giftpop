@@ -16,7 +16,7 @@ export function CatalogTabs({ current }: { current: CatalogTab }) {
           key={tab.key}
           href={tab.href}
           aria-current={tab.key === current ? "page" : undefined}
-          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 aria-[current=page]:border-primary aria-[current=page]:text-foreground -mb-px rounded-t-md border-b-2 border-transparent px-3 py-2 text-sm font-medium outline-none focus-visible:ring-3"
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring aria-[current=page]:border-primary aria-[current=page]:text-foreground -mb-px rounded-t-md border-b-2 border-transparent px-3 py-2 text-sm font-medium outline-none focus-visible:ring-3"
         >
           {tab.label}
         </Link>

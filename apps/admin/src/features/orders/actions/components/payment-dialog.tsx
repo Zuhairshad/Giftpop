@@ -17,6 +17,7 @@ import {
   suggestedAmountInput,
 } from "../lib/amount";
 import { recordOrderPayment } from "../lib/client";
+import { paymentHeading } from "../lib/focus";
 import { defaultPaymentMethod, validatePaymentForm } from "../lib/payment-request";
 import type { PaymentFieldName, PaymentFormValues } from "../lib/payment-request";
 
@@ -64,6 +65,8 @@ const METHOD_ITEMS = PaymentMethodSchema.options.map((value) => ({
 export function RecordPayment({ order }: { order: AdminOrderDetail }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const recordedRef = useRef(false);
+  const [announcement, setAnnouncement] = useState("");
   const blocked = paymentBlockedReason(order);
 
   return (
@@ -83,9 +86,28 @@ export function RecordPayment({ order }: { order: AdminOrderDetail }) {
           {blocked}
         </span>
       ) : null}
+      <p role="status" className="sr-only">
+        {announcement}
+      </p>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-h-[92dvh] overflow-y-auto" finalFocus={triggerRef}>
-          {open ? <PaymentForm order={order} onDone={() => setOpen(false)} /> : null}
+        <DialogContent
+          className="max-h-[92dvh] overflow-y-auto"
+          // The trigger is disabled once the order is paid, so after a recorded payment focus goes
+          // to the Payment heading, which stays on the page.
+          finalFocus={() => (recordedRef.current ? paymentHeading() : triggerRef.current)}
+        >
+          {open ? (
+            <PaymentForm
+              order={order}
+              onDone={(recorded) => {
+                if (recorded) {
+                  recordedRef.current = true;
+                  setAnnouncement("Payment recorded. The payment section is up to date.");
+                }
+                setOpen(false);
+              }}
+            />
+          ) : null}
         </DialogContent>
       </Dialog>
     </div>
@@ -103,7 +125,13 @@ function initialValues(order: AdminOrderDetail): PaymentFormValues {
   };
 }
 
-function PaymentForm({ order, onDone }: { order: AdminOrderDetail; onDone: () => void }) {
+function PaymentForm({
+  order,
+  onDone,
+}: {
+  order: AdminOrderDetail;
+  onDone: (recorded: boolean) => void;
+}) {
   const router = useRouter();
   const { currency } = order.quote;
   const resolver: Resolver<PaymentFormValues> = (values) => {
@@ -128,7 +156,7 @@ function PaymentForm({ order, onDone }: { order: AdminOrderDetail; onDone: () =>
     try {
       await recordOrderPayment(order.id, result.request);
       toast.success("Payment recorded");
-      onDone();
+      onDone(true);
       router.refresh();
     } catch (error) {
       const described = describeActionError(error);
@@ -241,7 +269,7 @@ function PaymentForm({ order, onDone }: { order: AdminOrderDetail; onDone: () =>
 
       <FormAlert message={alert} />
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onDone}>
+        <Button type="button" variant="outline" onClick={() => onDone(false)}>
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>

@@ -10,6 +10,7 @@ import {
   paymentTotals,
 } from "./view-model";
 
+import { ScrollRegion } from "@/components/scroll-region";
 import { ProofReview } from "@/features/orders/actions";
 import { formatDateTime, formatMoney } from "@/lib/format";
 
@@ -52,7 +53,7 @@ export function PaymentSection({ order }: { order: AdminOrderDetail }) {
           {order.payments.length === 0 ? (
             <p className="text-muted-foreground text-sm">No payments recorded yet.</p>
           ) : (
-            <div className="overflow-x-auto">
+            <ScrollRegion label="Recorded payments">
               <table className="w-full text-sm">
                 <caption className="sr-only">Recorded payments</caption>
                 <thead>
@@ -97,7 +98,7 @@ export function PaymentSection({ order }: { order: AdminOrderDetail }) {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </ScrollRegion>
           )}
         </div>
 

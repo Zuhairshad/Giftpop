@@ -66,29 +66,31 @@ export function AppSidebar({ user }: AppSidebarProps) {
         <SidebarGroup>
           <SidebarGroupLabel>Manage</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu aria-label="Main">
-              {visibleNavItems(navItems, user.role).map((item) => {
-                const Icon = ICONS[item.href] ?? GiftIcon;
-                const active = isActiveHref(pathname, item.href);
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      isActive={active}
-                      render={
-                        <Link
-                          href={item.href}
-                          aria-current={active ? "page" : undefined}
-                          onClick={() => setOpenMobile(false)}
-                        />
-                      }
-                    >
-                      <Icon aria-hidden="true" />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
+            <nav aria-label="Main">
+              <SidebarMenu>
+                {visibleNavItems(navItems, user.role).map((item) => {
+                  const Icon = ICONS[item.href] ?? GiftIcon;
+                  const active = isActiveHref(pathname, item.href);
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={active}
+                        render={
+                          <Link
+                            href={item.href}
+                            aria-current={active ? "page" : undefined}
+                            onClick={() => setOpenMobile(false)}
+                          />
+                        }
+                      >
+                        <Icon aria-hidden="true" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </nav>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

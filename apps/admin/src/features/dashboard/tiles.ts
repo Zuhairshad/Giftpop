@@ -42,11 +42,6 @@ export function buildTiles(needsAction: DashboardSummary["needsAction"]): TileMo
   return TILE_DEFS.map((def) => ({ ...def, count: needsAction[def.key] }));
 }
 
-/** The accessible name of a tile link: the count and the label in one phrase. */
-export function tileAccessibleName(tile: Pick<TileModel, "count" | "label">): string {
-  return `${tile.count} ${tile.label.toLowerCase()}`;
-}
-
 export interface RevenueLine {
   currency: string;
   text: string;

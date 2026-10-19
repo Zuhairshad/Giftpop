@@ -40,8 +40,7 @@ function Head() {
 
 export function OrdersTable({ rows }: { rows: readonly OrderRow[] }) {
   return (
-    <Table>
-      <caption className="sr-only">Orders, newest first</caption>
+    <Table label="Orders, newest first">
       <Head />
       <TableBody>
         {rows.map((row) => (
@@ -83,8 +82,7 @@ export function OrdersTable({ rows }: { rows: readonly OrderRow[] }) {
 
 export function OrdersTableSkeleton() {
   return (
-    <Table aria-busy="true">
-      <caption className="sr-only">Loading orders</caption>
+    <Table label="Loading orders" aria-busy="true">
       <Head />
       <TableBody>
         {Array.from({ length: 8 }, (_, i) => (

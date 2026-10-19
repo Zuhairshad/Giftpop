@@ -12,8 +12,16 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <SidebarProvider>
+      <a
+        href="#admin-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:ring-3 focus:ring-ring"
+      >
+        Skip to content
+      </a>
       <AppSidebar user={user} />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset id="admin-main" tabIndex={-1} className="outline-none">
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }

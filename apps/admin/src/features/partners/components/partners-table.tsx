@@ -23,7 +23,7 @@ interface PartnersTableProps {
 export function PartnersTable({ items, countryName, onOpen }: PartnersTableProps) {
   return (
     <div className="rounded-lg border">
-      <Table>
+      <Table label="Partner requests">
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -39,7 +39,7 @@ export function PartnersTable({ items, countryName, onOpen }: PartnersTableProps
                 <button
                   type="button"
                   onClick={() => onOpen(request)}
-                  className="focus-visible:ring-ring/50 rounded-sm text-left font-medium wrap-anywhere underline-offset-4 outline-none hover:underline focus-visible:ring-3"
+                  className="focus-visible:ring-ring rounded-sm text-left font-medium wrap-anywhere underline-offset-4 outline-none hover:underline focus-visible:ring-3"
                 >
                   {requestTitle(request, countryName)}
                 </button>

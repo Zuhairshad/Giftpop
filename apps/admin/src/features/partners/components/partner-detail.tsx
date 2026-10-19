@@ -37,7 +37,13 @@ interface PartnerDetailProps {
 export function PartnerDetail({ request, countryName, onClose, onSaved }: PartnerDetailProps) {
   return (
     <Sheet open={request !== null} onOpenChange={(open) => (open ? undefined : onClose())}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
+      <SheetContent
+        className="w-full overflow-y-auto sm:max-w-lg"
+        // Open on the status field (what staff change), not on the contact e-mail link.
+        initialFocus={() =>
+          document.querySelector<HTMLElement>("[data-slot=sheet-content] [role=combobox]")
+        }
+      >
         {request ? (
           <DetailBody
             key={request.id}

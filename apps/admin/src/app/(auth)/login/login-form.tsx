@@ -72,7 +72,7 @@ export function LoginForm({ next }: LoginFormProps) {
           type="email"
           autoComplete="username"
           inputMode="email"
-          aria-invalid={errors.email ? true : undefined}
+          aria-invalid={errors.email || formError ? true : undefined}
           aria-describedby={errors.email ? "email-error" : undefined}
         />
         {errors.email ? (
@@ -92,7 +92,7 @@ export function LoginForm({ next }: LoginFormProps) {
           name="password"
           type="password"
           autoComplete="current-password"
-          aria-invalid={errors.password ? true : undefined}
+          aria-invalid={errors.password || formError ? true : undefined}
           aria-describedby={errors.password ? "password-error" : undefined}
         />
         {errors.password ? (

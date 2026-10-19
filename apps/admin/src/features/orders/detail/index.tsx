@@ -44,7 +44,7 @@ export async function OrderDetail({ id }: { id: string }) {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href={`/orders/${order.id}/packing`}
-            className="focus-visible:ring-ring/50 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted focus-visible:ring-[3px]"
+            className="focus-visible:ring-ring rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted focus-visible:ring-[3px]"
           >
             Print packing sheet
           </Link>

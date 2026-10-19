@@ -15,7 +15,7 @@ export default async function PackagingPage() {
   return (
     <>
       <PageHeader
-        title="Catalog"
+        title="Packaging"
         description="Items, packaging, per-country prices and stock, and images."
         actions={
           <Link href="/catalog/packaging/new" className={buttonVariants()}>

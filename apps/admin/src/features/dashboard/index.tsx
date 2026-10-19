@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 import { loadDashboard } from "./load";
 import { RetryButton } from "./retry-button";
-import { buildTiles, ordersLabel, revenueLines, tileAccessibleName } from "./tiles";
+import { buildTiles, ordersLabel, revenueLines } from "./tiles";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,7 +22,6 @@ function NeedsAction({ summary }: { summary: DashboardSummary }) {
           <li key={tile.key}>
             <Link
               href={tile.href}
-              aria-label={tileAccessibleName(tile)}
               className="bg-card hover:bg-accent focus-visible:ring-ring block rounded-xl border p-4 transition-colors outline-none focus-visible:ring-2"
             >
               <span

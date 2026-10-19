@@ -33,7 +33,7 @@ export function ItemsTable({ items, page, pageSize, total, filters }: ItemsTable
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="rounded-lg border">
-        <Table>
+        <Table label="Catalog items">
           <TableHeader>
             <TableRow>
               <TableHead>Item</TableHead>
@@ -89,7 +89,7 @@ export function ItemsTable({ items, page, pageSize, total, filters }: ItemsTable
         <p className="text-muted-foreground">
           {total} {total === 1 ? "item" : "items"}. Page {page} of {pages}.
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <PageLink
             disabled={page <= 1}
             href={`/catalog${itemsQueryString({ ...filters, page: page - 1 })}`}
