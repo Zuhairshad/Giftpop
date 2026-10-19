@@ -32,7 +32,7 @@ export function ColourInput({
         aria-label={pickerLabel}
         value={toColorInputValue(value)}
         onChange={(event) => onChange(event.target.value)}
-        className="focus-visible:ring-ring/50 border-input h-8 w-10 shrink-0 cursor-pointer rounded-lg border bg-transparent p-0.5 outline-none focus-visible:ring-3"
+        className="focus-visible:ring-ring border-input h-8 w-10 shrink-0 cursor-pointer rounded-lg border bg-transparent p-0.5 outline-none focus-visible:ring-3"
       />
       <Input
         id={id}

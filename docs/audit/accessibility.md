@@ -255,3 +255,28 @@ Checked with axe 4.14 plus the contrast walker on 19 store screens in light and 
 | L1 | fixed | 404 title "Page not found"; country home "Gifts to PK". |
 | L2 | not fixed | Checkout error summary is not a one-line change. |
 | CLS | not measured | Banner is now absolutely positioned under the header (cannot push content) and absent in the builder. No `loading.tsx` for items added. Before: 0.445 on Fast 3G (performance report). After: not measured. |
+
+## Fix status: admin
+
+Measured against a separate stack (admin 3601, api 4600, database `giftpop_adminfix`) with the same scripts as the audit (copies named `afix-*.cjs`). axe 4.14 over 11 admin screens x light/dark x 1280/390: no `color-contrast`, `region`, `scrollable-region-focusable` or `landmark` violations remain.
+
+| Id | Status | Before / after |
+|---|---|---|
+| A2 | fixed | `keepTabInside` (`src/lib/focus-trap.ts`, pure part unit-tested) wired into `ui/dialog.tsx` and `ui/sheet.tsx`. Playwright, opened with Enter, 22 Tab + 22 Shift+Tab per dialog: 13 of 13 stay inside (change-status confirm x2, shipped, cancel, record payment, reject proof, proof zoom, add/edit country, invite staff, create template, partner sheet, mobile sidebar sheet). With the handler disabled the same script leaked in 13 of 13. |
+| A1 | fixed | Focus indicator, worst stop on 6 admin pages: light 1.55:1 -> 8.1:1, dark 1.89:1 -> 11.4:1 (opaque 3 px ring; `--ring`/`--sidebar-ring` and `ring-ring/50` replaced). |
+| A3 | fixed | Skip link first in Tab order, moves focus to `main#admin-main`; `nav "Main"`, `aside "Sidebar"`, `main`; axe `region` gone. |
+| A5 | fixed | Destructive text on its 10% tint: light 3.8:1 -> 5.30:1, dark 4.26:1 -> 6.70:1 (login error uses the same token). |
+| A6 | fixed | `ScrollRegion` (focusable, named region); `Table` takes a required `label` that is also its caption; order detail tables use it too. |
+| A7 | fixed | Switch track `h-6 w-11` (24 px). |
+| A8 | fixed | `min-w-0` on `SidebarInset`, `min-h-8` on menu buttons. 200% text: 0 px overflow on all pages at 1280. Also found and fixed at 390: catalog pagination (+42 px) and the templates button (+19 px). |
+| A9 | fixed | After recording a payment, accepting or rejecting a proof, focus goes to the Payment heading (now `tabIndex=-1`); a persistent `role="status"` announces "Payment recorded". |
+| W6 / status pills | no change needed | All 11 pill class sets in `status.ts` and the proof pills pass 4.5:1 in light and dark; `status.ts` untouched. |
+| W1 (primary colour) | n/a | Web only. |
+| L3 | fixed | Login fields get `aria-invalid` after a failed sign-in. |
+| L5 | fixed | Packaging page h1 is "Packaging". |
+| L6 | fixed | Partner sheet opens on the status select. |
+| L4 | not fixed | Colour names beside the hex values need packaging palette data; not a one-line change. |
+| Dashboard / header label mismatch | partly fixed | Tile `aria-label`s and the "Toggle navigation" label removed. axe `label-content-name-mismatch` (x1 per page) remains for the account menu button (`aria-label` differs from its visible name). Not fixed. |
+
+Edits to generated `components/ui/*` (re-apply if regenerated): `dialog.tsx`, `sheet.tsx` (A2 keydown), `table.tsx` (A6), `sidebar.tsx` (A3 `aside`, A8 classes), `switch.tsx` (A7), and `ring-ring/50` to `ring-ring` in button, input, select, textarea, checkbox, badge.
+Note: a native date input showed no ring in one Tab-walk sample; a direct check shows its 3 px ring is present, so this was a timing artefact of the script.

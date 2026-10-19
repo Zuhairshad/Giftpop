@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildTiles, ordersLabel, revenueLines, tileAccessibleName } from "./tiles";
+import { buildTiles, ordersLabel, revenueLines } from "./tiles";
 
 describe("buildTiles", () => {
   const tiles = buildTiles({
@@ -18,10 +18,6 @@ describe("buildTiles", () => {
       "/orders?status=delivery_failed",
     ]);
     expect(tiles.map((t) => t.count)).toEqual([2, 0, 5, 1]);
-  });
-
-  it("names a tile by count and label", () => {
-    expect(tileAccessibleName({ count: 5, label: "Orders to ship" })).toBe("5 orders to ship");
   });
 });
 

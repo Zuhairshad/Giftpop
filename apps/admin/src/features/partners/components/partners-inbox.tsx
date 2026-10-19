@@ -112,7 +112,7 @@ function Inbox() {
               aria-selected={selected}
               aria-controls="partners-panel"
               onClick={() => go({ kind: tab.kind, page: 1 })}
-              className={`focus-visible:ring-ring/50 -mb-px rounded-t-md border-b-2 px-3 py-2 text-sm font-medium outline-none focus-visible:ring-3 ${
+              className={`focus-visible:ring-ring -mb-px rounded-t-md border-b-2 px-3 py-2 text-sm font-medium outline-none focus-visible:ring-3 ${
                 selected
                   ? "border-primary text-foreground"
                   : "text-muted-foreground hover:text-foreground border-transparent"
@@ -202,11 +202,11 @@ function Pager({
   const pages = pageCount(total, PARTNERS_PAGE_SIZE);
   if (pages <= 1) return null;
   return (
-    <nav aria-label="Pages" className="flex items-center justify-between gap-2">
+    <nav aria-label="Pages" className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-muted-foreground text-sm">
         Page {page} of {pages} ({total} requests)
       </p>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => onPage(page - 1)}>
           Previous page
         </Button>

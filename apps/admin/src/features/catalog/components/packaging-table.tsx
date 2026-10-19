@@ -17,7 +17,7 @@ import {
 export function PackagingTable({ packagings }: { packagings: readonly Packaging[] }) {
   return (
     <div className="rounded-lg border">
-      <Table>
+      <Table label="Packaging">
         <TableHeader>
           <TableRow>
             <TableHead>Packaging</TableHead>

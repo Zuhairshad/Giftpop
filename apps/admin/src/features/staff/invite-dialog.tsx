@@ -38,7 +38,7 @@ const resolver: Resolver<InviteValues> = (values) => {
 };
 
 const SELECT_CLASS =
-  "border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive h-8 w-full rounded-lg border bg-transparent px-2 text-sm outline-none focus-visible:ring-3";
+  "border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring aria-invalid:border-destructive h-8 w-full rounded-lg border bg-transparent px-2 text-sm outline-none focus-visible:ring-3";
 
 export function InviteDialog() {
   const router = useRouter();

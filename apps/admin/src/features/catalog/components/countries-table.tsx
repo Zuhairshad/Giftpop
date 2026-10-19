@@ -43,7 +43,7 @@ export function CountriesTable({ countries }: { countries: readonly Country[] })
       </div>
 
       <div className="rounded-lg border">
-        <Table>
+        <Table label="Countries">
           <TableHeader>
             <TableRow>
               <TableHead>Country</TableHead>

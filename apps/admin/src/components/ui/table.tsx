@@ -3,15 +3,27 @@
 import { cn } from "cn";
 import * as React from "react";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+import { ScrollRegion } from "@/components/scroll-region";
+
+// a11y A6 (edited after generating; re-apply if regenerated): the scroller is a focusable, named
+// region and `label` is also the table's hidden caption.
+function Table({
+  className,
+  label,
+  children,
+  ...props
+}: React.ComponentProps<"table"> & { label: string }) {
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <ScrollRegion label={label}>
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
         {...props}
-      />
-    </div>
+      >
+        <caption className="sr-only">{label}</caption>
+        {children}
+      </table>
+    </ScrollRegion>
   );
 }
 

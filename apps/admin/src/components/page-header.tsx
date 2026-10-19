@@ -13,7 +13,7 @@ interface PageHeaderProps {
 export function PageHeader({ title, description, actions }: PageHeaderProps) {
   return (
     <header className="flex flex-wrap items-center gap-3 border-b px-4 py-3 md:px-6">
-      <SidebarTrigger aria-label="Toggle navigation" />
+      <SidebarTrigger />
       <Separator orientation="vertical" className="h-5" />
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-lg font-semibold">{title}</h1>

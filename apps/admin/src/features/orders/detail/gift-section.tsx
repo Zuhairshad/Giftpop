@@ -5,6 +5,7 @@ import { Field, Panel } from "./panel";
 import { ScenePanel } from "./scene-panel";
 import { itemRows, personalisationTexts, sceneInput } from "./view-model";
 
+import { ScrollRegion } from "@/components/scroll-region";
 import { formatMoney } from "@/lib/format";
 
 /** The gift exactly as ordered: drawn from snapshots, items, packaging and the texts to copy. */
@@ -18,7 +19,7 @@ export function GiftSection({ order }: { order: AdminOrderDetail }) {
       <div className="grid grid-cols-1 gap-4">
         <ScenePanel scene={sceneInput(order)} />
 
-        <div className="overflow-x-auto">
+        <ScrollRegion label="Items as ordered, with prices at the time of the order">
           <table className="w-full text-sm">
             <caption className="sr-only">
               Items as ordered, with prices at the time of the order
@@ -68,7 +69,7 @@ export function GiftSection({ order }: { order: AdminOrderDetail }) {
               </tr>
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
 
         <dl className="grid grid-cols-2 gap-3">
           <Field label="Wrapper colour">

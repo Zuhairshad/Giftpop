@@ -34,7 +34,7 @@ export function PriceGrid({ rows, errors, onChange, subject }: PriceGridProps) {
 
   return (
     <div className="grid grid-cols-1 gap-2">
-      <Table>
+      <Table label="Prices and stock by country">
         <TableHeader>
           <TableRow>
             <TableHead>Country</TableHead>

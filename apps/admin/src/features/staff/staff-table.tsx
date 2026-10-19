@@ -50,7 +50,7 @@ export function StaffTable({ staff, currentUserId }: StaffTableProps) {
   }
 
   return (
-    <Table>
+    <Table label="Staff">
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>

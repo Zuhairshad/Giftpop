@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { FormAlert } from "../../../catalog/components/field";
 import { describeActionError } from "../lib/action-errors";
 import { reviewPaymentProof } from "../lib/client";
+import { paymentHeading } from "../lib/focus";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +40,7 @@ export function ProofReview({
   const [error, setError] = useState<string>();
   const [confirming, setConfirming] = useState(false);
   const rejectRef = useRef<HTMLButtonElement>(null);
+  const reviewedRef = useRef(false);
 
   if (status !== "pending") {
     return <span className="text-muted-foreground text-sm">{DONE_TEXT[status]}</span>;
@@ -50,7 +52,11 @@ export function ProofReview({
     try {
       await reviewPaymentProof(orderId, proofId, { status: next });
       toast.success(next === "accepted" ? "Proof accepted" : "Proof rejected");
+      // The buttons are replaced by a word once the proof is reviewed, so move focus to the
+      // Payment heading, which stays.
+      reviewedRef.current = true;
       setConfirming(false);
+      paymentHeading()?.focus();
       router.refresh();
     } catch (cause) {
       setError(describeActionError(cause).message);
@@ -81,7 +87,9 @@ export function ProofReview({
       </div>
       {!confirming ? <FormAlert message={error} /> : null}
       <Dialog open={confirming} onOpenChange={setConfirming}>
-        <DialogContent finalFocus={rejectRef}>
+        <DialogContent
+          finalFocus={() => (reviewedRef.current ? paymentHeading() : rejectRef.current)}
+        >
           <DialogHeader>
             <DialogTitle>Reject this proof?</DialogTitle>
             <DialogDescription>

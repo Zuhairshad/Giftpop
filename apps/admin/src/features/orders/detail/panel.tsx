@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export function Panel({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <section aria-labelledby={id} className="bg-card min-w-0 rounded-xl border p-4">
-      <h2 id={id} className="mb-3 text-base font-semibold">
+      <h2 id={id} tabIndex={-1} className="mb-3 text-base font-semibold outline-none">
         {title}
       </h2>
       {children}

@@ -6,6 +6,7 @@ import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { keepTabInside } from "@/lib/focus-trap";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -57,6 +58,11 @@ function SheetContent({
           className,
         )}
         {...props}
+        // a11y A2 (edited after generating; re-apply if regenerated): keep Tab inside the modal.
+        onKeyDown={(event) => {
+          keepTabInside(event);
+          props.onKeyDown?.(event);
+        }}
       >
         {children}
         {showCloseButton && (

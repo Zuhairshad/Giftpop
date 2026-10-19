@@ -100,7 +100,7 @@ export function TemplatesManager() {
   return (
     <div className="grid grid-cols-1 gap-4">
       <div>
-        <Button onClick={() => openDialog(null)}>
+        <Button className="h-auto min-h-8 whitespace-normal" onClick={() => openDialog(null)}>
           <PlusIcon data-icon="inline-start" />
           Create from share link
         </Button>
