@@ -6,8 +6,8 @@ import type { ReactElement } from "react";
 
 import { SafeScene } from "../format/safe-scene";
 
-import { counterText } from "./items-copy";
-import type { ContinueState } from "./items-copy";
+import { counterText } from "@/features/builder/questions/items/items-copy";
+import type { ContinueState } from "@/features/builder/questions/items/items-copy";
 
 interface GiftSummaryProps {
   design: Design;

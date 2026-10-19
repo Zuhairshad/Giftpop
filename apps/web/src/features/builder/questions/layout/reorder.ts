@@ -7,13 +7,6 @@ export function stepTarget(index: number, direction: MoveDirection, length: numb
   return target < 0 || target >= length ? null : target;
 }
 
-/** Index to move to when a line is dropped on another, or null when nothing would change. */
-export function dropTarget(from: number | null, over: number, length: number): number | null {
-  if (from === null || from === over) return null;
-  if (from < 0 || from >= length || over < 0 || over >= length) return null;
-  return over;
-}
-
 /** A copy of `list` with the entry at `from` moved to `to`. Out-of-range moves return an unchanged copy. */
 export function moveInList<T>(list: readonly T[], from: number, to: number): T[] {
   const next = [...list];

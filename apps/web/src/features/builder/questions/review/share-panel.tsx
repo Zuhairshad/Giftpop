@@ -7,6 +7,7 @@ import type { ReactElement } from "react";
 
 import { describeSaveError, saveDesign } from "./save-design";
 
+import { buttonClass } from "@/components/ui";
 import { copyLink, copyMessage } from "@/features/share/copy-link";
 import { shareHref, shareUrl } from "@/features/share/links";
 
@@ -16,8 +17,7 @@ type SaveState =
   | { phase: "saved"; shareId: string; url: string }
   | { phase: "error"; message: string };
 
-const BUTTON =
-  "border-border bg-surface text-foreground hover:bg-surface-soft rounded-full border px-5 py-2.5 font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60";
+const BUTTON = buttonClass({ variant: "tint", size: "sm", className: "disabled:opacity-60" });
 
 type SharePanelProps = { country: CountryCode; design: Design };
 
@@ -56,9 +56,9 @@ export function SharePanel({ country, design }: SharePanelProps): ReactElement {
 
   return (
     <section aria-labelledby="share-heading" className="space-y-3">
-      <h2 id="share-heading" className="font-display text-2xl font-bold">
+      <h3 id="share-heading" className="text-foreground text-base font-semibold">
         Share this gift
-      </h2>
+      </h3>
       <p className="text-muted text-sm">
         Save your gift and send the link to anyone. They see it full screen and can order it too.
       </p>
@@ -84,7 +84,7 @@ export function SharePanel({ country, design }: SharePanelProps): ReactElement {
               readOnly
               value={state.url}
               onFocus={(event) => event.currentTarget.select()}
-              className="border-border bg-surface min-w-0 flex-1 rounded-soft border px-3 py-2.5 text-sm"
+              className="border-border-strong bg-surface min-h-11 min-w-0 flex-1 rounded-md border px-3 text-sm"
             />
             <button type="button" onClick={() => void onCopy(state.url)} className={BUTTON}>
               Copy link

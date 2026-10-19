@@ -14,3 +14,13 @@ export function readableInk(hex: string): "#000000" | "#ffffff" {
 export function sameColour(a: string | null | undefined, b: string | null | undefined): boolean {
   return !!a && !!b && a.toLowerCase() === b.toLowerCase();
 }
+
+/** Index a radio swatch moves to for an arrow, Home or End key (arrows wrap), or null for any other key. */
+export function nextSwatchIndex(current: number, key: string, count: number): number | null {
+  if (count <= 0) return null;
+  if (key === "Home") return 0;
+  if (key === "End") return count - 1;
+  if (key === "ArrowRight" || key === "ArrowDown") return (current + 1) % count;
+  if (key === "ArrowLeft" || key === "ArrowUp") return (current - 1 + count) % count;
+  return null;
+}

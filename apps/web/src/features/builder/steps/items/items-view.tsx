@@ -6,19 +6,20 @@ import type { ReactElement } from "react";
 import { StepProgressView } from "../../components/progress";
 import { stepHref } from "../../state";
 import type { BuilderApi } from "../../state";
-import { pickRangeCopy } from "../format/format-copy";
 
 import { CategoryTabs, panelId, tabId } from "./category-tabs";
 import { MobileSummary, SidebarSummary } from "./gift-summary";
 import { ItemCard } from "./item-card";
+import { ItemsSkeleton } from "./items-skeleton";
+
 import {
   ALL_CATEGORY,
   categoryTabs,
   continueState,
   filterItemsByCategory,
   quantityOf,
-} from "./items-copy";
-import { ItemsSkeleton } from "./items-skeleton";
+} from "@/features/builder/questions/items/items-copy";
+import { pickRangeCopy } from "@/features/builder/questions/packaging/format-copy";
 
 interface ItemsViewProps {
   builder: BuilderApi;

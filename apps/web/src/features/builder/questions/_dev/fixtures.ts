@@ -2,7 +2,13 @@
  * Test and dev only. A small catalog for unit tests and for the dev-only builder page.
  * Production code never imports from this folder.
  */
-import type { CatalogResponse, ItemShape, PricedItem, PricedPackaging } from "@giftpop/contracts";
+import type {
+  CatalogResponse,
+  ItemShape,
+  PackagingKind,
+  PricedItem,
+  PricedPackaging,
+} from "@giftpop/contracts";
 
 export function oid(n: number): string {
   return n.toString(16).padStart(24, "0");
@@ -26,6 +32,7 @@ interface PackagingSeed {
   capacity: number;
   price: number;
   inStock?: boolean;
+  kind?: PackagingKind;
   description?: string;
 }
 
@@ -38,7 +45,7 @@ function packaging(seed: PackagingSeed): PricedPackaging {
       slug: seed.name.toLowerCase().replace(/\s+/g, "-"),
       name: seed.name,
       description: seed.description ?? "",
-      kind: "box",
+      kind: seed.kind ?? "box",
       layoutType: seed.layoutType,
       minItems: seed.min,
       maxItems: seed.max,
@@ -61,6 +68,7 @@ interface ItemSeed {
   size: number;
   price: number;
   inStock?: boolean;
+  kind?: PackagingKind;
   image?: boolean;
 }
 
@@ -101,6 +109,7 @@ export const FIXTURE_PACKAGINGS: PricedPackaging[] = [
   packaging({
     n: 1,
     name: "Classic bouquet",
+    kind: "bouquet",
     layoutType: "bouquet-fan",
     min: 3,
     max: 7,
@@ -130,6 +139,7 @@ export const FIXTURE_PACKAGINGS: PricedPackaging[] = [
   packaging({
     n: 4,
     name: "Grand basket",
+    kind: "basket",
     layoutType: "box-grid",
     min: 8,
     max: 14,

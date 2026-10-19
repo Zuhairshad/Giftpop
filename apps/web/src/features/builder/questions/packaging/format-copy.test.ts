@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { FIXTURE_PACKAGINGS, fixtureCatalog, oid } from "../items/_dev/fixtures";
+import { FIXTURE_PACKAGINGS, fixtureCatalog, oid } from "../_dev/fixtures";
+import { priceLabel } from "../price-label";
 
 import {
   droppedItemNames,
@@ -9,7 +10,6 @@ import {
   pickRangeCopy,
   visiblePackagings,
 } from "./format-copy";
-import { priceLabel } from "./price-label";
 
 describe("pickRangeCopy", () => {
   it("says the range in plain words", () => {

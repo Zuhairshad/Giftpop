@@ -1,6 +1,24 @@
 import { describe, expect, it } from "vitest";
 
-import { readableInk, sameColour } from "./colours";
+import { nextSwatchIndex, readableInk, sameColour } from "./colours";
+
+describe("nextSwatchIndex", () => {
+  it("moves with arrows and wraps", () => {
+    expect(nextSwatchIndex(0, "ArrowRight", 3)).toBe(1);
+    expect(nextSwatchIndex(2, "ArrowRight", 3)).toBe(0);
+    expect(nextSwatchIndex(0, "ArrowLeft", 3)).toBe(2);
+    expect(nextSwatchIndex(1, "ArrowDown", 3)).toBe(2);
+    expect(nextSwatchIndex(1, "ArrowUp", 3)).toBe(0);
+  });
+  it("jumps with Home and End", () => {
+    expect(nextSwatchIndex(1, "Home", 4)).toBe(0);
+    expect(nextSwatchIndex(1, "End", 4)).toBe(3);
+  });
+  it("ignores other keys and an empty palette", () => {
+    expect(nextSwatchIndex(0, "a", 3)).toBeNull();
+    expect(nextSwatchIndex(0, "ArrowRight", 0)).toBeNull();
+  });
+});
 
 describe("readableInk", () => {
   it("picks dark ink on light colours and light ink on dark colours", () => {

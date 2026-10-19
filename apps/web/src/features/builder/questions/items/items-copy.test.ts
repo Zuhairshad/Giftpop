@@ -1,7 +1,8 @@
 import type { DesignProblem } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
-import { FIXTURE_ITEMS, fixtureCatalog, oid } from "./_dev/fixtures";
+import { FIXTURE_ITEMS, fixtureCatalog, oid } from "../_dev/fixtures";
+
 import {
   ALL_CATEGORY,
   addControlState,

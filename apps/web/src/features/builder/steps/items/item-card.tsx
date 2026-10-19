@@ -4,16 +4,15 @@ import type { PricedItem } from "@giftpop/contracts";
 import { useId, useRef } from "react";
 import type { ReactElement } from "react";
 
-import { priceLabel } from "../format/price-label";
-
-import { ItemArt } from "./item-art";
+import { ItemArt } from "@/features/builder/questions/items/item-art";
 import {
   addControlState,
   addLabel,
   quantityLabel,
   stepperAddLabel,
   stepperRemoveLabel,
-} from "./items-copy";
+} from "@/features/builder/questions/items/items-copy";
+import { priceLabel } from "@/features/builder/questions/price-label";
 
 interface ItemCardProps {
   entry: PricedItem;

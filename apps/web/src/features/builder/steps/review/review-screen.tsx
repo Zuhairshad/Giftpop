@@ -7,10 +7,10 @@ import { StepProgress } from "../../components/progress";
 import { stepHref } from "../../state";
 import type { BuilderApi } from "../../state";
 
-import { PriceSection } from "./price-section";
 import { buildPersonalisationRows, buildReviewLines } from "./review-lines";
-import { SharePanel } from "./share-panel";
 
+import { PriceSection } from "@/features/builder/questions/review/price-section";
+import { SharePanel } from "@/features/builder/questions/review/share-panel";
 import { checkoutHref } from "@/features/share/links";
 import { optimisedImageUrl } from "@/lib/image-url";
 

@@ -91,6 +91,40 @@ export function nextTabIndex(current: number, key: TabKey, count: number): numbe
   return (current + step + count) % count;
 }
 
+/** "2 spaces left", "1 space left", or "No spaces left". Never negative. */
+export function spacesLeftText(count: number, maxItems: number): string {
+  const left = Math.max(0, maxItems - count);
+  if (left === 0) return "No spaces left";
+  return `${left} ${left === 1 ? "space" : "spaces"} left`;
+}
+
+/** Share of the maximum that is picked, 0 to 100, for the counter's progress bar. */
+export function counterPercent(count: number, maxItems: number): number {
+  if (maxItems <= 0) return 0;
+  return Math.min(100, Math.max(0, Math.round((count / maxItems) * 100)));
+}
+
+/** The minimum is met, so the counter shows its check. */
+export function minimumMet(count: number, minItems: number): boolean {
+  return count >= minItems;
+}
+
+/**
+ * How many picks sit in one tab, for its badge: the sum of quantities of items in that category.
+ * "All" has no badge of its own (the counter already says it), so it answers 0.
+ */
+export function pickedInCategory(
+  lines: readonly DesignItem[],
+  items: readonly PricedItem[],
+  category: string,
+): number {
+  if (category === ALL_CATEGORY) return 0;
+  const inCategory = new Set(
+    items.filter((entry) => entry.item.category === category).map((entry) => entry.item.id),
+  );
+  return lines.reduce((sum, line) => sum + (inCategory.has(line.itemId) ? line.qty : 0), 0);
+}
+
 /** Text limits are fixed on the personalise step; every other problem is about the gift itself. */
 const NOT_BLOCKING: readonly DesignProblemCode[] = ["TEXT_TOO_LONG"];
 
