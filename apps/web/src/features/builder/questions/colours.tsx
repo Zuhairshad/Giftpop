@@ -4,7 +4,6 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-import { coloursReady } from "./can-continue";
 import { SwatchGroup } from "./colours/swatch-group";
 
 /** Question 2 body: wrapper and ribbon colours. The overview recolours as soon as one is picked. */
@@ -32,9 +31,4 @@ export function ColoursBody(): ReactElement {
       />
     </div>
   );
-}
-
-/** Both colours are chosen (the store defaults each to the packaging's first colour). */
-export function useColoursCanContinue(): boolean {
-  return coloursReady(useBuilder());
 }

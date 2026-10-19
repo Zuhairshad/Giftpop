@@ -6,7 +6,6 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-import { packagingReady } from "./can-continue";
 import { useQuestionData } from "./data-context";
 import { droppedItemNames, droppedItemsNotice, visiblePackagings } from "./packaging/format-copy";
 import { groupPackagings } from "./packaging/groups";
@@ -70,9 +69,4 @@ export function PackagingBody(): ReactElement {
       <TemplatesSection country={country} templates={templates} />
     </div>
   );
-}
-
-/** A packaging is chosen. */
-export function usePackagingCanContinue(): boolean {
-  return packagingReady(useBuilder());
 }

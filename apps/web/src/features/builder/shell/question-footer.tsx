@@ -9,13 +9,18 @@ import { useBuilder } from "../state";
 
 import { Button } from "@/components/ui";
 
+// Phones: shares the row with Back, at most 260px wide.
+const PRIMARY =
+  "max-w-[260px] min-w-0 flex-1 min-[900px]:max-w-none min-[900px]:flex-initial min-[900px]:px-8";
+
 /**
- * Back (ghost, not on the first question) and the one primary button, which names the next move.
+ * Back (ghost, not on the first question) and the one primary action, which names the next move
+ * (the question's own `Action` when it has one).
  * Mount one per question (`key`): the registry's `useCanContinue` is a hook of that question.
  */
 export function QuestionFooter({ question }: { question: QuestionId }): ReactElement {
   const { previousQuestion, nextQuestion } = useBuilder();
-  const { continueLabel, ownsActions, useCanContinue } = getQuestion(question);
+  const { continueLabel, Action, useCanContinue } = getQuestion(question);
   const canContinue = useCanContinue();
   const isFirst = questionIndex(question) === 0;
 
@@ -24,17 +29,14 @@ export function QuestionFooter({ question }: { question: QuestionId }): ReactEle
       {isFirst ? (
         <span />
       ) : (
-        <Button variant="ghost" size="sm" onClick={previousQuestion} className="px-3">
+        <Button variant="ghost" size="sm" onClick={previousQuestion} className="shrink-0 px-3">
           <span aria-hidden="true">&larr;</span> Back
         </Button>
       )}
-      {ownsActions ? null : (
-        <Button
-          size="md"
-          disabled={!canContinue}
-          onClick={nextQuestion}
-          className="max-w-[260px] min-w-0 flex-1 min-[900px]:max-w-none min-[900px]:flex-initial min-[900px]:px-8"
-        >
+      {Action ? (
+        <Action className={PRIMARY} />
+      ) : (
+        <Button size="md" disabled={!canContinue} onClick={nextQuestion} className={PRIMARY}>
           {continueLabel}
         </Button>
       )}

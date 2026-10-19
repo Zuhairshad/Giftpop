@@ -1,12 +1,14 @@
 "use client";
 
 import { useIsPresent } from "motion/react";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { createElement, useEffect, useEffectEvent, useRef } from "react";
 import type { ReactElement } from "react";
 
+import { useQuestionBody } from "../questions/body-loader";
 import type { QuestionId } from "../questions/ids";
 import { getQuestion } from "../questions/registry";
 
+import { BodySkeleton } from "./body-skeleton";
 import { questionProgress } from "./progress-model";
 
 interface LayerContentProps {
@@ -17,13 +19,20 @@ interface LayerContentProps {
   onNaturalHeight: (height: number) => void;
 }
 
+/** The question's body once its chunk is here, a skeleton until then. */
+function QuestionBody({ question }: { question: QuestionId }): ReactElement {
+  const body = useQuestionBody(question);
+  // `body` is a module-level component from the registry, never one made during render.
+  return body ? createElement(body) : <BodySkeleton />;
+}
+
 /** One question: its title and its body. The body scrolls inside the surface when it is taller than the space. */
 export function LayerContent({
   question,
   focusOnMount,
   onNaturalHeight,
 }: LayerContentProps): ReactElement {
-  const { title, Body } = getQuestion(question);
+  const { title } = getQuestion(question);
   const isPresent = useIsPresent();
   const titleBlock = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -71,7 +80,7 @@ export function LayerContent({
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 min-[900px]:px-6">
         <div ref={body} className="pb-2">
-          <Body />
+          <QuestionBody question={question} />
         </div>
       </div>
     </div>

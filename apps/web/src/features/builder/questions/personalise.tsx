@@ -6,7 +6,6 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-import { personaliseReady } from "./can-continue";
 import { LimitedField } from "./personalise/limited-field";
 import { nameableItems } from "./personalise/limits";
 
@@ -57,9 +56,4 @@ export function PersonaliseBody(): ReactElement {
       ) : null}
     </div>
   );
-}
-
-/** Every text is within its limit (the fields cut to fit, so this holds unless saved data is off). */
-export function usePersonaliseCanContinue(): boolean {
-  return personaliseReady(useBuilder());
 }
