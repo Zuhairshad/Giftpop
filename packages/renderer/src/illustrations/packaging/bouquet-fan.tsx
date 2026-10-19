@@ -1,16 +1,10 @@
-import {
-  PackagingBackPlaceholder,
-  PackagingFrontPlaceholder,
-} from "../../placeholders/PackagingPlaceholder";
-import type { PackagingIllustration, PackagingIllustrationProps } from "../types";
+import type { PackagingIllustration } from "../types";
 
-/** STUB: wraps the old wrapper art. The illustrations slice replaces both layers with the real art. */
-function Back(props: PackagingIllustrationProps) {
-  return <PackagingBackPlaceholder layoutType="bouquet-fan" {...props} />;
-}
+import { BouquetFanBack } from "./bouquet-fan-back";
+import { BouquetFanFront } from "./bouquet-fan-front";
 
-function Front(props: PackagingIllustrationProps) {
-  return <PackagingFrontPlaceholder layoutType="bouquet-fan" {...props} />;
-}
-
-export const BouquetFanIllustration: PackagingIllustration = { Back, Front };
+/** A hand-tied bouquet wrapper: pleated paper behind the blooms, cellophane panels and a bow in front. */
+export const BouquetFanIllustration: PackagingIllustration = {
+  Back: BouquetFanBack,
+  Front: BouquetFanFront,
+};

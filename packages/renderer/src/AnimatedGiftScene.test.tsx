@@ -183,10 +183,10 @@ describe("AnimatedGiftScene images", () => {
     const back = () => container.querySelector("[data-layer='back']");
     expect(back()?.querySelector("image")?.getAttribute("width")).toBe("1000");
     // The placeholder is drawn under the pending image, and stays after a failure.
-    expect(back()?.querySelector("rect")).not.toBeNull();
+    expect(back()?.querySelector("[data-art='back']")).not.toBeNull();
     fireEvent.error(back()?.querySelector("image") as Element);
     expect(back()?.querySelector("image")).toBeNull();
-    expect(back()?.querySelector("rect")).not.toBeNull();
+    expect(back()?.querySelector("[data-art='back']")).not.toBeNull();
   });
 
   it("waits until the scene is near the viewport before fetching", () => {

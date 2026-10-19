@@ -1,16 +1,10 @@
-import {
-  PackagingBackPlaceholder,
-  PackagingFrontPlaceholder,
-} from "../../placeholders/PackagingPlaceholder";
-import type { PackagingIllustration, PackagingIllustrationProps } from "../types";
+import type { PackagingIllustration } from "../types";
 
-/** STUB: wraps the old wrapper art. The illustrations slice replaces both layers with the real art. */
-function Back(props: PackagingIllustrationProps) {
-  return <PackagingBackPlaceholder layoutType="box-grid" {...props} />;
-}
+import { BoxGridBack } from "./box-grid-back";
+import { BoxGridFront } from "./box-grid-front";
 
-function Front(props: PackagingIllustrationProps) {
-  return <PackagingFrontPlaceholder layoutType="box-grid" {...props} />;
-}
-
-export const BoxGridIllustration: PackagingIllustration = { Back, Front };
+/** An open gift box seen from slightly above: interior behind the items, rim and ribbon in front. */
+export const BoxGridIllustration: PackagingIllustration = {
+  Back: BoxGridBack,
+  Front: BoxGridFront,
+};
