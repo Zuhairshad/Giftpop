@@ -32,31 +32,57 @@ type GiftRevealProps = {
   details: ReactNode;
 };
 
+/** A circular arrow: "play it again". Decorative, the button label says what it does. */
+function ReplayIcon(): ReactElement {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      className="size-4 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4.5 10a5.5 5.5 0 1 0 1.7-4" />
+      <path d="M4.5 3.5v3h3" />
+    </svg>
+  );
+}
+
 /** Animates the gift in, then the details. Under `prefers-reduced-motion` nothing moves. */
 export function GiftReveal({ scene, details }: GiftRevealProps): ReactElement {
   const [run, setRun] = useState(0);
 
   return (
-    <div>
+    <div className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-12">
       <style>{REVEAL_CSS}</style>
-      {/* The key remounts the block, which restarts both animations. */}
-      <div
-        key={run}
-        className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-12"
-      >
-        <div className="gp-reveal-scene relative isolate mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]">
+      <div className="flex flex-col items-center gap-3">
+        {/* The key remounts the drawing and the details, which restarts both animations. */}
+        <div
+          key={`scene-${run}`}
+          className="gp-reveal-scene relative isolate mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]"
+        >
           <span
             aria-hidden="true"
             className="bg-pink-soft absolute inset-[4%] -z-10 rounded-full"
           />
           {scene}
         </div>
-        <div className="gp-reveal-details">{details}</div>
-      </div>
-      <div className="mt-6 text-center motion-reduce:hidden">
-        <Button variant="ghost" size="sm" onClick={() => setRun((n) => n + 1)}>
+        {/* Outside the keyed blocks, so focus stays on the button after a replay. */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gp-reveal-details shadow-hairline motion-reduce:hidden"
+          onClick={() => setRun((n) => n + 1)}
+        >
+          <ReplayIcon />
           Watch the reveal again
         </Button>
+      </div>
+      <div key={`details-${run}`} className="gp-reveal-details min-w-0">
+        {details}
       </div>
     </div>
   );

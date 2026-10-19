@@ -1,5 +1,7 @@
 import type { CountryCode, ShareId } from "@giftpop/contracts";
 
+import { builderHref } from "@/features/builder/state";
+
 /** Path of the shared gift page, for example `/g/abc123XYZ_`. */
 export function shareHref(shareId: ShareId): string {
   return `/g/${shareId}`;
@@ -10,19 +12,19 @@ export function shareUrl(origin: string, shareId: ShareId): string {
   return `${origin.replace(/\/+$/, "")}${shareHref(shareId)}`;
 }
 
-/** "Order this gift": the review step loads the shared design from `?from=`. */
+/** "Order this gift": the builder loads the shared design from `?from=`. */
 export function orderThisGiftHref(country: CountryCode, shareId: ShareId): string {
-  return `/${country.toLowerCase()}/build/review?from=${encodeURIComponent(shareId)}`;
+  return builderHref(country, shareId);
 }
 
-/** "Make your own": start the builder at the first step. */
+/** "Make your own": an empty builder. */
 export function makeYourOwnHref(country: CountryCode): string {
-  return `/${country.toLowerCase()}/build/format`;
+  return builderHref(country);
 }
 
-/** The review step without any `?from=`. */
+/** The builder without any `?from=`, where a loaded design lands. */
 export function reviewHref(country: CountryCode): string {
-  return `/${country.toLowerCase()}/build/review`;
+  return builderHref(country);
 }
 
 /** Checkout page (arrives in phase 3). */
