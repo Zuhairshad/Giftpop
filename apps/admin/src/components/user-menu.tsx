@@ -41,9 +41,7 @@ export function UserMenu({ user }: UserMenuProps) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={<SidebarMenuButton size="lg" />}
-          >
+          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
             {/* No aria-label: the name starts with the visible text, so voice control matches it. */}
             <span className="flex min-w-0 flex-1 flex-col text-left leading-tight">
               <span className="truncate font-medium">{user.name}</span>
