@@ -1,7 +1,7 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
 import { cameraDistance, placeCamera } from "./camera";
-import { CAMERA } from "./constants";
+import { CAMERA, IDLE_RENDER } from "./constants";
 import { buildRig } from "./rig";
 import { loadSpriteArt } from "./sprite-art";
 import { heroStateAt } from "./timeline";
@@ -80,8 +80,13 @@ export async function startHero(
   let last: number | null = null;
   let frame = 0;
   let firstFrameSent = false;
+  let lastRendered = 0;
   const draw = (now: number) => {
     frame = requestAnimationFrame(draw);
+    // After the drop has settled, only the slow idle float is left: render at a lower rate.
+    if (elapsed > IDLE_RENDER.afterSeconds && now - lastRendered < 1000 / IDLE_RENDER.fps - 2)
+      return;
+    lastRendered = now;
     elapsed += last === null ? 0 : Math.min((now - last) / 1000, MAX_STEP);
     last = now;
     const state = heroStateAt(elapsed);

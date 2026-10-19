@@ -49,7 +49,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
-      aria-label="The Giftpop, home"
+      aria-label="the gift pop, home"
       className={cn(
         "text-primary-pressed -mx-1 inline-flex min-h-11 items-center gap-2 rounded-md px-1 no-underline",
         className,

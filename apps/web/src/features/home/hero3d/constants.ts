@@ -49,6 +49,13 @@ export const IDLE = {
   cameraPeriod: 14,
   cameraDriftDeg: 1.5,
 } as const;
+/**
+ * Keeping the page responsive: the scene starts this long after the window `load` event (then waits for
+ * idle), so hydration, first paint and the first taps never compete with building the scene.
+ */
+export const START_AFTER_LOAD_MS = 2500;
+/** Once everything has settled the idle float only needs a gentle frame rate (saves battery on phones). */
+export const IDLE_RENDER = { afterSeconds: IDLE.rampEnd + 0.4, fps: 30 } as const;
 /** Hard budget from the brief: the resting state is reached before this. */
 export const REST_BUDGET_SECONDS = 4;
 

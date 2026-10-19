@@ -1,4 +1,13 @@
-import { CAMERA, DROP, IDLE, LID, LID_CLOSED, LID_CLOSED_SCALE, LID_REST, RIBBON } from "./constants";
+import {
+  CAMERA,
+  DROP,
+  IDLE,
+  LID,
+  LID_CLOSED,
+  LID_CLOSED_SCALE,
+  LID_REST,
+  RIBBON,
+} from "./constants";
 import { boxMotionAt, CONTACTS, LAST_CONTACT, WOBBLE_END } from "./drop-physics";
 import { clamp01, easeInOutCubic, easeOutBack, easeOutCubic, lerp, smoothstep } from "./easing";
 import { degToRad } from "./layout";
@@ -90,7 +99,10 @@ function ringAt(t: number): { scale: number; opacity: number } {
     const dt = t - c.start;
     if (dt >= 0 && dt < RING_DURATION) {
       const u = dt / RING_DURATION;
-      return { scale: 0.8 + 1.4 * easeOutCubic(u), opacity: (RING_STRENGTH[k] ?? 0) * (1 - u) * (1 - u) };
+      return {
+        scale: 0.8 + 1.4 * easeOutCubic(u),
+        opacity: (RING_STRENGTH[k] ?? 0) * (1 - u) * (1 - u),
+      };
     }
   }
   return { scale: 1, opacity: 0 };

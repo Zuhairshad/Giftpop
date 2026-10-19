@@ -47,4 +47,31 @@ export function whenIdle(host: IdleHost, cb: () => void, timeout = 1200): () => 
   return () => host.clearTimeout(handle);
 }
 
+interface LoadHost extends IdleHost {
+  document: { readyState: string };
+  addEventListener: (type: "load", listener: () => void, options?: { once: boolean }) => void;
+  removeEventListener: (type: "load", listener: () => void) => void;
+}
+
+/**
+ * Runs `cb` once the page has loaded, `delayMs` later, when the browser is idle. Returns a cancel
+ * function that stops whichever stage is still pending.
+ */
+export function whenLoadedThenIdle(host: LoadHost, delayMs: number, cb: () => void): () => void {
+  let timer: number | undefined;
+  let cancelIdle: () => void = () => undefined;
+  const start = () => {
+    timer = host.setTimeout(() => {
+      cancelIdle = whenIdle(host, cb);
+    }, delayMs);
+  };
+  if (host.document.readyState === "complete") start();
+  else host.addEventListener("load", start, { once: true });
+  return () => {
+    host.removeEventListener("load", start);
+    if (timer !== undefined) host.clearTimeout(timer);
+    cancelIdle();
+  };
+}
+
 export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";

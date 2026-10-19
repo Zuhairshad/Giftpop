@@ -2,9 +2,8 @@
 
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 
-
-import { hasWebGL, REDUCED_MOTION_QUERY, whenIdle } from "./capabilities";
-import { POSTER_VIEWBOX } from "./constants";
+import { hasWebGL, REDUCED_MOTION_QUERY, whenLoadedThenIdle } from "./capabilities";
+import { POSTER_VIEWBOX, START_AFTER_LOAD_MS } from "./constants";
 import { HeroErrorBoundary } from "./hero-error-boundary";
 import { Poster } from "./poster";
 
@@ -58,11 +57,11 @@ export function HeroStage({ className }: { className?: string }) {
     return () => query.removeEventListener("change", sync);
   }, []);
 
-  // Once motion is allowed: wait for idle, test WebGL, wait for a visible tab, then arm the canvas.
+  // Once motion is allowed: wait for load and idle, test WebGL, wait for a visible tab, then arm the canvas.
   useEffect(() => {
     if (reduced !== false || armed || failed) return;
     let stopVisible: (() => void) | undefined;
-    const stopIdle = whenIdle(window, () => {
+    const stopIdle = whenLoadedThenIdle(window, START_AFTER_LOAD_MS, () => {
       if (!hasWebGL(document)) {
         setFailed(true);
         return;

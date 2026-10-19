@@ -170,9 +170,7 @@ export function buildRig(art: SpriteArt): Rig {
       const mesh = sparkles[i];
       if (!s || !mesh) return;
       mesh.visible = s.scale > 0.001;
-      mesh.scale.setScalar(
-        Math.max(def.size * 0.02 * s.scale, 1e-4),
-      );
+      mesh.scale.setScalar(Math.max(def.size * 0.02 * s.scale, 1e-4));
       mesh.rotation.z = s.rotZ;
     });
   };

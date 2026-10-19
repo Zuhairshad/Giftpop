@@ -30,23 +30,30 @@ Until a card gateway is chosen, "pay now" means a manual transfer using the coun
 
 Payment status is separate from order status: `unpaid`, `advance_paid`, `paid`, `refunded`.
 
-## Gift builder (digibouquet-style)
+## Gift builder (guided questions over a live overview)
 
-Steps, in order. Each is its own screen with a progress indicator and a back button.
-1. **Country** (skipped if already chosen).
-2. **Format**: pick a packaging (bouquet, box, basket...). Each packaging has `layoutType`, `minItems`, `maxItems` (for example "Pick 6 to 10"), `capacityUnits`, colour options for wrapper and ribbon, and layer images.
-3. **Pick items**: category tabs, a live counter ("4 of 6–10 picked"). Items that cannot be added stay visible but disabled with a reason ("Box is full", "Not available in Pakistan", "Out of stock").
-4. **Arrange**: the gift renders live with `<GiftScene/>`. The customer can shuffle the arrangement, reorder items, and change wrapper and ribbon colours. Placement is slot-based from the layout function, never free drag.
-5. **Personalise**: card message (max 200 chars), recipient name (max 40), and a name on any item marked `personalizable` (its own max length).
-6. **Review**: the scene, a price breakdown from the API quote for both payment modes side by side, "Save and share" (creates a share link), "Continue to checkout".
+The builder is one page, `/<country>/build`. A live **overview** of the gift (`<GiftScene/>`) stays on screen the whole time; each question appears in a **question surface**: a bottom sheet on phones (below 900px) and a floating card beside the overview on desktop. Every answer updates the overview at once. Questions lead into each other with a spring transition and Back reverses it; a six-segment progress bar and "Question 3 of 6" show where you are. The country is chosen before the builder (the home page of a country is `/<cc>`).
+
+1. **"What should your gift come in?"** Packagings from the database, grouped by their `kind` (box, bouquet, basket, mug, other). Each has `layoutType`, `minItems`, `maxItems` (for example "Pick 6 to 10"), `capacityUnits`, colour options for wrapper and ribbon, and layer images. Above the groups, **"Start from a ready-made gift"**: the featured templates for the country; "Start from this" opens the builder pre-filled on the review question.
+2. **"Pick your colours"**: wrapper and ribbon from the packaging's colour options; the overview recolours live.
+3. **"What goes inside?"**: category tabs, a live counter ("4 of 6-10 picked", "N spaces left"). Items that cannot be added stay visible but disabled with a reason ("Box is full", "Not available in Pakistan", "Out of stock"). Items animate into the overview.
+4. **"Happy with the layout?"**: shuffle, and reorder with "Move up" / "Move down" buttons. Placement is slot-based from the layout function, never free drag.
+5. **"Who's it for?"**: recipient name (max 40), card message (max 200), and a name on any item marked `personalizable` (its own max length).
+6. **Review**: your card (recipient and message), the price breakdown from the API quote for both payment modes side by side, "Save and share" (creates a share link), "Continue to checkout".
+
+Back keeps every answer. A visitor who reloads returns to their question with their answers (saved per country in the browser). The old per-step addresses (`/build/format`, `/build/items`, ...) redirect to `/<cc>/build`.
 
 A saved design gets a `shareId`. `/g/<shareId>` shows the gift full-screen with "Order this gift" and "Make your own".
 
-Rules the API enforces on every design: item count within min/max, total `sizeUnits` within `capacityUnits`, every item active and in stock for the country, personalisation within limits, packaging available in the country.
+Rules the API enforces on every design: item count within min/max, total `sizeUnits` within `capacityUnits`, every item active and in stock for the country, personalisation within limits, packaging available in the country. The browser never sends a price.
+
+## Home page
+
+Exactly one screen (`100dvh`, no scroll at any size): an `h1` that names what we sell and the customer's country (from the country document), one supporting line, one primary button "Build your gift", the 3D gift hero (a static poster first; the animation starts after the page has loaded and is skipped for reduced motion or when WebGL is unavailable), reassurance ticks taken from the country data (delivery days, cash on delivery when the country allows it), and a slim footer bar. Featured templates are not on the home page; they live in the builder's first question.
 
 ## Assets
 
-Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders a placeholder silhouette chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, other) and `color`.
+Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders one illustration chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, other), tinted by its `color`; a packaging with no layer images renders one illustration per `layoutType`, tinted by the chosen wrapper and ribbon colours. A real uploaded image always wins over the illustration.
 
 ## Orders
 
@@ -87,4 +94,4 @@ Staff move each request through `new`, `in_talks`, `accepted`, `declined`, with 
 
 ## Featured templates
 
-Staff can mark a saved design as a featured template with a title and a country list. The home page shows templates for the customer's country; "Start from this" opens the builder pre-filled.
+Staff can mark a saved design as a featured template with a title and a country list. The builder's first question shows templates for the customer's country; "Start from this" opens the builder pre-filled on the review question.

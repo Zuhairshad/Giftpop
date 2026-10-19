@@ -161,13 +161,15 @@ export function buildBox(owner: Owner, tagTexture: Texture): BoxParts {
     owner.geometry(
       new PlaneGeometry((GIFT_TAG.width * GIFT_TAG.scale) / 100, (70 * GIFT_TAG.scale) / 100),
     ),
-    owner.material(new MeshBasicMaterial({
+    owner.material(
+      new MeshBasicMaterial({
         map: tagTexture,
         transparent: true,
         premultipliedAlpha: true,
         alphaTest: 0.04,
         side: DoubleSide,
-      })),
+      }),
+    ),
   );
   tag.position.set(tagWorld.x, tagWorld.y - BOX.floorY, depth / 2 + 0.2);
   tag.rotation.z = (-GIFT_TAG.rotDeg * Math.PI) / 180;
