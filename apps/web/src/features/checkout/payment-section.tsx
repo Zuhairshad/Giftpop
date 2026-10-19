@@ -15,13 +15,15 @@ function Line({
   label,
   value,
   strong = false,
+  className = "",
 }: {
   label: string;
   value: string;
   strong?: boolean;
+  className?: string;
 }): ReactElement {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+    <div className={`flex flex-wrap items-baseline justify-between gap-x-3 ${className}`}>
       <dt className={strong ? "font-bold" : "text-muted"}>{label}</dt>
       <dd className={`ml-auto tabular-nums ${strong ? "font-bold" : ""}`}>{value}</dd>
     </div>
@@ -69,9 +71,12 @@ function Card({
         {card.rows.map((row) => (
           <Line key={row.label} label={row.label} value={rowValue(row, card.currency)} />
         ))}
-        <div className="border-border border-t pt-1.5">
-          <Line label={card.total.label} value={money(card.total.minor)} strong />
-        </div>
+        <Line
+          label={card.total.label}
+          value={money(card.total.minor)}
+          strong
+          className="border-border border-t pt-1.5"
+        />
       </dl>
       <dl className="bg-surface space-y-1.5 rounded-soft p-3 text-sm">
         <Line label={card.dueNow.label} value={money(card.dueNow.minor)} strong />

@@ -9,12 +9,11 @@ export function FormatStrip({ cards }: { cards: FormatCardModel[] }) {
         Pick a gift format
       </h2>
       <p className="text-muted mt-2">Every format is made and packed by hand.</p>
-      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <li key={card.id}>
             <Link
               href={card.href}
-              aria-label={`${card.name}. ${card.pickCopy}. ${card.priceCopy}. Choose this format`}
               className="border-border bg-surface rounded-card hover:bg-surface-soft flex h-full gap-4 border p-5 transition-colors"
             >
               <svg
@@ -38,7 +37,9 @@ export function FormatStrip({ cards }: { cards: FormatCardModel[] }) {
                 {card.description ? (
                   <span className="text-muted block text-sm wrap-anywhere">{card.description}</span>
                 ) : null}
-                <span className="text-muted mt-1 block text-sm">{card.priceCopy}</span>
+                <span className="text-muted mt-1 block text-sm wrap-anywhere">
+                  {card.priceCopy}
+                </span>
               </span>
             </Link>
           </li>

@@ -16,8 +16,8 @@
   --gp-ink-soft: #6d5260;
 
   /* Giftpop pink accent */
-  --gp-pink: #e8336d;
-  --gp-pink-strong: #c41f56;
+  --gp-pink: #d42760;
+  --gp-pink-strong: #b01c4f;
   --gp-pink-soft: #ffd3e0;
   --gp-on-pink: #ffffff;
 
@@ -26,6 +26,7 @@
   --gp-mint: #bfeed8;
   --gp-sky: #c9e4ff;
   --gp-lilac: #dccbff;
+  --gp-on-accent: #3a2230;
 
   /* Focus ring */
   --gp-focus: #1d4ed8;
@@ -58,6 +59,7 @@
     --gp-mint: #4f9c7f;
     --gp-sky: #5b8fc4;
     --gp-lilac: #8c74c9;
+    --gp-on-accent: #1d1219;
 
     --gp-focus: #93b4ff;
 

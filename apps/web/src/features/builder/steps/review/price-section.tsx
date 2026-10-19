@@ -12,13 +12,15 @@ function Row({
   label,
   children,
   strong = false,
+  className = "",
 }: {
   label: string;
   children: string;
   strong?: boolean;
+  className?: string;
 }): ReactElement {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+    <div className={`flex flex-wrap items-baseline justify-between gap-x-2 ${className}`}>
       <dt className={strong ? "font-bold" : "text-muted"}>{label}</dt>
       <dd className={`ml-auto tabular-nums ${strong ? "font-bold" : ""}`}>{children}</dd>
     </div>
@@ -49,11 +51,9 @@ function Column({ column }: { column: PriceColumn }): ReactElement {
             {rowValue(row, column.currency)}
           </Row>
         ))}
-        <div className="border-border border-t pt-1.5">
-          <Row label={column.total.label} strong>
-            {money(column.total.minor)}
-          </Row>
-        </div>
+        <Row label={column.total.label} strong className="border-border border-t pt-1.5">
+          {money(column.total.minor)}
+        </Row>
       </dl>
       <dl className="bg-surface-soft rounded-soft mt-3 space-y-1.5 p-2.5 text-sm sm:p-3 sm:text-base">
         <Row label={column.dueNow.label} strong>

@@ -52,8 +52,8 @@ const DONE: readonly OrderStatus[] = ["delivered"];
 
 /** Tailwind classes for the status pill. Never colour alone: the label always shows. */
 export function statusTone(status: OrderStatus): string {
-  if (ISSUE.includes(status)) return "bg-butter text-foreground";
-  if (DONE.includes(status)) return "bg-mint text-foreground";
+  if (ISSUE.includes(status)) return "bg-butter text-on-accent";
+  if (DONE.includes(status)) return "bg-mint text-on-accent";
   return "bg-pink-soft text-foreground";
 }
 

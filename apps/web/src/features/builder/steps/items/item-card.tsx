@@ -59,7 +59,7 @@ export function ItemCard({
           type="button"
           aria-disabled={!control.canAdd}
           aria-describedby={control.reason ? reasonId : undefined}
-          aria-label={`${addLabel(item.name, qty)}, ${price}`}
+          aria-label={`${addLabel(item.name, qty)} ${price}`}
           onClick={add}
           className={`rounded-card flex flex-1 flex-col items-center gap-1 p-3 text-center ${
             control.canAdd ? "hover:bg-surface-soft cursor-pointer" : "cursor-not-allowed"
@@ -71,6 +71,7 @@ export function ItemCard({
           <span aria-hidden="true" className="text-foreground text-sm leading-tight font-semibold">
             {item.name}
           </span>
+          {/* A real space, so the visible text reads "Rose PKR 840.00" like the accessible name. */}{" "}
           <span aria-hidden="true" className="text-pink-strong text-sm font-bold">
             {price}
           </span>

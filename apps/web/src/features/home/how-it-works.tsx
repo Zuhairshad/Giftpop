@@ -45,11 +45,11 @@ export function HowItWorks() {
       <h2 id="how-it-works-heading" className="font-display text-3xl font-bold">
         How it works
       </h2>
-      <ol className="mt-6 grid gap-4 sm:grid-cols-3">
+      <ol className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {STEPS.map((step, index) => (
           <li
             key={step.title}
-            className="border-border bg-surface rounded-card flex gap-4 border p-5 sm:flex-col"
+            className="border-border bg-surface rounded-card flex flex-wrap gap-4 border p-5 sm:flex-col sm:flex-nowrap"
           >
             <svg
               viewBox="0 0 120 120"
@@ -61,7 +61,7 @@ export function HowItWorks() {
             >
               {step.art}
             </svg>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1 basis-40 wrap-anywhere">
               <h3 className="font-display text-xl font-bold">
                 <span className="text-pink-strong">{index + 1}.</span> {step.title}
               </h3>

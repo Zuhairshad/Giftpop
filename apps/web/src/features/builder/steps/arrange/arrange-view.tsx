@@ -49,13 +49,13 @@ export function ArrangeView({ builder }: { builder: ArrangeBuilder }) {
 
   if (!packaging || !design) {
     return (
-      <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
         <StepProgress current="arrange" />
         <p className="mt-6 text-lg">Pick a format and some items first, then come back here.</p>
         <Link href={stepHref(country, "format")} className={`${PRIMARY} mt-4`}>
           Choose a format
         </Link>
-      </main>
+      </div>
     );
   }
 
@@ -76,7 +76,7 @@ export function ArrangeView({ builder }: { builder: ArrangeBuilder }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
       <StepProgress current="arrange" />
 
       <div className="mt-6">
@@ -160,6 +160,6 @@ export function ArrangeView({ builder }: { builder: ArrangeBuilder }) {
           Continue to personalise
         </Link>
       </nav>
-    </main>
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { GiftReveal } from "./gift-reveal";
+import { InertChrome } from "./inert-chrome";
 import { makeYourOwnHref, orderThisGiftHref } from "./links";
 import { buildSharedItemRows, describeSharedGiftState } from "./shared-gift-view";
 import type { SharedItemRow } from "./shared-gift-view";
@@ -32,7 +33,7 @@ function ItemList({ rows }: { rows: readonly SharedItemRow[] }): ReactElement {
               <span className="text-muted text-sm">named &ldquo;{row.customName}&rdquo;</span>
             ) : null}
             {row.unavailable ? (
-              <span className="bg-butter text-foreground rounded-full px-2.5 py-0.5 text-xs font-bold">
+              <span className="bg-butter text-on-accent rounded-full px-2.5 py-0.5 text-xs font-bold">
                 No longer available
               </span>
             ) : null}
@@ -111,6 +112,7 @@ export function SharedGiftScreen({ view }: { view: SharedDesignView }): ReactEle
           "radial-gradient(ellipse at 50% 0%, var(--gp-pink-soft) 0%, transparent 60%), var(--gp-bg)",
       }}
     >
+      <InertChrome />
       <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col px-4 py-5 sm:px-6">
         <header>
           <Link
@@ -121,9 +123,9 @@ export function SharedGiftScreen({ view }: { view: SharedDesignView }): ReactEle
             The Giftpop
           </Link>
         </header>
-        <main id="main" className="flex flex-1 flex-col justify-center py-6">
+        <div id="gift" className="flex flex-1 flex-col justify-center py-6">
           <GiftReveal scene={scene} details={details} />
-        </main>
+        </div>
       </div>
     </div>
   );

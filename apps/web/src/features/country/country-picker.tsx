@@ -20,7 +20,7 @@ type CountryPickerProps = {
 };
 
 const PILL =
-  "border-border bg-surface text-foreground hover:bg-surface-soft inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors";
+  "border-border bg-surface text-foreground hover:bg-surface-soft inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors";
 
 export function CountryPicker({ countries, cookieCode, allCountries }: CountryPickerProps) {
   const pathname = usePathname();

@@ -133,7 +133,7 @@ export function ProofPanel({ number, contact, proofs, onUploaded }: ProofPanelPr
           ) : null}
           {busy ? <p className="text-muted text-sm">Uploading your proof…</p> : null}
           {done ? (
-            <p className="bg-mint text-foreground rounded-soft p-3 text-sm font-semibold">
+            <p className="bg-mint text-on-accent rounded-soft p-3 text-sm font-semibold">
               We have your proof. We will confirm your payment soon.
             </p>
           ) : null}

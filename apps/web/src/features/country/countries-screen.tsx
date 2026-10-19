@@ -105,7 +105,7 @@ function CountryLists({ countries }: { countries: PublicCountry[] }) {
         {live.length === 0 ? (
           <p className="text-muted">No countries are open yet. Check back soon.</p>
         ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {live.map((country) => (
               <LiveCard key={country.code} country={country} />
             ))}
@@ -121,7 +121,7 @@ function CountryLists({ countries }: { countries: PublicCountry[] }) {
           >
             Coming soon
           </h2>
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {comingSoon.map((country) => (
               <ComingSoonCard key={country.code} country={country} />
             ))}
