@@ -88,3 +88,5 @@ Add a line here whenever Claude made a mistake that a rule would have prevented.
 
 - A shared view that computed "is this still for sale" from the gift's saved country made a template opened from another country silently drop items. When data is looked at from a different place than where it was made, pass the viewing context (here `?country=`) instead of trusting the stored one.
 - A layout that awaited the API with no catch turned an outage into a blank 500 on every country page, while the home sections below it already degraded per section. Resilience built in a child does not help if a parent layout throws first: check each layer in the tree, and test with the API pointed at a dead URL.
+- Dashboard queries that `hint` an index passed every test (tests call `init()`) but would fail in production while the index is still building. When code depends on an index existing, make boot build it (`model.init()`) and say so in the deploy notes.
+- A refund cap lived only in the admin form. The browser is not a boundary: every rule the UI enforces for money or status must also be enforced and tested in the API.
