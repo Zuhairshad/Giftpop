@@ -14,7 +14,6 @@
   "dependencies": {
     "@giftpop/contracts": "workspace:*",
     "@giftpop/renderer": "workspace:*",
-    "@react-three/fiber": "9.8.2",
     "@sentry/nextjs": "^11.8.0",
     "motion": "^14.3.0",
     "nanoid": "^6.0.2",
