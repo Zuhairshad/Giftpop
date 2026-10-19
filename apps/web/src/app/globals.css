@@ -148,10 +148,10 @@ body:has(main [data-viewport-fit="builder"]) .gp-footer {
 }
 
 /*
- * The country suggestion floats over the page. On a page that fills the viewport exactly it would
- * cover the headline or the overview, and the header country chip is right there, so it is not shown.
+ * The country suggestion sits in flow above the header. On a page that fills the viewport exactly it
+ * would take height from the stage, and the header country chip is right there, so it is not shown.
  */
-body:has(main [data-viewport-fit]) section[aria-label="Country suggestion"] {
+body:has(main [data-viewport-fit]) .gp-suggestion {
   display: none;
 }
 

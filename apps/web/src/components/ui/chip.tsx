@@ -2,22 +2,6 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/cn";
 
-const CHIP =
-  "inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 text-sm font-medium text-ink shadow-hairline";
-
-const INTERACTIVE =
-  "min-h-11 transition-colors hover:bg-warm active:bg-warm-2 disabled:pointer-events-none disabled:opacity-50";
-
-/** A small pill label (not interactive). */
-export function Chip({ className, ...props }: ComponentProps<"span">) {
-  return <span className={cn(CHIP, "min-h-8", className)} {...props} />;
-}
-
-/** An interactive pill (country, filters). 44px tall so it is a real touch target. */
-export function ChipButton({ className, type = "button", ...props }: ComponentProps<"button">) {
-  return <button type={type} className={cn(CHIP, INTERACTIVE, className)} {...props} />;
-}
-
 /**
  * A category tab. Selected is ink fill with a canvas label, not pink (pink means "act").
  * `count` shows how many picks the category holds (hidden when 0 or omitted).
