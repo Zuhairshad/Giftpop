@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 
-import { PlaceholderPage } from "@/components/placeholder-page";
+import { PageHeader } from "@/components/page-header";
+import { PartnersInbox } from "@/features/partners";
 
 export const metadata: Metadata = { title: "Partners" };
 
 export default function PartnersPage() {
   return (
-    <PlaceholderPage
-      title="Partners"
-      description="Partner requests from people who want The Giftpop in their country."
-    />
+    <>
+      <PageHeader title="Partners" />
+      <div className="p-4 md:p-6">
+        <PartnersInbox />
+      </div>
+    </>
   );
 }

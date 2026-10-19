@@ -161,7 +161,7 @@ function statusChanged(
 
 /** Pure: builds the customer message from the order's customer-facing fields and the payload. */
 export function renderNotification(
-  type: NotificationType,
+  type: Exclude<NotificationType, "staff_alert">,
   order: TemplateOrder,
   payload: Record<string, unknown>,
   options: TemplateOptions,

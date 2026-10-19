@@ -7,9 +7,11 @@ import { countriesRouter } from "./countries/router";
 import { designsRouter } from "./designs/router";
 import { notificationsRouter } from "./notifications/router";
 import { ordersRouter } from "./orders/router";
+import { partnersRouter } from "./partners/router";
 import { paymentsRouter } from "./payments/router";
 import { quotesRouter } from "./quotes/router";
 import { staffRouter } from "./staff/router";
+import { templatesRouter } from "./templates/router";
 
 export interface ApiModule {
   /** Mount path under `/v1`, for example `/countries`. */
@@ -30,4 +32,6 @@ export const modules: ApiModule[] = [
   // Payment proof lives under /orders/:number/payment-proof; both routers share the prefix.
   { path: "/orders", router: paymentsRouter },
   { path: "/notifications", router: notificationsRouter },
+  { path: "/partner-requests", router: partnersRouter },
+  { path: "/templates", router: templatesRouter },
 ];

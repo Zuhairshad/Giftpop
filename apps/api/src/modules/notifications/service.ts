@@ -58,6 +58,33 @@ export async function enqueue(input: EnqueueInput, session?: ClientSession): Pro
   await OutboxModel.create(docs, { session, ordered: true });
 }
 
+export interface StaffAlertInput {
+  subject: string;
+  /** Plain text. Never put a customer's or partner's contact details in it: it is logged. */
+  text: string;
+}
+
+const StaffAlertSchema = z.object({
+  subject: z.string().min(1).max(200),
+  text: z.string().min(1).max(2000),
+});
+
+/**
+ * Queues a message for the team (for example a new partner request). It has no order
+ * and goes to the console channel only until staff recipients are configured. Same
+ * transaction rule as `enqueue`.
+ */
+export async function enqueueStaffAlert(
+  input: StaffAlertInput,
+  session?: ClientSession,
+): Promise<void> {
+  const payload = StaffAlertSchema.parse(input);
+  await OutboxModel.create([{ type: "staff_alert", channel: "console", payload }], {
+    session,
+    ordered: true,
+  });
+}
+
 export interface ProcessOptions {
   now?: Date;
   batchSize?: number;
@@ -100,6 +127,17 @@ async function deliver(
 ): Promise<void> {
   const transport = transports[entry.channel];
   if (!transport) throw new Error(`No transport registered for channel ${entry.channel}`);
+  if (entry.type === "staff_alert") {
+    const alert = StaffAlertSchema.parse(entry.payload);
+    await transport.send({
+      type: entry.type,
+      orderNumber: "",
+      to: { email: "", phone: "" },
+      subject: alert.subject,
+      text: alert.text,
+    });
+    return;
+  }
   const order = await OrderModel.findById(entry.orderId).lean<OrderDoc>();
   if (!order) throw new Error("Order not found");
   const templateOrder: TemplateOrder = {

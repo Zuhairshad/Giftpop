@@ -4,7 +4,8 @@ import { model, Schema, type Types } from "mongoose";
 export interface OutboxDoc {
   _id: Types.ObjectId;
   type: NotificationType;
-  orderId: Types.ObjectId;
+  /** Absent for `staff_alert`. */
+  orderId?: Types.ObjectId;
   channel: NotificationChannel;
   payload: Record<string, unknown>;
   status: OutboxStatus;
@@ -17,7 +18,7 @@ export interface OutboxDoc {
 const outboxSchema = new Schema<OutboxDoc>(
   {
     type: { type: String, required: true },
-    orderId: { type: Schema.Types.ObjectId, required: true },
+    orderId: { type: Schema.Types.ObjectId },
     channel: { type: String, required: true },
     payload: { type: Schema.Types.Mixed, default: {} },
     status: { type: String, required: true, default: "pending" },

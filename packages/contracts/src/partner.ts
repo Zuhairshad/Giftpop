@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { CountryCodeSchema, IsoDateTimeSchema, ObjectIdSchema } from "./common";
+import { PaginationQuerySchema } from "./api";
+import { CountryCodeSchema, CountryParamSchema, IsoDateTimeSchema, ObjectIdSchema } from "./common";
 import { PhoneSchema } from "./order";
 
 export const PARTNER_REQUEST_KINDS = ["brand", "country"] as const;
@@ -71,3 +72,20 @@ export const UpdatePartnerRequestSchema = z.object({
   note: z.string().trim().min(1).max(2000).optional(),
 });
 export type UpdatePartnerRequest = z.infer<typeof UpdatePartnerRequestSchema>;
+
+/**
+ * Name of the hidden form field bots fill in. The API reads it from the raw body before
+ * validation (zod would strip it): a filled field gets a fake success and nothing is stored.
+ */
+export const PARTNER_HONEYPOT_FIELD = "website_url";
+
+/** The public answer to a partner request, real or (for a bot) fake. */
+export const PartnerRequestReceivedSchema = z.object({ received: z.literal(true) });
+export type PartnerRequestReceived = z.infer<typeof PartnerRequestReceivedSchema>;
+
+export const PartnerRequestListQuerySchema = PaginationQuerySchema.extend({
+  kind: PartnerRequestKindSchema.optional(),
+  status: PartnerRequestStatusSchema.optional(),
+  country: CountryParamSchema.optional(),
+});
+export type PartnerRequestListQuery = z.infer<typeof PartnerRequestListQuerySchema>;

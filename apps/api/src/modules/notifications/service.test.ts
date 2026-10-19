@@ -6,7 +6,7 @@ import { insertOrder } from "../orders/fixtures";
 import { OrderModel } from "../orders/model";
 
 import { OutboxModel } from "./model";
-import { BACKOFF_MS, enqueue, processOutbox } from "./service";
+import { BACKOFF_MS, enqueue, enqueueStaffAlert, processOutbox } from "./service";
 import {
   registerEmailTransport,
   unregisterTransport,
@@ -208,5 +208,28 @@ describe("processOutbox", () => {
     expect(results.reduce((a, b) => a + b, 0)).toBe(6);
     expect(sent).toHaveLength(6);
     expect(await OutboxModel.countDocuments({ status: "sent" })).toBe(6);
+  });
+});
+
+describe("staff alerts", () => {
+  it("are delivered without an order and carry only their own subject and text", async () => {
+    await enqueueStaffAlert({
+      subject: "New partner request",
+      text: "A brand asked to join. Open the admin.",
+    });
+    const sent: { subject: string; text: string; orderNumber: string }[] = [];
+    const count = await processOutbox({
+      transports: { console: { send: async (m) => void sent.push(m) } },
+    });
+    expect(count).toBe(1);
+    expect(sent).toEqual([
+      expect.objectContaining({ subject: "New partner request", orderNumber: "" }),
+    ]);
+    expect(await OutboxModel.countDocuments({ status: "sent", type: "staff_alert" })).toBe(1);
+  });
+
+  it("reject an empty subject and write nothing", async () => {
+    await expect(enqueueStaffAlert({ subject: "", text: "x" })).rejects.toThrow();
+    expect(await OutboxModel.countDocuments()).toBe(0);
   });
 });
