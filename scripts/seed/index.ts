@@ -11,7 +11,7 @@ import {
 import { upsertCountry } from "../../apps/api/src/modules/countries/service";
 
 import { COUNTRIES, ITEMS, PACKAGINGS, PRICES } from "./data";
-import { parseSeedEnv } from "./env";
+import { assertSeedMayRun, parseSeedEnv } from "./env";
 
 const API_ENV_PATH = fileURLToPath(new URL("../../apps/api/.env", import.meta.url));
 
@@ -19,14 +19,7 @@ async function main(): Promise<void> {
   // Variables already set in the shell win over the file.
   if (existsSync(API_ENV_PATH)) process.loadEnvFile(API_ENV_PATH);
   const env = parseSeedEnv(process.env);
-
-  // The seed replaces seeded items, packagings, countries and prices, which would
-  // undo staff edits on a live database.
-  if (process.env["NODE_ENV"] === "production" && process.env["SEED_ALLOW_PRODUCTION"] !== "1") {
-    throw new Error(
-      "Refusing to seed with NODE_ENV=production. Set SEED_ALLOW_PRODUCTION=1 to override.",
-    );
-  }
+  assertSeedMayRun(env, process.env);
 
   await connectDb({ uri: env.mongodbUri, maxAttempts: 5, baseDelayMs: 250 });
   try {
@@ -36,6 +29,11 @@ async function main(): Promise<void> {
       name: "Owner",
       password: env.ownerPassword,
     });
+    if (env.ownerOnly) {
+      console.log("Owner ready (SEED_OWNER_ONLY=1: no countries, catalog or prices written).");
+      console.log(`  owner:      ${owner.email}`);
+      return;
+    }
     for (const country of COUNTRIES) await upsertCountry(country);
     for (const packaging of PACKAGINGS) await upsertPackaging(packaging);
     for (const item of ITEMS) await upsertItem(item);

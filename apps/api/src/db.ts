@@ -53,3 +53,25 @@ export async function disconnectDb(): Promise<void> {
 export function isDbReady(): boolean {
   return mongoose.connection.readyState === mongoose.ConnectionStates.connected;
 }
+
+/**
+ * Whether the database answers a `ping` within `timeoutMs`. Mongoose can still report
+ * "connected" for a while after the server or the network went away, so `/ready` asks.
+ */
+export async function pingDb(timeoutMs = 2000): Promise<boolean> {
+  const db = mongoose.connection.db;
+  if (!isDbReady() || !db) return false;
+  let timer: NodeJS.Timeout | undefined;
+  const timeout = new Promise<false>((resolve) => {
+    timer = setTimeout(() => resolve(false), timeoutMs);
+  });
+  const ping = db
+    .command({ ping: 1 })
+    .then(() => true)
+    .catch(() => false);
+  try {
+    return await Promise.race([ping, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}

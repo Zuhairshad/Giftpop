@@ -15,10 +15,14 @@ type ServerEnv = z.infer<typeof ServerEnvSchema>;
 export function parseServerEnv(
   source: Record<string, string | undefined> = process.env,
 ): ServerEnv {
-  const result = ServerEnvSchema.safeParse({
-    // An empty string in .env means "unset".
-    API_URL: source.API_URL || undefined,
-  });
+  // An empty string in .env means "unset".
+  const apiUrl = source.API_URL?.trim() || undefined;
+  // The localhost default is for development only: a production build without API_URL would
+  // bake a localhost rewrite in and fail on every call at runtime, so refuse it instead.
+  if (!apiUrl && source.NODE_ENV === "production") {
+    throw new Error("Invalid environment: API_URL is required in production");
+  }
+  const result = ServerEnvSchema.safeParse({ API_URL: apiUrl });
   if (!result.success) {
     throw new Error(`Invalid environment: ${z.prettifyError(result.error)}`);
   }

@@ -50,5 +50,9 @@ jobs:
       - name: Lint, typecheck and test
         run: pnpm verify
 
+      # `next build` runs with NODE_ENV=production, where web and admin require API_URL.
+      # CI only checks that the apps build; deploy builds set the real API address.
       - name: Build
         run: pnpm build
+        env:
+          API_URL: http://localhost:4000

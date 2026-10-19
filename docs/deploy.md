@@ -75,13 +75,15 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 
 | Name      | Required?                                  | Example                  | Secret? | What it does                                                                                                                                                                   |
 | --------- | ------------------------------------------ | ------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `API_URL` | Yes (defaults to `http://localhost:4000`)  | `https://api.<tld>`      | No      | Base URL of the API, no `/v1`. Server-side only. Read when the app builds (the rewrite is fixed at build) and at runtime (Server Components): set it for Production and Preview, and redeploy after changing it. |
+| `API_URL` | Yes (the build fails without it; `http://localhost:4000` in development only) | `https://api.<tld>`      | No      | Base URL of the API, no `/v1`. Server-side only. Read when the app builds (the rewrite is fixed at build) and at runtime (Server Components): set it for Production and Preview, and redeploy after changing it. |
+| `PUBLIC_ASSET_BASE_URL` | Yes when items have images | `https://assets.<tld>` | No | Same value as the API. The only host `next/image` resizes item images from. Read at build and by `next start`. |
 
 ### Admin (`apps/admin`, Vercel project 2)
 
 | Name      | Required?                                  | Example                  | Secret? | What it does                                                         |
 | --------- | ------------------------------------------ | ------------------------ | ------- | -------------------------------------------------------------------- |
-| `API_URL` | Yes (defaults to `http://localhost:4000`)  | `https://api.<tld>`      | No      | Same as web: build-time rewrite target and runtime server calls.     |
+| `API_URL` | Yes (the build fails without it; `http://localhost:4000` in development only) | `https://api.<tld>`      | No      | Same as web: build-time rewrite target and runtime server calls.     |
+| `PUBLIC_ASSET_BASE_URL` | Yes when items have images | `https://assets.<tld>` | No | Same as web. |
 
 ### Seed script (`pnpm seed`, run once from a trusted machine, not in the image)
 
@@ -90,7 +92,8 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 | `MONGODB_URI`           | Yes                          | the Atlas string         | Yes     | Database to seed.                                                                                 |
 | `SEED_OWNER_EMAIL`      | Yes                          | `owner@<tld>`            | No      | Email of the first owner account. Created only if no staff member has this email.                 |
 | `SEED_OWNER_PASSWORD`   | Yes                          | 12 or more characters    | Yes     | Password of that account. Type it with `read -s` so it stays out of shell history.                |
-| `SEED_ALLOW_PRODUCTION` | Yes when `NODE_ENV=production` | `1`                    | No      | Without it the seed refuses to run in production.                                                 |
+| `SEED_OWNER_ONLY`       | Yes for the first production owner | `1`                | No      | Creates only the owner account; writes no countries, catalog or prices. Allowed in production without `SEED_ALLOW_PRODUCTION`. |
+| `SEED_ALLOW_PRODUCTION` | Only to load the demo catalog in production | `1`         | No      | Without it the full seed refuses to run with `NODE_ENV=production`.                               |
 | `NODE_ENV`              | No                           | `production`             | No      | Set to `production` so the seed's guard applies.                                                  |
 
 ### Tests only (never set in a deployment)
@@ -103,6 +106,9 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 | `E2E_CHROMIUM_PATH`  | No        | `/usr/bin/chromium`     | No      | Use a local Chromium instead of a downloaded one.  |
 | `E2E_STAFF_EMAIL`    | No        | `owner@giftpop.test`    | No      | Owner the e2e setup seeds.                         |
 | `E2E_STAFF_PASSWORD` | No        | `dev-owner-password-1`  | Yes     | Password for that owner (a throwaway test value).  |
+| `E2E_ISOLATED` | No | `1` | No | Start a private stack (API 4100, web 3100, admin 3101, database `giftpop_e2e`), seeded before the API listens. |
+| `E2E_MONGODB_URI` | No | `mongodb://127.0.0.1:27017/giftpop_e2e?replicaSet=rs0` | No | Database for the isolated stack. |
+| `E2E_UPLOAD_DIR` | No | `$TMPDIR/giftpop-e2e-uploads` | No | Upload folder for the isolated stack. |
 
 ### GitHub Actions (repository settings, used by `.github/workflows/deploy-*.yml`)
 
@@ -166,7 +172,7 @@ docker ps   # STATUS shows (healthy) after about a minute
 - pnpm is the version in the root `package.json` `packageManager` field, fetched by Corepack.
 - Build stages: install with the lockfile frozen (`pnpm install --frozen-lockfile --filter "@giftpop/api..."`), bundle with tsup, then `pnpm deploy --prod` copies only production dependencies. The runtime image holds `dist/server.js` and `node_modules`; no pnpm, no sources, no tests, no `.env`. `.dockerignore` keeps `.env` files and the other apps out of the build context.
 - Runs as the non-root `node` user, `NODE_ENV=production`, `PORT=4000`.
-- `HEALTHCHECK` fetches `http://127.0.0.1:$PORT/ready` with Node (the slim image has no curl). `/ready` answers 503 while the MongoDB connection is down (it reads the Mongoose connection state; it does not ping), so on a host use `/health` (process only) as the liveness check and `/ready` as the readiness check, or a short MongoDB blip restarts the container.
+- `HEALTHCHECK` fetches `http://127.0.0.1:$PORT/ready` with Node (the slim image has no curl). `/ready` answers 503 while the MongoDB connection is down or MongoDB does not answer a `ping` within 2 seconds, so on a host use `/health` (process only) as the liveness check and `/ready` as the readiness check, or a short MongoDB blip restarts the container.
 - Signals: `CMD` is the exec form, so `node` is PID 1 and receives `SIGTERM` directly. `server.ts` handles `SIGTERM` and `SIGINT` (stop the worker, close the server, close MongoDB, exit) and forces exit after 10 seconds. No init wrapper is needed because the API starts no child processes; `docker run --init` also works. Give the host a stop timeout above 10 seconds (the example uses 20).
 - `/data/uploads` is declared a volume for the local storage driver. That driver is for development and the API refuses it when `NODE_ENV=production`; production stores nothing on disk.
 
@@ -205,11 +211,11 @@ Proofs uploaded before this change still have an old public URL and their object
 
    ```sh
    read -rs SEED_OWNER_PASSWORD && export SEED_OWNER_PASSWORD
-   NODE_ENV=production SEED_ALLOW_PRODUCTION=1 \
+   NODE_ENV=production SEED_OWNER_ONLY=1 \
    MONGODB_URI='<atlas string>' SEED_OWNER_EMAIL='owner@<tld>' pnpm seed
    ```
 
-   Read `docs/audit/deploy.md` first: the seed also writes the demo catalog and there is no owner-only mode yet. Run it once. Do not keep an `apps/api/.env` pointing at another database next to it (shell variables win over that file, but be sure).
+   `SEED_OWNER_ONLY=1` creates the owner and nothing else; the real catalog is entered in the admin. It never changes an existing account, so running it twice is harmless. Only use `SEED_ALLOW_PRODUCTION=1` (without `SEED_OWNER_ONLY`) if you want the demo catalog live. Do not keep an `apps/api/.env` pointing at another database next to it (shell variables win over that file, but be sure).
 7. Create the two Vercel projects (root directory `apps/web` and `apps/admin`, "Include source files outside of the Root Directory" on, Node 22, install command `pnpm install --frozen-lockfile`). Set `API_URL=https://api.<tld>` for Production and Preview in both, then deploy. Add the domains. Or enable the deploy workflows (set the variables and secrets above, then `DEPLOY_ENABLED=true`).
 8. DNS: `giftpop.<tld>` and `admin.<tld>` to Vercel (CNAME to the target Vercel shows), `api.<tld>` to the API host, `assets.<tld>` to R2 (done by Cloudflare). Wait for certificates.
 9. Check CORS origins: `WEB_ORIGIN` and `ADMIN_ORIGIN` on the API are exactly the HTTPS origins (no trailing slash, no path).

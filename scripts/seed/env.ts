@@ -4,6 +4,8 @@ export interface SeedEnv {
   mongodbUri: string;
   ownerEmail: string;
   ownerPassword: string;
+  /** `SEED_OWNER_ONLY=1`: create the first owner and write no countries, catalog or prices. */
+  ownerOnly: boolean;
 }
 
 /**
@@ -31,10 +33,35 @@ export function parseSeedEnv(source: Record<string, string | undefined>): SeedEn
     }
   }
 
+  const ownerOnlyRaw = source["SEED_OWNER_ONLY"]?.trim() ?? "";
+  if (!["", "0", "1"].includes(ownerOnlyRaw)) problems.push("SEED_OWNER_ONLY must be 1 or 0");
+
   if (problems.length > 0 || !owner.success) {
     throw new Error(
       `Seed cannot start. Fix these in apps/api/.env or the shell:\n${problems.map((p) => `  ${p}`).join("\n")}`,
     );
   }
-  return { mongodbUri, ownerEmail: owner.data.email, ownerPassword: owner.data.password };
+  return {
+    mongodbUri,
+    ownerEmail: owner.data.email,
+    ownerPassword: owner.data.password,
+    ownerOnly: ownerOnlyRaw === "1",
+  };
+}
+
+/**
+ * The full seed replaces seeded items, packagings, countries and prices, which would put the
+ * demo catalog live or undo staff edits, so production needs an explicit override. Owner-only
+ * mode writes one staff account (and never overwrites an existing one), so it may run there.
+ */
+export function assertSeedMayRun(
+  env: Pick<SeedEnv, "ownerOnly">,
+  source: Record<string, string | undefined>,
+): void {
+  if (env.ownerOnly || source["NODE_ENV"] !== "production") return;
+  if (source["SEED_ALLOW_PRODUCTION"] === "1") return;
+  throw new Error(
+    "Refusing to write the demo catalog with NODE_ENV=production. To create only the first " +
+      "owner, set SEED_OWNER_ONLY=1. To load the demo catalog anyway, set SEED_ALLOW_PRODUCTION=1.",
+  );
 }

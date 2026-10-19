@@ -17,6 +17,16 @@ describe("parseServerEnv", () => {
     );
   });
 
+  it("refuses to fall back to localhost in production", () => {
+    expect(() => parseServerEnv({ NODE_ENV: "production" })).toThrow(/API_URL is required/);
+    expect(() => parseServerEnv({ NODE_ENV: "production", API_URL: " " })).toThrow(
+      /API_URL is required/,
+    );
+    expect(
+      parseServerEnv({ NODE_ENV: "production", API_URL: "https://api.example.com" }).API_URL,
+    ).toBe("https://api.example.com");
+  });
+
   it("rejects a value that is not a URL", () => {
     expect(() => parseServerEnv({ API_URL: "not a url" })).toThrow(/Invalid environment/);
   });
