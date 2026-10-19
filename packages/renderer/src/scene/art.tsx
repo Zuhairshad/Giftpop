@@ -2,9 +2,8 @@ import type { Asset } from "@giftpop/contracts";
 import { useId } from "react";
 import type { ReactNode, Ref } from "react";
 
-import { ITEM_ILLUSTRATIONS, PACKAGING_ILLUSTRATIONS } from "../illustrations";
+import { ITEM_ART_SIZE, ITEM_ILLUSTRATIONS, PACKAGING_ILLUSTRATIONS } from "../illustrations";
 import { SCENE_SIZE } from "../layouts";
-import { PLACEHOLDER_SIZE } from "../placeholders/ItemPlaceholder";
 import {
   PackagingBackPlaceholder,
   PackagingFrontPlaceholder,
@@ -84,7 +83,7 @@ export function SceneImage({
 
 /** An item's silhouette, centred on the origin like an anchored image. */
 export function ItemPlaceholderArt({ art }: { art: SceneItemArt }) {
-  const half = PLACEHOLDER_SIZE / 2;
+  const half = ITEM_ART_SIZE / 2;
   const Illustration = ITEM_ILLUSTRATIONS[art.shape];
   return (
     <g transform={`translate(${-half} ${-half})`}>
