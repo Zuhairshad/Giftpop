@@ -1,0 +1,66 @@
+/*
+ * Design tokens for The Giftpop storefront.
+ * Raw values live here as CSS variables (light and dark); globals.css maps them into Tailwind v4 @theme.
+ */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --gp-bg: #fff8f3;
+  --gp-surface: #ffffff;
+  --gp-surface-soft: #ffeef2;
+  --gp-border: #f3d9df;
+
+  /* Text */
+  --gp-ink: #3a2230;
+  --gp-ink-soft: #6d5260;
+
+  /* Giftpop pink accent */
+  --gp-pink: #e8336d;
+  --gp-pink-strong: #c41f56;
+  --gp-pink-soft: #ffd3e0;
+  --gp-on-pink: #ffffff;
+
+  /* Playful supporting colours, used in illustrations */
+  --gp-butter: #ffe08a;
+  --gp-mint: #bfeed8;
+  --gp-sky: #c9e4ff;
+  --gp-lilac: #dccbff;
+
+  /* Focus ring */
+  --gp-focus: #1d4ed8;
+
+  /* Shape and depth */
+  --gp-radius-sm: 0.75rem;
+  --gp-radius-md: 1.25rem;
+  --gp-radius-lg: 2rem;
+  --gp-shadow: 0 10px 30px -12px rgb(196 31 86 / 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --gp-bg: #1d1219;
+    --gp-surface: #2a1a24;
+    --gp-surface-soft: #3a2230;
+    --gp-border: #55354a;
+
+    --gp-ink: #fdeef3;
+    --gp-ink-soft: #d9b8c6;
+
+    --gp-pink: #ff6b98;
+    --gp-pink-strong: #ff8fb2;
+    --gp-pink-soft: #5e2a40;
+    --gp-on-pink: #2a0f1c;
+
+    --gp-butter: #d9b24a;
+    --gp-mint: #4f9c7f;
+    --gp-sky: #5b8fc4;
+    --gp-lilac: #8c74c9;
+
+    --gp-focus: #93b4ff;
+
+    --gp-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  }
+}
