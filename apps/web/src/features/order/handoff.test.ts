@@ -1,0 +1,52 @@
+import { describe, expect, it } from "vitest";
+
+import { parseHandoff, readHandoff, writeHandoff } from "./handoff";
+
+const NUMBER = "GP-PK-7K2M9Q";
+
+describe("parseHandoff", () => {
+  it("returns the contact for a valid entry", () => {
+    expect(parseHandoff(JSON.stringify({ number: NUMBER, contact: " a@b.co " }), NUMBER)).toBe(
+      "a@b.co",
+    );
+  });
+  it("returns null when missing", () => {
+    expect(parseHandoff(null, NUMBER)).toBeNull();
+    expect(parseHandoff("", NUMBER)).toBeNull();
+  });
+  it("returns null when corrupt", () => {
+    expect(parseHandoff("{oops", NUMBER)).toBeNull();
+    expect(parseHandoff('{"number":1}', NUMBER)).toBeNull();
+    expect(parseHandoff("null", NUMBER)).toBeNull();
+  });
+  it("returns null for another order", () => {
+    expect(
+      parseHandoff(JSON.stringify({ number: "GP-PK-AAAAAA", contact: "a@b.co" }), NUMBER),
+    ).toBeNull();
+  });
+});
+
+describe("readHandoff and writeHandoff", () => {
+  it("round-trips through a storage", () => {
+    const data = new Map<string, string>();
+    const storage = {
+      getItem: (k: string) => data.get(k) ?? null,
+      setItem: (k: string, v: string) => void data.set(k, v),
+    };
+    writeHandoff(NUMBER, "0300 1234567", storage);
+    expect(readHandoff(NUMBER, storage)).toBe("0300 1234567");
+  });
+  it("never throws when storage does", () => {
+    const broken = {
+      getItem: () => {
+        throw new Error("blocked");
+      },
+      setItem: () => {
+        throw new Error("blocked");
+      },
+    };
+    expect(readHandoff(NUMBER, broken)).toBeNull();
+    expect(() => writeHandoff(NUMBER, "x@y.zz", broken)).not.toThrow();
+    expect(readHandoff(NUMBER, undefined)).toBeNull();
+  });
+});
