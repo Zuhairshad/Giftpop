@@ -1,5 +1,11 @@
 import type { Router } from "express";
 
+import { assetsRouter } from "./assets/router";
+import { authRouter } from "./auth/router";
+import { catalogRouter } from "./catalog/router";
+import { countriesRouter } from "./countries/router";
+import { staffRouter } from "./staff/router";
+
 export interface ApiModule {
   /** Mount path under `/v1`, for example `/countries`. */
   path: string;
@@ -7,4 +13,10 @@ export interface ApiModule {
 }
 
 /** Every API module registers here; `app.ts` mounts the list under `/v1`. */
-export const modules: ApiModule[] = [];
+export const modules: ApiModule[] = [
+  { path: "/auth", router: authRouter },
+  { path: "/staff", router: staffRouter },
+  { path: "/countries", router: countriesRouter },
+  { path: "/catalog", router: catalogRouter },
+  { path: "/assets", router: assetsRouter },
+];

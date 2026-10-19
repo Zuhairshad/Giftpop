@@ -12,7 +12,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "verify": "turbo run lint typecheck test",
-    "seed": "tsx scripts/seed/index.ts",
+    "seed": "pnpm --filter @giftpop/seed start",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

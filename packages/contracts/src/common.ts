@@ -17,3 +17,9 @@ export type HexColor = z.infer<typeof HexColorSchema>;
 /** ISO 3166-1 alpha-2, upper case. */
 export const CountryCodeSchema = z.string().regex(/^[A-Z]{2}$/, "Invalid country code");
 export type CountryCode = z.infer<typeof CountryCodeSchema>;
+
+/** A country code in a URL or query string: `pk` and `PK` both parse to `PK`. */
+export const CountryParamSchema = z
+  .string()
+  .transform((value) => value.toUpperCase())
+  .pipe(CountryCodeSchema);

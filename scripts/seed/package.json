@@ -1,0 +1,25 @@
+{
+  "name": "@giftpop/seed",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "dependencies": {
+    "@giftpop/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@giftpop/config": "workspace:*",
+    "@types/node": "^22",
+    "eslint": "9.39.5",
+    "globals": "17.13.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}

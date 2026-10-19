@@ -38,3 +38,18 @@ export const CreateStaffRequestSchema = z.object({
   password: z.string().min(PASSWORD_MIN_LENGTH).max(200),
 });
 export type CreateStaffRequest = z.infer<typeof CreateStaffRequestSchema>;
+
+export const UpdateStaffRequestSchema = z
+  .object({
+    name: z.string().trim().min(1).max(80),
+    role: StaffRoleSchema,
+    active: z.boolean(),
+    /** Set a new temporary password. */
+    password: z.string().min(PASSWORD_MIN_LENGTH).max(200),
+  })
+  .partial();
+export type UpdateStaffRequest = z.infer<typeof UpdateStaffRequestSchema>;
+
+/** Name of the staff session cookie. */
+export const STAFF_COOKIE_NAME = "gp_admin";
+export const STAFF_SESSION_DAYS = 7;

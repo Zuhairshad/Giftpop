@@ -1,9 +1,11 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "scripts/*"
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 onlyBuiltDependencies:
   - esbuild
   - mongodb-memory-server
+  - argon2

@@ -60,3 +60,10 @@ export type CountrySummary = z.infer<typeof CountrySummarySchema>;
 
 export const UpdateCountryRequestSchema = CountrySchema.omit({ code: true }).partial();
 export type UpdateCountryRequest = z.infer<typeof UpdateCountryRequestSchema>;
+
+/** Everything the store may see: no payment instructions until an order exists. */
+export const PublicCountrySchema = CountrySchema.omit({ paymentInstructions: true });
+export type PublicCountry = z.infer<typeof PublicCountrySchema>;
+
+export const CreateCountryRequestSchema = CountrySchema;
+export type CreateCountryRequest = z.infer<typeof CreateCountryRequestSchema>;
