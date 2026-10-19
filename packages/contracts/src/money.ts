@@ -21,7 +21,8 @@ function assertMinor(value: number): void {
 
 export function money(amountMinor: number, currency: CurrencyCode): Money {
   assertMinor(amountMinor);
-  return { amountMinor, currency };
+  // `+ 0` turns -0 into 0 so amounts never serialise or compare as negative zero.
+  return { amountMinor: amountMinor + 0, currency };
 }
 
 function assertSameCurrency(a: Money, b: Money): void {

@@ -84,6 +84,12 @@ export function computeQuote(input: QuoteInput): Quote {
   );
 
   const { flatMinor, freeOverMinor } = input.shipping;
+  if (
+    !Number.isSafeInteger(flatMinor) ||
+    (freeOverMinor !== undefined && !Number.isSafeInteger(freeOverMinor))
+  ) {
+    throw new RangeError("Shipping amounts must be integers in minor units");
+  }
   const shippingMinor =
     freeOverMinor !== undefined && goods.amountMinor >= freeOverMinor ? 0 : flatMinor;
 
