@@ -1,5 +1,7 @@
 export { GiftScene, describeGift } from "./GiftScene";
 export type { GiftSceneProps } from "./GiftScene";
+export { AnimatedGiftScene } from "./AnimatedGiftScene";
+export type { AnimatedGiftSceneProps } from "./AnimatedGiftScene";
 export {
   LAYOUTS,
   LAYOUT_TYPES,

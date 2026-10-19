@@ -100,13 +100,21 @@ describe("GiftScene", () => {
     expect(svg?.getAttribute("data-layout")).toBe("box-grid");
   });
 
-  it("adds motion styles, with a reduced-motion override, only when motion is on", () => {
+  it("draws no animation machinery on the static path", () => {
+    const { container } = render(<GiftScene design={design} packaging={packaging} items={items} />);
+    expect(container.querySelector("style")).toBeNull();
+    expect(container.querySelector("g[style*='opacity']")).toBeNull();
+    expect(container.querySelectorAll("[data-item-index]")).toHaveLength(3);
+  });
+
+  it("hands over to the client variant when motion is on, with the same labels", () => {
     const off = render(<GiftScene design={design} packaging={packaging} items={items} />);
-    expect(off.container.querySelector("style")).toBeNull();
+    const offLabel = off.getByRole("img").getAttribute("data-layout");
     off.unmount();
     const on = render(<GiftScene design={design} packaging={packaging} items={items} motion />);
-    expect(on.container.querySelector("style")?.textContent).toContain("prefers-reduced-motion");
-    expect(on.container.querySelectorAll(".gp-scene-motion")).toHaveLength(3);
+    expect(on.getByRole("img", { name: /Item 1.*Item 2.*Item 3/ })).toBeTruthy();
+    expect(on.getByRole("img").getAttribute("data-layout")).toBe(offLabel);
+    expect(on.container.querySelectorAll("[data-item-index]")).toHaveLength(3);
   });
 
   it("renders to static markup without a client runtime", () => {
