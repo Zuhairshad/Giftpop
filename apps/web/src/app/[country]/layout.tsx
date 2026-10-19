@@ -13,12 +13,19 @@ export default async function CountryLayout({ children, params }: CountryLayoutP
   const code = parseCountryParam((await params).country);
   if (!code) notFound();
 
-  const countries = await apiRequest("/countries", z.array(PublicCountrySchema), {
-    cache: "no-store",
-  });
-  const country = countries.find((candidate) => candidate.code === code);
-  if (!country) notFound();
-  if (country.status !== "live") redirect("/countries");
+  let countries: z.infer<typeof PublicCountrySchema>[] | null;
+  try {
+    countries = await apiRequest("/countries", z.array(PublicCountrySchema), { cache: "no-store" });
+  } catch {
+    // The API is down: the home page still shows its static sections, and the builder
+    // has its own error page. Do not turn an outage into a blank 500 here.
+    countries = null;
+  }
+  if (countries) {
+    const country = countries.find((candidate) => candidate.code === code);
+    if (!country) notFound();
+    if (country.status !== "live") redirect("/countries");
+  }
 
   return children;
 }

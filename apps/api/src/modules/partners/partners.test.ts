@@ -1,4 +1,4 @@
-import { PartnerRequestSchema } from "@giftpop/contracts";
+import { PARTNER_HONEYPOT_FIELD, PartnerRequestSchema } from "@giftpop/contracts";
 import request from "supertest";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -11,6 +11,7 @@ import { OutboxModel } from "../notifications/model";
 import { PartnerRequestModel } from "./model";
 import { resetPartnerRateLimit } from "./rate-limit";
 import { partnersRouter } from "./router";
+import { alertFor } from "./service";
 
 vi.mock("../../middleware/require-staff", async () =>
   (await import("../countries/fixtures")).fakeRequireStaffModule(),
@@ -92,7 +93,7 @@ describe("POST /v1/partner-requests", () => {
   });
 
   it("answers a filled honeypot with a fake 201 and stores nothing", async () => {
-    const res = await post({ ...brand, website_url: "http://spam.example" });
+    const res = await post({ ...brand, [PARTNER_HONEYPOT_FIELD]: "http://spam.example" });
     expect(res.status).toBe(201);
     expect(res.body).toEqual({ received: true });
     expect(await PartnerRequestModel.countDocuments()).toBe(0);
@@ -100,13 +101,13 @@ describe("POST /v1/partner-requests", () => {
   });
 
   it("honeypot answers 201 even when the rest of the body is invalid", async () => {
-    const res = await post({ kind: "nope", website_url: "x" });
+    const res = await post({ kind: "nope", [PARTNER_HONEYPOT_FIELD]: "x" });
     expect(res.status).toBe(201);
     expect(await PartnerRequestModel.countDocuments()).toBe(0);
   });
 
   it("treats an empty honeypot as a real request", async () => {
-    const res = await post({ ...brand, website_url: "" });
+    const res = await post({ ...brand, [PARTNER_HONEYPOT_FIELD]: "" });
     expect(res.status).toBe(201);
     expect(await PartnerRequestModel.countDocuments()).toBe(1);
   });
@@ -317,5 +318,60 @@ describe("staff routes", () => {
       expect((await patch("c".repeat(24), { note: "x" })).status).toBe(404);
       expect((await patch("nope", { note: "x" })).status).toBe(400);
     });
+  });
+});
+
+describe("partner request hardening", () => {
+  it("rejects a brand link that is not a web address or an Instagram handle", async () => {
+    for (const link of [
+      "javascript:alert(1)",
+      "data:text/html,x",
+      "ftp://x.example",
+      "two words",
+    ]) {
+      resetPartnerRateLimit();
+      expect((await post({ ...brand, link })).status, link).toBe(400);
+    }
+    for (const link of [
+      "https://good.example/shop",
+      "http://good.example",
+      "@honeybloom",
+      "honey.bloom",
+      "instagram.com/honeybloom",
+      "www.honeybloom.example",
+    ]) {
+      resetPartnerRateLimit();
+      expect((await post({ ...brand, link })).status, link).toBe(201);
+    }
+  });
+
+  it("keeps line breaks and control characters out of the alert sent to staff", () => {
+    const alert = alertFor(
+      { ...brand, kind: "brand" as const, brandName: "Evil\r\nSubject: hacked\u0000" },
+      "Pakistan",
+    );
+    expect(alert.text).not.toMatch(/\p{Cc}/u);
+    expect(alert.text).toContain("Evil Subject: hacked");
+  });
+
+  it("answers 500 INTERNAL, not 400, when a stored row no longer parses", async () => {
+    await PartnerRequestModel.collection.insertOne({
+      kind: "brand",
+      brandName: "x".repeat(300),
+      contactName: "A",
+      email: "a@example.com",
+      phone: "+92 300 1234567",
+      country: "PK",
+      productCategories: ["candles"],
+      link: "https://x.example",
+      message: "",
+      status: "new",
+      notes: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    const res = await request(app).get("/v1/partner-requests/admin").set(asStaff);
+    expect(res.status).toBe(500);
+    expect(res.body.error.code).toBe("INTERNAL");
   });
 });

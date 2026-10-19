@@ -1,5 +1,7 @@
 import { PartnerRequestSchema, type PartnerRequest } from "@giftpop/contracts";
 
+import { AppError } from "../../lib/errors";
+
 import type { PartnerNoteDoc, PartnerRequestDoc } from "./model";
 
 function toNote(note: PartnerNoteDoc) {
@@ -30,5 +32,8 @@ export function toPartnerRequest(doc: PartnerRequestDoc): PartnerRequest {
           link: doc.link,
         }
       : { ...common, kind: "country", offering: doc.offering };
-  return PartnerRequestSchema.parse(shaped);
+  const result = PartnerRequestSchema.safeParse(shaped);
+  // A stored row that no longer parses is a data fault on our side, not the caller's mistake.
+  if (!result.success) throw new AppError("INTERNAL", 500, "A partner request could not be loaded");
+  return result.data;
 }

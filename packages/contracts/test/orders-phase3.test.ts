@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  BrandRequestInputSchema,
   CountrySchema,
+  PARTNER_HONEYPOT_FIELD,
   OutboxEntrySchema,
   PaymentProofUploadFieldsSchema,
   PriceEntrySchema,
@@ -188,5 +190,40 @@ describe("country dialCode", () => {
     const parsed = PublicCountrySchema.parse({ ...country, dialCode: "+92" });
     expect(parsed.dialCode).toBe("+92");
     expect(parsed).not.toHaveProperty("paymentInstructions");
+  });
+});
+
+describe("partner brand link and honeypot", () => {
+  const brand = {
+    kind: "brand",
+    brandName: "Honey & Bloom",
+    contactName: "Maryam",
+    email: "m@example.com",
+    phone: "+92 300 1234567",
+    country: "PK",
+    productCategories: ["candles"],
+    message: "",
+  };
+  it("accepts a web address or an Instagram handle and nothing else", () => {
+    for (const link of [
+      "https://good.example/x",
+      "http://good.example",
+      "@honey.bloom",
+      "honeybloom",
+    ]) {
+      expect(BrandRequestInputSchema.safeParse({ ...brand, link }).success, link).toBe(true);
+    }
+    for (const link of [
+      "javascript:alert(1)",
+      "data:text/html,x",
+      "ftp://x.example",
+      "two words",
+      "https://",
+    ]) {
+      expect(BrandRequestInputSchema.safeParse({ ...brand, link }).success, link).toBe(false);
+    }
+  });
+  it("uses a field name an autofill would not know", () => {
+    expect(PARTNER_HONEYPOT_FIELD).not.toMatch(/url|website|email|phone|name|address/i);
   });
 });

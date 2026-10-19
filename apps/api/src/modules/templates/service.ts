@@ -179,26 +179,30 @@ export async function startTemplate(
   const doc = await TemplateModel.findById(id).lean<TemplateDoc>();
   if (!doc?.active) throw new AppError("NOT_FOUND", 404, "No template with that id");
 
-  let country: CountryCode | undefined = requested;
-  if (country) {
-    if (!doc.countries.includes(country)) {
+  const design = parseStoredDesign(doc.design);
+  if (requested) {
+    if (!doc.countries.includes(requested)) {
       throw new AppError("VALIDATION_ERROR", 422, "This template is not offered in that country");
     }
-  } else {
-    const live = await CountryModel.find({ code: { $in: doc.countries }, status: "live" })
-      .select({ code: 1 })
-      .lean<Pick<CountryDoc, "code">[]>();
-    const liveCodes = new Set(live.map((c) => c.code));
-    country = doc.countries.find((code) => liveCodes.has(code));
-    if (!country) {
-      throw new AppError("VALIDATION_ERROR", 422, "This template is not available anywhere yet");
+    if (!isSellable(await getCountryCatalog(requested), design)) {
+      throw new AppError(
+        "VALIDATION_ERROR",
+        422,
+        "This gift is no longer available in that country",
+      );
     }
+    return { country: requested, design: structuredClone(design) };
   }
 
-  const catalog = await getCountryCatalog(country);
-  const design = parseStoredDesign(doc.design);
-  if (!isSellable(catalog, design)) {
-    throw new AppError("VALIDATION_ERROR", 422, "This gift is no longer available in that country");
+  // No country asked for: the first listed country that is live AND can still make this gift.
+  const live = await CountryModel.find({ code: { $in: doc.countries }, status: "live" })
+    .select({ code: 1 })
+    .lean<Pick<CountryDoc, "code">[]>();
+  const liveCodes = new Set(live.map((c) => c.code));
+  for (const code of doc.countries.filter((c) => liveCodes.has(c))) {
+    if (isSellable(await getCountryCatalog(code), design)) {
+      return { country: code, design: structuredClone(design) };
+    }
   }
-  return { country, design: structuredClone(design) };
+  throw new AppError("VALIDATION_ERROR", 422, "This gift is not available anywhere right now");
 }

@@ -15,6 +15,11 @@ import { toPartnerRequest } from "./mappers";
 import { PartnerRequestModel, type PartnerRequestDoc } from "./model";
 
 /** Contact details never go in the alert: its text is logged. */
+/** Names are typed by strangers: no line breaks or control characters in a message to staff. */
+function plain(text: string): string {
+  return text.replace(/\p{Cc}+/gu, " ").trim();
+}
+
 export function alertFor(
   input: CreatePartnerRequest,
   countryName: string,
@@ -22,7 +27,7 @@ export function alertFor(
   if (input.kind === "brand") {
     return {
       subject: "New brand partner request",
-      text: `New brand partner request: ${input.brandName} (${countryName}). Open the admin to read it.`,
+      text: `New brand partner request: ${plain(input.brandName)} (${countryName}). Open the admin to read it.`,
     };
   }
   return {

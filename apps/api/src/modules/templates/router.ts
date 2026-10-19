@@ -76,7 +76,8 @@ export function createTemplatesRouter({
   // Public routes.
   router.get("/", validateQuery(ListQuerySchema), async (req, res) => {
     const { country } = req.query as z.infer<typeof ListQuerySchema>;
-    res.set("Cache-Control", PUBLIC_CACHE).json(await listPublicTemplates(country));
+    const templates = await listPublicTemplates(country);
+    res.set("Cache-Control", PUBLIC_CACHE).json(templates);
   });
   router.post(
     "/:id/start",

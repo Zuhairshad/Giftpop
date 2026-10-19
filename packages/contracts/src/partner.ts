@@ -26,7 +26,16 @@ export const BrandRequestInputSchema = z.object({
   country: CountryCodeSchema,
   productCategories: z.array(z.string().trim().min(1).max(40)).min(1).max(20),
   /** Website or Instagram. */
-  link: z.string().trim().min(1).max(300),
+  link: z
+    .string()
+    .trim()
+    .min(1)
+    .max(300)
+    // An http(s) address, or text with no colon and no spaces (an Instagram handle, `www.shop.com`).
+    // Anything else, such as `javascript:` or `data:`, is not a website.
+    .refine((value) => /^https?:\/\/\S+$/i.test(value) || /^[^\s:]+$/.test(value), {
+      message: "Enter a website address, or an Instagram handle",
+    }),
 });
 export type BrandRequestInput = z.infer<typeof BrandRequestInputSchema>;
 
@@ -77,7 +86,7 @@ export type UpdatePartnerRequest = z.infer<typeof UpdatePartnerRequestSchema>;
  * Name of the hidden form field bots fill in. The API reads it from the raw body before
  * validation (zod would strip it): a filled field gets a fake success and nothing is stored.
  */
-export const PARTNER_HONEYPOT_FIELD = "website_url";
+export const PARTNER_HONEYPOT_FIELD = "gp_hp_contact_ref";
 
 /** The public answer to a partner request, real or (for a bot) fake. */
 export const PartnerRequestReceivedSchema = z.object({ received: z.literal(true) });

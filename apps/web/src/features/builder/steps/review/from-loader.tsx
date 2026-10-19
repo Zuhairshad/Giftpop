@@ -47,7 +47,10 @@ export function FromLoader({
   useEffect(() => {
     if (!shareId) return;
     const controller = new AbortController();
-    apiRequest(`/designs/${shareId}`, SharedDesignViewSchema, { signal: controller.signal })
+    // Availability is worked out for the country the visitor is in, not the one the gift was saved in.
+    apiRequest(`/designs/${shareId}?country=${country}`, SharedDesignViewSchema, {
+      signal: controller.signal,
+    })
       .then((view) => {
         if (controller.signal.aborted) return;
         onFetched(view);
@@ -57,7 +60,7 @@ export function FromLoader({
         setError(describeFromError(cause));
       });
     return () => controller.abort();
-  }, [shareId]);
+  }, [shareId, country]);
 
   if (error) {
     return (

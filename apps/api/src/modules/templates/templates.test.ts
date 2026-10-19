@@ -297,6 +297,17 @@ describe("POST /v1/templates/:id/start", () => {
     expect((await start(t.id, { country: "CN" })).status).toBe(422);
   });
 
+  it("picks the first listed country that can still make the gift, not just the first live one", async () => {
+    const { shareId, world } = await setup();
+    const t = await featured(shareId, {}, ["PK", "GB"]);
+    // PK is live but the bar is now out of stock there: GB is the first country that can make it.
+    await upsertPrices([itemPrice(world.bar, "PK", 45_000, false)]);
+    expect(TemplateStartResponseSchema.parse((await start(t.id, {})).body).country).toBe("GB");
+    // Nowhere left: 422.
+    await upsertPrices([itemPrice(world.bar, "GB", 450, false)]);
+    expect((await start(t.id, {})).status).toBe(422);
+  });
+
   it("answers 404 for unknown and inactive templates, 400 for bad input", async () => {
     const { shareId } = await setup();
     const t = await featured(shareId);

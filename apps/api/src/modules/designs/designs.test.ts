@@ -10,9 +10,10 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestApp } from "../../../test/app";
 import { clearDatabase, useTestMongo } from "../../../test/mongo";
 import { CountryPriceModel, ItemModel } from "../catalog/model";
+import { upsertPrices } from "../catalog/service";
 import { makeCountry } from "../countries/fixtures";
 import { upsertCountry } from "../countries/service";
-import { initCatalogModels, makeDesign, seedWorld } from "../quotes/fixtures";
+import { initCatalogModels, itemPrice, makeDesign, seedWorld } from "../quotes/fixtures";
 import { createIpLimiter } from "../quotes/rate-limit";
 
 import { DesignModel } from "./model";
@@ -288,5 +289,40 @@ describe("GET /v1/designs/:shareId: corrupt stored data", () => {
     expect(res.status).toBe(500);
     expect(res.body.error.code).toBe("INTERNAL");
     expect(res.body.error).not.toHaveProperty("details");
+  });
+});
+
+describe("GET /v1/designs/:shareId?country=", () => {
+  it("shows availability for the country being viewed, not the one the gift was saved in", async () => {
+    const { packaging, bar, soap, shareId } = await savedWorld();
+    await upsertCountry(makeCountry({ code: "GB", name: "United Kingdom", currency: "GBP" }));
+    await upsertPrices([
+      {
+        kind: "packaging",
+        packagingId: packaging.id,
+        country: "GB",
+        priceMinor: 900,
+        inStock: true,
+      },
+      itemPrice(bar, "GB", 450),
+      itemPrice(soap, "GB", 120),
+    ]);
+    // In the saved country the bar lost its price; in GB everything is still sold.
+    await CountryPriceModel.deleteOne({ kind: "item", targetId: bar.id, country: "PK" });
+
+    const saved = SharedDesignViewSchema.parse((await fetchShared(shareId)).body);
+    expect(saved.country).toBe("PK");
+    expect(saved.unavailableItemIds).toEqual([bar.id]);
+
+    const inGb = SharedDesignViewSchema.parse((await fetchShared(`${shareId}?country=gb`)).body);
+    expect(inGb.country).toBe("GB");
+    expect(inGb.currency).toBe("GBP");
+    expect(inGb.unavailableItemIds).toEqual([]);
+    expect(inGb.packagingAvailable).toBe(true);
+  });
+
+  it("rejects a malformed country with 400", async () => {
+    const { shareId } = await savedWorld();
+    expect((await fetchShared(`${shareId}?country=nope`)).status).toBe(400);
   });
 });

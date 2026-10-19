@@ -61,9 +61,14 @@ export async function saveDesign(country: CountryCode, design: Design): Promise<
 /**
  * What the share page draws. Never fails because the catalog moved on: items
  * that are no longer sold in the country keep their documents in `items` (when
- * they still exist) and are all listed in `unavailableItemIds`.
+ * they still exist) and are all listed in `unavailableItemIds`. Availability is for
+ * `viewingCountry` when given (a template opened from another country), else for the
+ * country the gift was saved in.
  */
-export async function getSharedDesign(shareId: string): Promise<SharedDesignView> {
+export async function getSharedDesign(
+  shareId: string,
+  viewingCountry?: CountryCode,
+): Promise<SharedDesignView> {
   const doc = await DesignModel.findOne({ shareId }).lean<DesignDoc>();
   if (!doc) throw new AppError("NOT_FOUND", 404, "No gift with that link");
   const saved = toSavedDesign(doc);
@@ -71,7 +76,7 @@ export async function getSharedDesign(shareId: string): Promise<SharedDesignView
 
   const itemIds = design.items.map((line) => line.itemId);
   const [catalog, itemDocs, packagingDoc] = await Promise.all([
-    getCountryCatalog(saved.country),
+    getCountryCatalog(viewingCountry ?? saved.country),
     ItemModel.find({ _id: { $in: itemIds } }).lean<ItemDoc[]>(),
     PackagingModel.findById(design.packagingId).lean<PackagingDoc>(),
   ]);
@@ -81,7 +86,7 @@ export async function getSharedDesign(shareId: string): Promise<SharedDesignView
   const byId = new Map(itemDocs.map((d) => [d._id.toHexString(), toItem(d)]));
   return {
     shareId: saved.shareId,
-    country: saved.country,
+    country: catalog.country,
     currency: catalog.currency,
     design,
     packaging: toPackaging(packagingDoc),

@@ -1,8 +1,13 @@
-import { SaveDesignRequestSchema, ShareIdSchema, type SaveDesignRequest } from "@giftpop/contracts";
+import {
+  CountryParamSchema,
+  SaveDesignRequestSchema,
+  ShareIdSchema,
+  type SaveDesignRequest,
+} from "@giftpop/contracts";
 import { Router, type Request, type RequestHandler } from "express";
 import { z } from "zod";
 
-import { validateBody, validateParams } from "../../lib/validate";
+import { validateBody, validateParams, validateQuery } from "../../lib/validate";
 import { createIpLimiter } from "../quotes/rate-limit";
 
 import { defaultSaveStore, SAVES_PER_MINUTE } from "./rate-limit";
@@ -10,6 +15,8 @@ import { getSharedDesign, saveDesign } from "./service";
 
 const ShareParamsSchema = z.object({ shareId: ShareIdSchema });
 type ShareParams = z.infer<typeof ShareParamsSchema>;
+/** `?country=pk`: show availability for the country the visitor is in. */
+const ViewQuerySchema = z.object({ country: CountryParamSchema.optional() });
 
 const PUBLIC_CACHE = "public, max-age=60, stale-while-revalidate=300";
 
@@ -35,8 +42,10 @@ export function createDesignsRouter({
   router.get(
     "/:shareId",
     validateParams(ShareParamsSchema),
+    validateQuery(ViewQuerySchema),
     async (req: Request<ShareParams>, res) => {
-      const view = await getSharedDesign(req.params.shareId);
+      const { country } = req.query as z.infer<typeof ViewQuerySchema>;
+      const view = await getSharedDesign(req.params.shareId, country);
       res.set("Cache-Control", PUBLIC_CACHE).json(view);
     },
   );

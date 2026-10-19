@@ -69,7 +69,7 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
 
   const label = current
     ? `Country: ${current.name}. Change country.`
-    : "Choose your country. No country chosen yet.";
+    : "Country: Choose. No country chosen yet.";
 
   return (
     <div>
