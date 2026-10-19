@@ -30,6 +30,8 @@ const EnvObjectSchema = z.object({
   DB_CONNECT_BASE_DELAY_MS: z.coerce.number().int().min(10).max(10_000).default(250),
   /** Peppers the hash of staff session tokens. At least 32 characters; required in production. */
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
+  /** `on` runs the notification outbox worker in this process; keep it on in exactly one instance. */
+  NOTIFICATIONS_WORKER: z.enum(["on", "off"]).default("off"),
   /** How many reverse proxies sit in front of the API (0 when none). Rate limits key on the real client IP. */
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
   /** Where the admin app and the store are served from (used for CORS and links). */

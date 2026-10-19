@@ -2,6 +2,7 @@ import { createApp } from "./app";
 import { connectDb, disconnectDb } from "./db";
 import { EnvError, parseEnv } from "./env";
 import { createLogger } from "./logger";
+import { shouldRunWorker, startNotificationsWorker } from "./modules/notifications/worker";
 
 function loadDotEnv(): void {
   try {
@@ -28,6 +29,15 @@ async function main(): Promise<void> {
     logger.info({ port: env.PORT }, "API listening");
   });
 
+  const worker = shouldRunWorker(env.NOTIFICATIONS_WORKER)
+    ? startNotificationsWorker({
+        intervalMs: 5000,
+        logger,
+        trackBaseUrl: env.WEB_ORIGIN,
+        onError: (error: unknown) => logger.error({ err: error }, "notifications worker"),
+      })
+    : undefined;
+
   let shuttingDown = false;
   const shutdown = (signal: string): void => {
     if (shuttingDown) return;
@@ -38,6 +48,7 @@ async function main(): Promise<void> {
       process.exit(1);
     }, 10_000);
     forceExit.unref();
+    worker?.stop();
     server.close((closeError) => {
       disconnectDb()
         .catch((dbError: unknown) => logger.error({ err: dbError }, "Error closing MongoDB"))

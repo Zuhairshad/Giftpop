@@ -158,6 +158,7 @@ export async function createOrder(request: CreateOrderRequest): Promise<CreateOr
               currency: quote.currency,
               customerName: request.contact.name,
               customerEmail: request.contact.email,
+              paymentInstructions: country.paymentInstructions,
             },
           },
           session,

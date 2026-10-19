@@ -22,10 +22,7 @@ const enqueueState = vi.hoisted(() => ({ fail: false, calls: [] as unknown[] }))
 
 // A stand-in outbox that writes in the caller's session, so rollback is observable.
 vi.mock("../notifications/service", () => ({
-  enqueue: async (
-    input: { orderId: string },
-    session: ClientSession | undefined,
-  ) => {
+  enqueue: async (input: { orderId: string }, session: ClientSession | undefined) => {
     enqueueState.calls.push({ input, inTransaction: Boolean(session?.inTransaction()) });
     const mongooseModule = await import("mongoose");
     await mongooseModule.default.connection

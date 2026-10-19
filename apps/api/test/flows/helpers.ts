@@ -1,5 +1,8 @@
 // Shared helpers for the end-to-end order flow tests. Tests only; never imported by app code.
 import { randomUUID } from "node:crypto";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import {
   CreateOrderResponseSchema,
@@ -23,6 +26,9 @@ import { OrderModel, type OrderDoc } from "../../src/modules/orders/model";
 import { resetQuoteRateLimit } from "../../src/modules/quotes/rate-limit";
 import { createTestApp } from "../app";
 import { clearDatabase, useTestMongo } from "../mongo";
+
+// Payment proofs go to the local storage driver: keep them out of the repo.
+process.env["UPLOAD_DIR"] ??= mkdtempSync(join(tmpdir(), "giftpop-flows-"));
 
 export { makeItem, makePackaging } from "../../src/modules/catalog/fixtures";
 export { makeCountry } from "../../src/modules/countries/fixtures";

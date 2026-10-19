@@ -53,6 +53,7 @@ let shared: Storage | undefined;
  * without env, so the assets router asks for it here; env is already validated at boot.
  */
 export function getStorage(): Storage {
-  shared ??= createStorage(parseEnv(process.env));
+  // `MONGODB_URI` is not needed for storage: a placeholder stands in when it is unset (tests).
+  shared ??= createStorage(parseEnv({ MONGODB_URI: "mongodb://unused", ...process.env }));
   return shared;
 }
