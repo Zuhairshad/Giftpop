@@ -1,0 +1,77 @@
+import { DesignSchema } from "@giftpop/contracts";
+import type { CatalogResponse, CountryCode, Design } from "@giftpop/contracts";
+
+import { designFitsCatalog } from "./design-data";
+
+/** The part of `Storage` the builder uses, so tests can pass a fake. */
+export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+export function storageKey(country: CountryCode): string {
+  return `gp-builder:${country}`;
+}
+
+/** `sessionStorage`, or null when the browser blocks it (or there is no browser). */
+export function getSessionStorage(): StorageLike | null {
+  try {
+    return typeof window === "undefined" ? null : window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads the design saved for this country. Returns null, and forgets what was
+ * stored, when it is missing, unreadable, invalid, or names a format or item
+ * the catalog no longer has.
+ */
+export function readStoredDesign(
+  storage: StorageLike | null,
+  country: CountryCode,
+  catalog: CatalogResponse,
+): Design | null {
+  if (!storage) return null;
+  const key = storageKey(country);
+  let raw: string | null;
+  try {
+    raw = storage.getItem(key);
+  } catch {
+    return null;
+  }
+  if (raw === null) return null;
+
+  const design = parseDesign(raw, catalog);
+  if (design === null) forget(storage, key);
+  return design;
+}
+
+function parseDesign(raw: string, catalog: CatalogResponse): Design | null {
+  try {
+    const parsed = DesignSchema.safeParse(JSON.parse(raw));
+    return parsed.success && designFitsCatalog(parsed.data, catalog) ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+function forget(storage: StorageLike, key: string): void {
+  try {
+    storage.removeItem(key);
+  } catch {
+    // Blocked storage: nothing to clean up.
+  }
+}
+
+/** Saves the design, or clears it when there is none. Never throws. */
+export function writeStoredDesign(
+  storage: StorageLike | null,
+  country: CountryCode,
+  design: Design | null,
+): void {
+  if (!storage) return;
+  try {
+    if (design === null) storage.removeItem(storageKey(country));
+    else storage.setItem(storageKey(country), JSON.stringify(design));
+  } catch {
+    // Storage is full or blocked: the builder keeps working without it.
+  }
+}
