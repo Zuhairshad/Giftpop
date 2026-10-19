@@ -14,6 +14,7 @@ import { CountryPriceModel } from "../catalog/model";
 import { upsertItem, upsertPrices } from "../catalog/service";
 import { makeCountry } from "../countries/fixtures";
 import { makeDesign, seedWorld, initCatalogModels, type World } from "../quotes/fixtures";
+import { createIpLimiter } from "../quotes/rate-limit";
 
 import { OrderModel } from "./model";
 import { createOrdersRouter } from "./router";
@@ -41,7 +42,10 @@ beforeEach(async () => {
   enqueueState.calls = [];
 });
 
-const app = createTestApp([{ path: "/orders", router: createOrdersRouter() }]);
+// Tests place many orders from one IP; the order limit has its own test below.
+const app = createTestApp([
+  { path: "/orders", router: createOrdersRouter({ orderLimiter: (_req, _res, next) => next() }) },
+]);
 let counter = 0;
 const nextKey = () => `key-${Date.now()}-${(counter += 1)}-abcdef`;
 
@@ -359,5 +363,25 @@ describe("POST /v1/orders: idempotency", () => {
     enqueueState.fail = false;
     expect((await place(body(world), key)).status).toBe(201);
     expect(await OrderModel.countDocuments()).toBe(1);
+  });
+});
+
+describe("POST /v1/orders: rate limit", () => {
+  it("answers 429 once one IP has placed too many orders, even for invalid requests", async () => {
+    const limited = createTestApp([
+      {
+        path: "/orders",
+        router: createOrdersRouter({ orderLimiter: createIpLimiter({ limit: 3 }) }),
+      },
+    ]);
+    const statuses: number[] = [];
+    for (let i = 0; i < 5; i += 1) {
+      const res = await request(limited)
+        .post("/v1/orders")
+        .set("Idempotency-Key", nextKey())
+        .send({ nothing: "valid" });
+      statuses.push(res.status);
+    }
+    expect(statuses).toEqual([400, 400, 400, 429, 429]);
   });
 });

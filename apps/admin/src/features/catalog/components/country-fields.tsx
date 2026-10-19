@@ -65,6 +65,19 @@ export function CountryFields({ form, existing }: CountryFieldsProps) {
           />
         )}
       </Field>
+      <Field label="Phone dial code (optional)" error={errors.dialCode?.message}>
+        {(field) => (
+          <Input
+            {...field}
+            placeholder="+92"
+            maxLength={5}
+            autoComplete="off"
+            {...register("dialCode", {
+              setValueAs: (value: string) => value.trim() || undefined,
+            })}
+          />
+        )}
+      </Field>
       <Field label="Status" error={errors.status?.message}>
         {(field) => (
           <Controller

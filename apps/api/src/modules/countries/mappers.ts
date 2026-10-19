@@ -9,6 +9,7 @@ export function toPublicCountry(doc: CountryDoc): PublicCountry {
     code: doc.code,
     name: doc.name,
     currency: doc.currency,
+    ...(doc.dialCode ? { dialCode: doc.dialCode } : {}),
     status: doc.status,
     paymentModes: [...doc.paymentModes],
     shipping: {

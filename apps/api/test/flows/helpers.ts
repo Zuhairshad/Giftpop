@@ -23,6 +23,7 @@ import { beforeAll, beforeEach, expect } from "vitest";
 import { initCatalogModels } from "../../src/modules/catalog/fixtures";
 import { modules } from "../../src/modules/index";
 import { OrderModel, type OrderDoc } from "../../src/modules/orders/model";
+import { resetOrderRateLimit, resetTrackRateLimit } from "../../src/modules/orders/rate-limit";
 import { resetQuoteRateLimit } from "../../src/modules/quotes/rate-limit";
 import { createTestApp } from "../app";
 import { clearDatabase, useTestMongo } from "../mongo";
@@ -49,6 +50,8 @@ export function useFlowDatabase(): void {
   beforeEach(async () => {
     await clearDatabase();
     resetQuoteRateLimit();
+    resetOrderRateLimit();
+    resetTrackRateLimit();
   });
 }
 

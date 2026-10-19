@@ -19,5 +19,18 @@ export function contactMatches(stored: Contact, typed: string): boolean {
   const input = typed.trim();
   if (input.includes("@")) return normaliseEmail(input) === normaliseEmail(stored.email);
   const digits = normalisePhone(input);
-  return digits.length >= 6 && digits === normalisePhone(stored.phone);
+  if (digits.length < 6) return false;
+  const storedDigits = normalisePhone(stored.phone);
+  if (digits === storedDigits) return true;
+  // Checkout stores the phone with its country code ("+92 300 1234567"); customers
+  // often type it the national way ("0300 1234567"). Accept that: the typed digits,
+  // without the trunk zero, must be the whole stored number after a country code of
+  // at most 4 digits, and long enough that a short tail cannot match.
+  const national = digits.replace(/^0+/, "");
+  return (
+    national.length >= 7 &&
+    storedDigits.length - national.length >= 1 &&
+    storedDigits.length - national.length <= 4 &&
+    storedDigits.endsWith(national)
+  );
 }

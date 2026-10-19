@@ -40,6 +40,11 @@ export const CountrySchema = z.object({
   code: CountryCodeSchema,
   name: z.string().min(1).max(80),
   currency: CurrencyCodeSchema,
+  /** Phone country code shown before the phone field at checkout, for example `+92`. */
+  dialCode: z
+    .string()
+    .regex(/^\+\d{1,4}$/, "Use a dial code like +92")
+    .optional(),
   status: CountryStatusSchema,
   paymentModes: z.array(PaymentModeSchema),
   shipping: ShippingRuleSchema,

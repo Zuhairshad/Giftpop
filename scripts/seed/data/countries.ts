@@ -14,6 +14,7 @@ const DEV_PAYMENT_INSTRUCTIONS = "DEV ONLY: bank transfer details go here";
 export const COUNTRIES: Country[] = [
   {
     code: "US",
+    dialCode: "+1",
     name: "United States",
     currency: "USD",
     status: "live",
@@ -28,6 +29,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "GB",
+    dialCode: "+44",
     name: "United Kingdom",
     currency: "GBP",
     status: "live",
@@ -42,6 +44,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "SA",
+    dialCode: "+966",
     name: "Saudi Arabia",
     currency: "SAR",
     status: "live",
@@ -56,6 +59,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "IN",
+    dialCode: "+91",
     name: "India",
     currency: "INR",
     status: "live",
@@ -70,6 +74,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "PK",
+    dialCode: "+92",
     name: "Pakistan",
     currency: "PKR",
     status: "live",
@@ -84,6 +89,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "CN",
+    dialCode: "+86",
     name: "China",
     currency: "CNY",
     status: "live",
@@ -98,6 +104,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "AU",
+    dialCode: "+61",
     name: "Australia",
     currency: "AUD",
     status: "live",
@@ -112,6 +119,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "TR",
+    dialCode: "+90",
     name: "Turkey",
     currency: "TRY",
     status: "live",
@@ -126,6 +134,7 @@ export const COUNTRIES: Country[] = [
   },
   {
     code: "CA",
+    dialCode: "+1",
     name: "Canada",
     currency: "CAD",
     status: "live",

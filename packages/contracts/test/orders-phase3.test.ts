@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  CountrySchema,
   OutboxEntrySchema,
   PaymentProofUploadFieldsSchema,
   PriceEntrySchema,
+  PublicCountrySchema,
   PublicOrderViewSchema,
   SetPricesRequestSchema,
   snapshotsToSceneDocs,
@@ -158,5 +160,32 @@ describe("payment proof and outbox", () => {
     };
     expect(OutboxEntrySchema.safeParse(entry).success).toBe(true);
     expect(OutboxEntrySchema.safeParse({ ...entry, type: "newsletter" }).success).toBe(false);
+  });
+});
+
+describe("country dialCode", () => {
+  const country = {
+    code: "PK",
+    name: "Pakistan",
+    currency: "PKR",
+    status: "live",
+    paymentModes: ["prepaid", "cod"],
+    shipping: { flatMinor: 25000, deliveryDays: { min: 3, max: 7 } },
+    addressFormat: {
+      region: { required: true, label: "Province" },
+      postalCode: { required: false, label: "Postal code" },
+    },
+    paymentInstructions: "",
+  };
+  it("is optional and looks like +92", () => {
+    expect(CountrySchema.safeParse(country).success).toBe(true);
+    expect(CountrySchema.safeParse({ ...country, dialCode: "+92" }).success).toBe(true);
+    for (const bad of ["92", "+", "+92 300", "+12345", "pk"]) {
+      expect(CountrySchema.safeParse({ ...country, dialCode: bad }).success).toBe(false);
+    }
+  });
+  it("reaches the public country the store reads", () => {
+    const { paymentInstructions: _hidden, ...publicCountry } = country;
+    expect(PublicCountrySchema.parse({ ...publicCountry, dialCode: "+92" }).dialCode).toBe("+92");
   });
 });

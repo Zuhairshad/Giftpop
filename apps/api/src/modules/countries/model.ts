@@ -28,6 +28,7 @@ const countrySchema = new Schema(
       region: ruleSchema,
       postalCode: ruleSchema,
     },
+    dialCode: { type: String },
     paymentInstructions: { type: String, default: "" },
   },
   { versionKey: false, collection: "countries" },

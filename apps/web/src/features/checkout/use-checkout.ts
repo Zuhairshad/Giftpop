@@ -5,7 +5,6 @@ import type { OrderNumber, PaymentMode, PublicCountry } from "@giftpop/contracts
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 
-import { dialCodeFor } from "./dial-codes";
 import { EMPTY_FORM, fieldId, firstInvalidField, isContactField } from "./fields";
 import type { FieldErrors, FieldName, FormValues } from "./fields";
 import { saveOrderHandoff } from "./handoff";
@@ -49,7 +48,7 @@ export function useCheckout(
   const sendingRef = useRef(false);
   const keysRef = useRef(createIdempotencyKeys(() => crypto.randomUUID()));
 
-  const dialCode = dialCodeFor(country.code);
+  const dialCode = country.dialCode ?? null;
   const cards =
     builder.quoteStatus === "ready" && builder.quote
       ? buildPaymentCards(builder.quote.quotes, country.paymentModes)

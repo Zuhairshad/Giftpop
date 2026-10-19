@@ -48,8 +48,18 @@ describe("classifyOrderError", () => {
       details: { problems: [] },
     });
     expect(classifyOrderError(design)).toEqual({ kind: "design_invalid" });
+    expect(
+      classifyOrderError(
+        new ApiError(409, {
+          code: "CONFLICT",
+          message: "x",
+          details: { outOfStock: [{ kind: "item", targetId: "a" }] },
+        }),
+      ),
+    ).toEqual({ kind: "sold_out" });
+    // A 409 with no stock details (a request already in progress, a reused key) is not "sold out".
     expect(classifyOrderError(new ApiError(409, { code: "CONFLICT", message: "x" }))).toEqual({
-      kind: "sold_out",
+      kind: "in_progress",
     });
     expect(classifyOrderError(new ApiError(429, { code: "RATE_LIMITED", message: "x" }))).toEqual({
       kind: "rate_limited",

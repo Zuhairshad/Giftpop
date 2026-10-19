@@ -34,5 +34,7 @@ const outboxSchema = new Schema<OutboxDoc>(
 
 // The worker claims the oldest due pending entries.
 outboxSchema.index({ status: 1, nextAttemptAt: 1 });
+// Delivered and failed messages are not kept for ever: they hold the text we sent.
+outboxSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 export const OutboxModel = model<OutboxDoc>("NotificationOutbox", outboxSchema);

@@ -11,7 +11,12 @@ import { validateBody } from "../../lib/validate";
 import { idempotency } from "../../middleware/idempotency";
 import { createIpLimiter } from "../quotes/rate-limit";
 
-import { defaultTrackStore, TRACKS_PER_MINUTE } from "./rate-limit";
+import {
+  defaultOrderStore,
+  defaultTrackStore,
+  ORDERS_PER_MINUTE,
+  TRACKS_PER_MINUTE,
+} from "./rate-limit";
 import { createOrder, trackOrder } from "./service";
 
 export interface OrdersRouterOptions {
@@ -19,6 +24,9 @@ export interface OrdersRouterOptions {
   limiter?: RequestHandler;
   /** Counter store for the default limiter. Each limiter needs its own store. */
   store?: Store;
+  /** Limits how many orders one IP can place; replaceable in tests. */
+  orderLimiter?: RequestHandler;
+  orderStore?: Store;
 }
 
 /** Customers type numbers in any case; the contract only accepts upper case. */
@@ -38,13 +46,25 @@ export function createOrdersRouter({
     store,
     message: "Too many lookups. Try again in a minute.",
   }),
+  orderStore = new MemoryStore(),
+  orderLimiter = createIpLimiter({
+    limit: ORDERS_PER_MINUTE,
+    store: orderStore,
+    message: "Too many orders. Try again in a minute.",
+  }),
 }: OrdersRouterOptions = {}): Router {
   const router = Router();
 
   // The schema strips unknown keys, so a price sent by the client never reaches the service.
-  router.post("/", validateBody(CreateOrderRequestSchema), idempotency(), async (req, res) => {
-    res.status(201).json(await createOrder(req.body as CreateOrderRequest));
-  });
+  router.post(
+    "/",
+    orderLimiter,
+    validateBody(CreateOrderRequestSchema),
+    idempotency(),
+    async (req, res) => {
+      res.status(201).json(await createOrder(req.body as CreateOrderRequest));
+    },
+  );
 
   router.post(
     "/track",
@@ -59,4 +79,7 @@ export function createOrdersRouter({
   return router;
 }
 
-export const ordersRouter: Router = createOrdersRouter({ store: defaultTrackStore });
+export const ordersRouter: Router = createOrdersRouter({
+  store: defaultTrackStore,
+  orderStore: defaultOrderStore,
+});

@@ -2,7 +2,7 @@ import type { AddressFormat, Design, Quote } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
 import { buildAddressFields } from "./address-fields";
-import { dialCodeFor, withDialCode } from "./dial-codes";
+import { withDialCode } from "./dial-codes";
 import { EMPTY_FORM, firstInvalidField } from "./fields";
 import type { FormValues } from "./fields";
 import { saveOrderHandoff } from "./handoff";
@@ -143,12 +143,6 @@ describe("checkForm", () => {
 });
 
 describe("dial codes", () => {
-  it("knows the launch countries and nothing else", () => {
-    expect(dialCodeFor("PK")).toBe("+92");
-    expect(dialCodeFor("gb")).toBe("+44");
-    expect(dialCodeFor("ZZ")).toBeNull();
-  });
-
   it("puts the dial code in front, drops the trunk zero, keeps typed + numbers", () => {
     expect(withDialCode("+92", "0300 1234567")).toBe("+92 300 1234567");
     expect(withDialCode("+44", "7700 900123")).toBe("+44 7700 900123");

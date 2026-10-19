@@ -18,6 +18,16 @@ describe("contactMatches", () => {
   it("matches the email regardless of case and spaces", () => {
     expect(contactMatches(stored, " sara@example.COM ")).toBe(true);
   });
+  it("matches the national number typed the way people write it at home", () => {
+    for (const typed of ["300 1234567", "0300 1234567", "0300-1234567", "(0300) 1234567"]) {
+      expect(contactMatches(stored, typed)).toBe(true);
+    }
+  });
+  it("does not match a short tail or a number with a different middle", () => {
+    for (const typed of ["1234567", "234567", "0 1234567", "301 1234567", "300 1234568"]) {
+      expect(contactMatches(stored, typed)).toBe(false);
+    }
+  });
   it("does not match another phone or email, or a partial phone", () => {
     expect(contactMatches(stored, "+92 300 7654321")).toBe(false);
     expect(contactMatches(stored, "other@example.com")).toBe(false);

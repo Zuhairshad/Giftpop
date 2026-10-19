@@ -9,6 +9,7 @@ export type OrderFailure =
   | { kind: "fields"; fields: FieldErrors }
   | { kind: "design_invalid" }
   | { kind: "sold_out" }
+  | { kind: "in_progress" }
   | { kind: "rate_limited" }
   | { kind: "offline" }
   | { kind: "generic" };
@@ -32,7 +33,11 @@ export function classifyOrderError(error: unknown): OrderFailure {
   if (error instanceof ApiNetworkError) return { kind: "offline" };
   if (!(error instanceof ApiError)) return { kind: "generic" };
   if (error.status === 429) return { kind: "rate_limited" };
-  if (error.status === 409) return { kind: "sold_out" };
+  if (error.status === 409) {
+    const details = error.details;
+    const soldOut = typeof details === "object" && details !== null && "outOfStock" in details;
+    return soldOut ? { kind: "sold_out" } : { kind: "in_progress" };
+  }
   if (error.code === "DESIGN_INVALID") return { kind: "design_invalid" };
   if (error.status === 422 || error.code === "VALIDATION_ERROR") {
     const fields = mapDetailsToFields(error.details);
@@ -50,6 +55,8 @@ export function failureMessage(failure: OrderFailure): string | null {
       return "Something in your gift changed and it can no longer be ordered as it is. Go back to your items and check it.";
     case "sold_out":
       return "An item in your gift just sold out. Go back to your items and swap it for another.";
+    case "in_progress":
+      return "We are already placing this order. Wait a moment, then press Place order again.";
     case "rate_limited":
       return "Too many attempts. Wait a minute and press Place order again.";
     case "offline":
