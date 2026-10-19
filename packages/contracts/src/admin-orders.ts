@@ -104,3 +104,9 @@ export const DashboardSummarySchema = z.object({
   ),
 });
 export type DashboardSummary = z.infer<typeof DashboardSummarySchema>;
+
+/** Staff review of a payment proof the customer uploaded. */
+export const ReviewProofRequestSchema = z.object({
+  status: z.enum(["accepted", "rejected"]),
+});
+export type ReviewProofRequest = z.infer<typeof ReviewProofRequestSchema>;

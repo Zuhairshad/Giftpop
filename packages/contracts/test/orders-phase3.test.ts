@@ -12,6 +12,7 @@ import {
   PriceEntrySchema,
   PublicCountrySchema,
   PublicOrderViewSchema,
+  ReviewProofRequestSchema,
   SetPricesRequestSchema,
   snapshotsToSceneDocs,
   validateAddress,
@@ -276,5 +277,13 @@ describe("admin order contracts", () => {
       ordersByCountry: [{ country: "PK", orders: 3 }],
     });
     expect(ok.success).toBe(true);
+  });
+});
+
+describe("ReviewProofRequestSchema", () => {
+  it("only accepts or rejects; a proof cannot go back to pending", () => {
+    expect(ReviewProofRequestSchema.safeParse({ status: "accepted" }).success).toBe(true);
+    expect(ReviewProofRequestSchema.safeParse({ status: "rejected" }).success).toBe(true);
+    expect(ReviewProofRequestSchema.safeParse({ status: "pending" }).success).toBe(false);
   });
 });
