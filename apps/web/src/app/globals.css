@@ -147,6 +147,14 @@ body:has(main [data-viewport-fit="builder"]) .gp-footer {
   display: none;
 }
 
+/*
+ * The country suggestion floats over the page. On a page that fills the viewport exactly it would
+ * cover the headline or the overview, and the header country chip is right there, so it is not shown.
+ */
+body:has(main [data-viewport-fit]) section[aria-label="Country suggestion"] {
+  display: none;
+}
+
 /* The soft pink and lavender light pools behind the hero and builder overview (decorative, the only gradients). */
 .gp-pools {
   background-color: var(--gp-bg);
