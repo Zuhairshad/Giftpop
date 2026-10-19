@@ -58,7 +58,7 @@ export function PackagingTile({
             design={design}
             packaging={packaging}
             items={items}
-            className="w-24 min-[560px]:w-32"
+            className="max-w-24 min-[560px]:max-w-32"
             fallbackClassName="size-full"
           />
         </span>
