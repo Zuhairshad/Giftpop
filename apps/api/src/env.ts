@@ -37,8 +37,11 @@ const EnvObjectSchema = z.object({
   DB_CONNECT_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(100).default(10),
   /** First retry delay in ms; doubles each attempt up to 10 seconds. */
   DB_CONNECT_BASE_DELAY_MS: z.coerce.number().int().min(10).max(10_000).default(250),
-  /** Peppers the hash of staff session tokens. At least 32 characters; required in production. */
-  SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
+  /** Peppers the hash of staff session tokens. At least 32 characters; required in production. Blank means unset. */
+  SESSION_SECRET: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
+  ),
   /** `on` runs the notification outbox worker in this process; keep it on in exactly one instance. */
   NOTIFICATIONS_WORKER: z.enum(["on", "off"]).default("off"),
   /** How many reverse proxies sit in front of the API (0 when none). Rate limits key on the real client IP. */

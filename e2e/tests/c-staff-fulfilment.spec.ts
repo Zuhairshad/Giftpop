@@ -53,7 +53,9 @@ test("staff fulfil the Pakistan order and the customer sees every step", async (
     // The amount is pre-filled with what is due now (the 20% advance for cash on delivery).
     await expect(payment.getByLabel(/Amount received/)).not.toHaveValue("");
     await payment.getByRole("button", { name: "Record payment" }).click();
-    await expect(page.getByText("Payment recorded")).toBeVisible();
+    // The toast, not the screen-reader status line or the history note with the same words.
+    const toasts = page.getByRole("region", { name: /Notifications/ });
+    await expect(toasts.getByText("Payment recorded", { exact: true })).toBeVisible();
     await expect(payment).toBeHidden();
     // Recording the advance confirms an order that was waiting for payment.
     await expectTrackStatus(customer, order, "confirmed");

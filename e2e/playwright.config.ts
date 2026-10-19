@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { defineConfig, devices } from "@playwright/test";
 
+import { STAFF_EMAIL, STAFF_PASSWORD } from "./support/env";
+
 /**
  * `E2E_ISOLATED=1` runs a private copy of the stack: its own database (`giftpop_e2e`
  * on the Mongo that is already listening on 27017), API on 4100, web on 3100 and admin
@@ -43,9 +45,12 @@ if (isolated) {
 const servers = isolated
   ? [
       {
-        command: "pnpm --filter @giftpop/api exec tsx src/server.ts",
+        // Seed before the API listens. Playwright starts the servers before global setup, and
+        // the web readiness probe renders the home page: on a fresh database it would cache an
+        // empty country list for five minutes (`revalidate: 300`) and every flow would fail.
+        command: "pnpm seed && pnpm --filter @giftpop/api exec tsx src/server.ts",
         url: `${API}/ready`,
-        env: isolatedEnv,
+        env: { ...isolatedEnv, SEED_OWNER_EMAIL: STAFF_EMAIL, SEED_OWNER_PASSWORD: STAFF_PASSWORD },
         reuseExistingServer: false,
         timeout: 120_000,
       },

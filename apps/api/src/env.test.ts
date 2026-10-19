@@ -61,6 +61,15 @@ describe("parseEnv", () => {
       expect(() => parseEnv({ ...valid, SESSION_SECRET: "too-short" })).toThrow(/at least 32/);
     });
 
+    it("treats a blank SESSION_SECRET (as in .env.example) as unset", () => {
+      expect(
+        parseEnv({ ...valid, SESSION_SECRET: "" }).SESSION_SECRET.length,
+      ).toBeGreaterThanOrEqual(32);
+      expect(() =>
+        parseEnv({ ...valid, NODE_ENV: "production", STORAGE_DRIVER: "r2", SESSION_SECRET: " " }),
+      ).toThrow(/SESSION_SECRET is required in production/);
+    });
+
     it("requires a real SESSION_SECRET when an origin is https, whatever NODE_ENV says", () => {
       expect(() => parseEnv({ ...valid, ADMIN_ORIGIN: "https://admin.example.com" })).toThrow(
         /SESSION_SECRET/,
