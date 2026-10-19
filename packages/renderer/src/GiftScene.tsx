@@ -68,7 +68,12 @@ function StaticScene({
 }: Omit<GiftSceneProps, "motion" | "imageUrl">) {
   const model = buildSceneModel({ design, packaging, items });
   return (
-    <SceneSvg label={model.label} layoutType={model.layoutType} className={className}>
+    <SceneSvg
+      label={model.label}
+      layoutType={model.layoutType}
+      bounds={model.bounds}
+      className={className}
+    >
       <g data-layer="back">
         <StaticLayer side="back" asset={model.layers.back} model={model} />
       </g>

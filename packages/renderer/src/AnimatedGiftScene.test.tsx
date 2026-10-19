@@ -50,7 +50,8 @@ describe("AnimatedGiftScene", () => {
       <AnimatedGiftScene design={design} packaging={packaging} items={items} />,
     );
     expect(structure(moving.container)).toEqual(expected);
-    expect(moving.getByRole("img").getAttribute("viewBox")).toBe("0 0 1000 1000");
+    // The fixture packaging is a bouquet, so both variants show its crop of the scene.
+    expect(moving.getByRole("img").getAttribute("viewBox")).toBe("30 230 940 740");
   });
 
   it("matches the static scene's item transforms once settled", async () => {

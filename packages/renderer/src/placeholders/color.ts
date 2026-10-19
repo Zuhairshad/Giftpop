@@ -17,6 +17,20 @@ function parseHex(hex: string): [number, number, number] {
   ];
 }
 
+/** Blend `from` towards `to` by `t` in [0, 1]: 0 is `from`, 1 is `to`. */
+export function mix(from: string, to: string, t: number): string {
+  const a = parseHex(from);
+  const b = parseHex(to);
+  const k = Math.min(1, Math.max(0, t));
+  return `#${a
+    .map((c, i) =>
+      Math.round(c + ((b[i] ?? c) - c) * k)
+        .toString(16)
+        .padStart(2, "0"),
+    )
+    .join("")}`;
+}
+
 /** Move a colour towards black (`amount` < 0) or white (`amount` > 0), amount in [-1, 1]. */
 export function shade(hex: string, amount: number): string {
   const target = amount < 0 ? 0 : 255;

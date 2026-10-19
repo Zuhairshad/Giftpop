@@ -97,7 +97,27 @@ describe("GiftScene", () => {
     );
     const svg = container.querySelector("svg");
     expect(svg?.getAttribute("viewBox")).toBe("0 0 1000 1000");
+    expect(svg?.getAttribute("style")).toContain("aspect-ratio: 1000 / 1000");
     expect(svg?.getAttribute("data-layout")).toBe("box-grid");
+  });
+
+  it("crops a bouquet to its bounds, with a matching aspect ratio", () => {
+    const { container } = render(<GiftScene design={design} packaging={packaging} items={items} />);
+    const svg = container.querySelector("svg");
+    expect(svg?.getAttribute("viewBox")).toBe("30 230 940 740");
+    expect(svg?.getAttribute("style")).toContain("aspect-ratio: 940 / 740");
+  });
+
+  it("shows the whole square when the packaging has an uploaded layer", () => {
+    const layer = { url: "/front.webp", width: 1000, height: 1000, anchor: { x: 0.5, y: 0.5 } };
+    const { container } = render(
+      <GiftScene
+        design={design}
+        packaging={makePackaging({ layers: { front: layer } })}
+        items={items}
+      />,
+    );
+    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 1000 1000");
   });
 
   it("draws no animation machinery on the static path", () => {

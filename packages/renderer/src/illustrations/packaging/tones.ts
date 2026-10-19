@@ -1,5 +1,5 @@
-import { shade } from "../../placeholders/color";
-import { luma } from "../palette";
+import { mix, shade } from "../../placeholders/color";
+import { INK, luma, PAPER } from "../palette";
 
 /**
  * Shades of one packaging colour, named by role. Near-black wrappers cannot be darkened and
@@ -35,6 +35,43 @@ export function wrapTones(color: string): WrapTones {
     floor: light ? shade(color, -0.32) : shade(color, dark ? -0.3 : -0.38),
     edge: shade(color, dark ? -0.7 : -0.42),
     fold: dark ? shade(color, 0.5) : shade(color, -0.42),
+  };
+}
+
+/**
+ * An open box's inside. The floor is lined with pale tissue tinted by the wrapper, so items read
+ * against it at thumbnail size; walls in shadow are deepened towards the ink colour, not black,
+ * so pinks and creams stay warm instead of turning grey-mauve.
+ */
+export interface BoxTones {
+  /** Tissue lining the floor. */
+  tissue: string;
+  /** Tissue creases and the crinkled front fold. */
+  crease: string;
+  /** The inner back wall, in shadow. */
+  wall: string;
+  /** The inner side walls, a little lighter than the back wall. */
+  side: string;
+  /** The outside front face below the rim. */
+  face: string;
+  /** Texture dots on the tissue. */
+  dots: string;
+  /** Outline of the rim and the box, the wrapper darkened about 38%. */
+  edge: string;
+}
+
+export function boxTones(color: string): BoxTones {
+  // Charcoal and other deep wrappers: walls step lighter and the tissue stays nearly white.
+  const dark = luma(color) < 0.35;
+  const tissue = mix(PAPER, color, dark ? 0.08 : 0.26);
+  return {
+    tissue,
+    crease: mix(tissue, color, dark ? 0.18 : 0.5),
+    wall: dark ? shade(color, 0.14) : mix(color, INK, 0.16),
+    side: dark ? shade(color, 0.22) : mix(color, INK, 0.08),
+    face: dark ? shade(color, 0.08) : mix(color, INK, 0.1),
+    dots: dark ? shade(color, 0.45) : color,
+    edge: dark ? shade(color, -0.6) : mix(color, INK, 0.45),
   };
 }
 

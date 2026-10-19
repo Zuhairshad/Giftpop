@@ -13,8 +13,10 @@ export {
   isKnownLayoutType,
   ITEM_BASE_SIZE,
   SCENE_SIZE,
+  FULL_SCENE,
+  sceneBounds,
 } from "./layouts";
-export type { KnownLayoutType, LayoutFn, LayoutInput, Placement } from "./layouts";
+export type { KnownLayoutType, LayoutFn, LayoutInput, Placement, SceneBounds } from "./layouts";
 export {
   ITEM_ART_SIZE,
   ITEM_ILLUSTRATIONS,
