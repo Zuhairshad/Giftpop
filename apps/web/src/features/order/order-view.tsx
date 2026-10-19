@@ -1,7 +1,6 @@
 "use client";
 
 import type { PublicOrderView } from "@giftpop/contracts";
-import Link from "next/link";
 import { useState } from "react";
 import type { ReactElement } from "react";
 
@@ -11,8 +10,9 @@ import { GiftPanel } from "./gift-panel";
 import { ProofPanel } from "./proof-panel";
 import { statusHint } from "./status-labels";
 import { StatusPill } from "./status-pill";
-import { BUTTON_SECONDARY, CARD } from "./ui";
+import { CARD, CARD_TITLE, META_LABEL, SECONDARY, WELL } from "./ui";
 
+import { ButtonLink } from "@/components/ui";
 import { formatMoney } from "@/lib/format-money";
 
 const NEXT_STEPS = [
@@ -31,21 +31,21 @@ export function OrderView({ initial, contact }: OrderViewProps): ReactElement {
   const instructions = view.paymentInstructions.trim();
 
   return (
-    <div className="space-y-8">
-      <header className={`${CARD} space-y-4`}>
+    <div className="space-y-6 sm:space-y-8">
+      <header className={`${CARD} space-y-5`}>
         <CopyNumber number={view.number} />
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <StatusPill status={view.status} />
-          <span className="text-muted text-sm">{statusHint(view.status)}</span>
+          <span className="text-sm text-muted">{statusHint(view.status)}</span>
         </div>
         {awaiting ? (
-          <p className="bg-surface-soft rounded-soft p-3">
-            <span className="text-muted block text-sm font-bold">Amount to pay now</span>
-            <span className="font-display text-3xl font-bold tabular-nums">
+          <p className={`${WELL} p-4`}>
+            <span className={`${META_LABEL} block`}>Amount to pay now</span>
+            <span className="font-display block text-4xl font-bold tracking-tight tabular-nums wrap-anywhere">
               {formatMoney(view.quote.dueNowMinor, view.quote.currency, "en")}
             </span>
             {view.quote.dueOnDeliveryMinor > 0 ? (
-              <span className="text-muted block text-sm">
+              <span className="mt-1 block text-sm text-muted">
                 and {formatMoney(view.quote.dueOnDeliveryMinor, view.quote.currency, "en")} when it
                 is delivered
               </span>
@@ -54,11 +54,11 @@ export function OrderView({ initial, contact }: OrderViewProps): ReactElement {
         ) : null}
       </header>
 
-      <div className="grid gap-8 md:grid-cols-2 md:items-start">
-        <div className="min-w-0 space-y-8">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-2 md:items-start">
+        <div className="min-w-0 space-y-6 sm:space-y-8">
           {awaiting && instructions ? (
             <section aria-labelledby="pay-heading" className={`${CARD} space-y-2`}>
-              <h2 id="pay-heading" className="font-display text-2xl font-bold">
+              <h2 id="pay-heading" className={CARD_TITLE}>
                 How to pay
               </h2>
               <p className="wrap-anywhere whitespace-pre-line">{instructions}</p>
@@ -77,24 +77,33 @@ export function OrderView({ initial, contact }: OrderViewProps): ReactElement {
           <AmountsPanel view={view} />
 
           <section aria-labelledby="next-heading" className={CARD}>
-            <h2 id="next-heading" className="font-display text-2xl font-bold">
+            <h2 id="next-heading" className={CARD_TITLE}>
               What happens next
             </h2>
-            <ol className="mt-2 list-decimal space-y-1.5 pl-5">
-              {NEXT_STEPS.map((step) => (
-                <li key={step}>{step}</li>
+            <ol className="mt-4 space-y-3">
+              {NEXT_STEPS.map((step, index) => (
+                <li key={step} className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="font-display mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-foreground text-sm font-bold text-background"
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 pt-0.5">{step}</span>
+                </li>
               ))}
             </ol>
-            <Link
+            <ButtonLink
               href={`/track?number=${encodeURIComponent(view.number)}`}
-              className={`${BUTTON_SECONDARY} mt-4`}
+              variant="ghost"
+              className={`${SECONDARY} mt-5`}
             >
               Open the track page
-            </Link>
+            </ButtonLink>
           </section>
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 md:sticky md:top-6">
           <GiftPanel view={view} />
         </div>
       </div>

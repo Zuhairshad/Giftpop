@@ -3,6 +3,9 @@ import type { HTMLInputTypeAttribute, ReactElement } from "react";
 import { fieldId } from "./fields";
 import type { FieldName } from "./fields";
 
+import { FieldError } from "@/features/order/field-error";
+import { FIELD_LABEL, INPUT } from "@/features/order/ui";
+
 type TextFieldProps = {
   name: FieldName;
   label: string;
@@ -18,9 +21,6 @@ type TextFieldProps = {
   prefix?: string | null;
   hint?: string;
 };
-
-const CONTROL =
-  "border-border bg-surface text-foreground placeholder:text-muted/70 min-w-0 w-full rounded-soft border-2 px-4 py-3 text-base focus-visible:border-pink aria-[invalid=true]:border-pink-strong";
 
 /** A labelled input. The error is read out with the field and the field is marked invalid. */
 export function TextField({
@@ -44,17 +44,15 @@ export function TextField({
 
   return (
     <div className="min-w-0">
-      <label htmlFor={id} className="mb-1.5 block font-bold">
+      <label htmlFor={id} className={FIELD_LABEL}>
         {label}
-        {required ? null : (
-          <span className="text-muted ml-2 text-sm font-semibold">(optional)</span>
-        )}
+        {required ? null : <span className="ml-2 font-normal text-muted">(optional)</span>}
       </label>
       <div className="flex min-w-0 items-stretch gap-2">
         {prefix ? (
           <span
             aria-hidden="true"
-            className="bg-surface-soft border-border text-foreground rounded-soft flex shrink-0 items-center border-2 px-3 font-bold tabular-nums"
+            className="flex min-h-12 shrink-0 items-center rounded-md border border-border-strong bg-warm px-3 font-semibold text-foreground tabular-nums"
           >
             {prefix}
           </span>
@@ -71,19 +69,15 @@ export function TextField({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
           onChange={(event) => onChange(event.target.value)}
-          className={CONTROL}
+          className={INPUT}
         />
       </div>
       {hint ? (
-        <p id={hintId} className="text-muted mt-1.5 text-sm">
+        <p id={hintId} className="mt-1.5 text-sm text-muted">
           {hint}
         </p>
       ) : null}
-      {error ? (
-        <p id={errorId} className="text-pink-strong mt-1.5 text-sm font-bold">
-          {error}
-        </p>
-      ) : null}
+      {error ? <FieldError id={errorId}>{error}</FieldError> : null}
     </div>
   );
 }

@@ -13,15 +13,17 @@ export function ErrorSummary({ entries }: { entries: ErrorSummaryEntry[] }): Rea
   return (
     <div
       role="alert"
-      className="bg-surface-soft border-pink-strong rounded-soft space-y-2 border-2 p-4"
+      className="space-y-2 rounded-lg border-l-4 border-danger bg-surface p-4 shadow-hairline"
     >
-      <h2 className="font-bold">{summaryHeading(entries.length)}</h2>
+      <h2 className="font-display text-lg font-bold tracking-tight text-danger">
+        {summaryHeading(entries.length)}
+      </h2>
       <ul className="list-disc space-y-1 ps-5">
         {entries.map((entry) => (
           <li key={entry.field}>
             <a
               href={entry.href}
-              className="text-pink-strong font-semibold underline underline-offset-4"
+              className="inline-flex min-h-11 items-center font-semibold text-foreground underline underline-offset-4"
             >
               {entry.label ? `${entry.label}: ${entry.message}` : entry.message}
             </a>

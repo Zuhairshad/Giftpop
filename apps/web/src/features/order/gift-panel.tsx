@@ -2,6 +2,8 @@ import { snapshotsToSceneDocs } from "@giftpop/contracts";
 import type { PublicOrderView } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
+import { CARD_TITLE, META_LABEL, WELL } from "./ui";
+
 import { SafeScene } from "@/features/builder/steps/format/safe-scene";
 
 /** The gift drawn from the order's frozen snapshots, with its item list. */
@@ -14,11 +16,13 @@ export function GiftPanel({
   const { cardMessage, recipientName, itemNames } = view.design.personalisation;
   return (
     <section aria-labelledby="gift-heading" className="space-y-4">
-      <h2 id="gift-heading" className="font-display text-2xl font-bold">
+      <h2 id="gift-heading" className={CARD_TITLE}>
         Your {view.packaging.name}
       </h2>
-      <div className="mx-auto w-[min(100%,28rem)] md:w-full">
-        <SafeScene design={view.design} packaging={packaging} items={items} />
+      <div className={`${WELL} p-4 sm:p-6`}>
+        <div className="mx-auto w-[min(100%,28rem)] md:w-full">
+          <SafeScene design={view.design} packaging={packaging} items={items} />
+        </div>
       </div>
       <ul className="space-y-1.5">
         {view.items.map((item) => {
@@ -29,7 +33,7 @@ export function GiftPanel({
                 {item.qty} &times; {item.name}
               </span>
               {named ? (
-                <span className="text-muted text-sm wrap-anywhere">
+                <span className="text-sm text-muted wrap-anywhere">
                   named &ldquo;{named}&rdquo;
                 </span>
               ) : null}
@@ -38,16 +42,16 @@ export function GiftPanel({
         })}
       </ul>
       {recipientName.trim() || cardMessage.trim() ? (
-        <dl className="space-y-2">
+        <dl className="space-y-3 rounded-lg bg-surface p-4 shadow-hairline">
           {recipientName.trim() ? (
             <div>
-              <dt className="text-muted text-sm font-bold">For</dt>
+              <dt className={META_LABEL}>For</dt>
               <dd className="wrap-anywhere">{recipientName}</dd>
             </div>
           ) : null}
           {cardMessage.trim() ? (
             <div>
-              <dt className="text-muted text-sm font-bold">Card message</dt>
+              <dt className={META_LABEL}>Card message</dt>
               <dd className="wrap-anywhere whitespace-pre-line">{cardMessage}</dd>
             </div>
           ) : null}

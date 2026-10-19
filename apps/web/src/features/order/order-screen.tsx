@@ -8,7 +8,10 @@ import { browserSession, readHandoff, writeHandoff } from "./handoff";
 import { NOT_FOUND_MESSAGE, describeLookupError, lookupOrder } from "./lookup";
 import { LookupForm } from "./lookup-form";
 import { OrderView } from "./order-view";
-import { BUTTON_PRIMARY } from "./ui";
+import { PageHeading } from "./page-heading";
+import { StatePanel } from "./state-panel";
+
+import { Button } from "@/components/ui";
 
 type State =
   | { phase: "loading" }
@@ -48,26 +51,24 @@ export function OrderScreen({ orderNumber }: { orderNumber: OrderNumber }): Reac
   }, [orderNumber, attempt]);
 
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-6 py-6">
-      <h1 className="font-display text-3xl font-bold sm:text-4xl">Your order</h1>
+    <section className="mx-auto w-full max-w-5xl space-y-6 sm:space-y-8">
+      <PageHeading title="Your order" eyebrow="Made by hand, just for you" />
 
       {state.phase === "loading" ? (
-        <p role="status" className="text-muted">
-          Loading your order…
-        </p>
+        <StatePanel tone="loading">Loading your order…</StatePanel>
       ) : null}
 
       {state.phase === "error" ? (
-        <div role="alert" className="bg-surface-soft rounded-card space-y-3 p-4">
-          <p className="font-semibold wrap-anywhere">{state.message}</p>
-          <button type="button" onClick={() => setAttempt((n) => n + 1)} className={BUTTON_PRIMARY}>
-            Try again
-          </button>
-        </div>
+        <StatePanel
+          tone="error"
+          action={<Button onClick={() => setAttempt((n) => n + 1)}>Try again</Button>}
+        >
+          {state.message}
+        </StatePanel>
       ) : null}
 
       {state.phase === "form" ? (
-        <div className="max-w-xl space-y-3">
+        <div className="max-w-xl space-y-4">
           <p className="text-muted">
             Enter the phone number or email you used to order, and we will show your order.
           </p>

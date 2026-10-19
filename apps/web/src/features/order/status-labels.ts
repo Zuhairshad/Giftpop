@@ -47,14 +47,19 @@ export function paymentLabel(status: PaymentStatus): string {
   return PAYMENT_LABELS[status];
 }
 
-const ISSUE: readonly OrderStatus[] = ["delivery_failed", "returned", "cancelled"];
+const WARNING: readonly OrderStatus[] = ["awaiting_payment", "delivery_failed", "returned"];
+const DANGER: readonly OrderStatus[] = ["cancelled"];
 const DONE: readonly OrderStatus[] = ["delivered"];
 
-/** Tailwind classes for the status pill. Never colour alone: the label always shows. */
+/**
+ * Tailwind classes for the status pill, from the status tokens (pink is for actions, not status).
+ * Never colour alone: the label always shows.
+ */
 export function statusTone(status: OrderStatus): string {
-  if (ISSUE.includes(status)) return "bg-butter text-on-accent";
-  if (DONE.includes(status)) return "bg-mint text-on-accent";
-  return "bg-pink-soft text-foreground";
+  if (DANGER.includes(status)) return "bg-warm text-danger";
+  if (WARNING.includes(status)) return "bg-warm text-warning";
+  if (DONE.includes(status)) return "bg-success-tint text-success";
+  return "bg-lavender text-lavender-deep";
 }
 
 const DATE = new Intl.DateTimeFormat("en", {
