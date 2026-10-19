@@ -1,11 +1,17 @@
-import { HomeSections } from "@/features/home";
-import { Hero } from "@/features/home/hero";
+import type { Metadata } from "next";
 
+import { HomeScreen, homeHeadline, homeMetadata, homeTicks } from "@/features/home";
+
+export const metadata: Metadata = homeMetadata();
+
+/** `/` with no country chosen. Returning visitors are redirected to `/<cc>` by `proxy.ts`. */
 export default function Home() {
   return (
-    <div className="space-y-12">
-      <Hero />
-      <HomeSections />
-    </div>
+    <HomeScreen
+      headline={homeHeadline()}
+      ticks={homeTicks(null)}
+      buildHref="/countries"
+      chooseCountryHref="/countries"
+    />
   );
 }
