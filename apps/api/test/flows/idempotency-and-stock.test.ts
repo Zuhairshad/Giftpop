@@ -100,7 +100,9 @@ describe("stock", () => {
       postOrder(app, body, randomUUID()),
     ]);
 
-    expect(results.map((r) => r.status).sort()).toEqual([201, 409]);
+    expect(results.map((r) => r.status).sort(), JSON.stringify(results.map((r) => r.body))).toEqual(
+      [201, 409],
+    );
     expect(await orderCount()).toBe(1);
     expect(await priceRow("item", bar, "PK")).toMatchObject({ stockQty: 0, inStock: false });
     // The loser's transaction rolled back, so it left no notification either.

@@ -60,6 +60,15 @@ async function applyPayment(
   }
 
   const kind = options.kind ?? defaultKind(doc, sumPaid(doc) + amount.amountMinor);
+  if (kind === "refund") {
+    const refunded = doc.payments.reduce(
+      (sum, p) => (p.kind === "refund" ? sum + p.amount.amountMinor : sum),
+      0,
+    );
+    if (amount.amountMinor > sumPaid(doc) - refunded) {
+      throw new AppError("VALIDATION_ERROR", 422, "A refund cannot be more than was received");
+    }
+  }
   const paidAfter = sumPaid(doc) + (kind === "refund" ? 0 : amount.amountMinor);
   const overpaid = paidAfter - doc.quote.totalMinor;
   const notes = [

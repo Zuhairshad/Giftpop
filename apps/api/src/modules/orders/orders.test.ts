@@ -258,7 +258,7 @@ describe("POST /v1/orders: rollback and stock", () => {
     });
 
     const [a, b] = await Promise.all([place(single), place(single)]);
-    expect([a.status, b.status].sort()).toEqual([201, 409]);
+    expect([a.status, b.status].sort(), JSON.stringify([a.body, b.body])).toEqual([201, 409]);
     expect(await stockOf(world.bar)).toBe(0);
     expect(await OrderModel.countDocuments()).toBe(1);
   });

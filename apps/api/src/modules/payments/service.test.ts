@@ -144,6 +144,22 @@ describe("recordPayment", () => {
     }
   });
 
+  it("refunds cannot exceed what was received, counting earlier refunds", async () => {
+    const id = await insertOrder();
+    await recordPayment(id, pkr(50_000), "manual_transfer", staff);
+    await expect(
+      recordPayment(id, pkr(50_001), "manual_transfer", staff, { kind: "refund" }),
+    ).rejects.toMatchObject({ httpStatus: 422 });
+    await recordPayment(id, pkr(30_000), "manual_transfer", staff, { kind: "refund" });
+    await expect(
+      recordPayment(id, pkr(20_001), "manual_transfer", staff, { kind: "refund" }),
+    ).rejects.toMatchObject({ httpStatus: 422 });
+    const order = await recordPayment(id, pkr(20_000), "manual_transfer", staff, {
+      kind: "refund",
+    });
+    expect(order.payments).toHaveLength(3);
+  });
+
   it("rejects a wrong currency and non-positive or fractional amounts", async () => {
     const id = await insertOrder();
     await expect(

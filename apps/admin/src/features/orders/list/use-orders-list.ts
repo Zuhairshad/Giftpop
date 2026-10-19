@@ -3,18 +3,20 @@
 import { AdminOrderListResponseSchema } from "@giftpop/contracts";
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
+import { describeActionError } from "../actions/lib/action-errors";
+
 import { buildApiPath } from "./lib/filters";
 import type { OrderFilters } from "./lib/filters";
 import { INITIAL_LIST_STATE, listReducer } from "./lib/state";
 
-import { apiFetch, isApiError } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 function isAbort(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
 function messageOf(error: unknown): string {
-  return isApiError(error) ? error.message : "Could not load orders.";
+  return describeActionError(error).message;
 }
 
 /**

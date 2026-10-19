@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 import { createApp } from "./app";
 import { connectDb, disconnectDb } from "./db";
 import { EnvError, parseEnv } from "./env";
@@ -23,6 +25,9 @@ async function main(): Promise<void> {
     baseDelayMs: env.DB_CONNECT_BASE_DELAY_MS,
     logger,
   });
+
+  // Dashboard queries hint their indexes, so they must exist before traffic arrives.
+  await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
 
   const app = createApp({ env, logger });
   const server = app.listen(env.PORT, () => {
