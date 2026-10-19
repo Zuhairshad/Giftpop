@@ -2,7 +2,6 @@ import { CatalogResponseSchema } from "@giftpop/contracts";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { StepFocus } from "@/features/builder/components/step-focus";
 import { BuilderProvider } from "@/features/builder/state";
 import { apiRequest } from "@/lib/api";
 import { parseCountryParam } from "@/lib/country-param";
@@ -19,7 +18,6 @@ export default async function CheckoutLayout({ children, params }: CheckoutLayou
   });
   return (
     <BuilderProvider country={country} catalog={catalog}>
-      <StepFocus />
       {children}
     </BuilderProvider>
   );

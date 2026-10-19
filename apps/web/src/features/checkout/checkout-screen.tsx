@@ -7,10 +7,11 @@ import type { ReactElement } from "react";
 
 import { CheckoutForm } from "./checkout-form";
 import { GiftSummary } from "./gift-summary";
+import { useArrivalFocus } from "./use-arrival-focus";
 import { useCountry } from "./use-country";
 
 import { ButtonLink } from "@/components/ui";
-import { stepHref, useBuilder, useStepGuard } from "@/features/builder/state";
+import { builderHref, useBuilder, useCheckoutGuard } from "@/features/builder/state";
 import { useBuilderStore } from "@/features/builder/state/context";
 import { PageHeading } from "@/features/order/page-heading";
 import { StatePanel } from "@/features/order/state-panel";
@@ -26,11 +27,13 @@ function Notice({ title, children }: { title: string; children: React.ReactNode 
 
 /** Guard, country data and the form. Unmounted once an order is placed so the guard cannot redirect. */
 function CheckoutContent({ onPlaced }: { onPlaced: (number: OrderNumber) => void }): ReactElement {
-  useStepGuard("review");
+  useCheckoutGuard();
   const builder = useBuilder();
   const countryState = useCountry(builder.country);
   const store = useBuilderStore();
   const hydrated = useSyncExternalStore(store.subscribe, store.isHydrated, () => false);
+  // The h1 renders once saved state is read (either "Checkout" or "Choose a gift first").
+  useArrivalFocus(hydrated);
 
   if (!hydrated) {
     return <StatePanel tone="loading">Loading your gift&hellip;</StatePanel>;
@@ -40,17 +43,17 @@ function CheckoutContent({ onPlaced }: { onPlaced: (number: OrderNumber) => void
     return (
       <Notice title="Choose a gift first">
         <p className="text-muted">Build your gift before you check out.</p>
-        <ButtonLink href={stepHref(builder.country, "format")}>Choose a format</ButtonLink>
+        <ButtonLink href={builderHref(builder.country)}>Build your gift</ButtonLink>
       </Notice>
     );
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       <PageHeading title="Checkout" eyebrow="Almost there">
         Tell us where to send it and how you would like to pay.
       </PageHeading>
-      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start">
+      <div className="grid gap-5 sm:gap-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:items-start">
         <GiftSummary builder={builder} />
         {countryState.status === "ready" ? (
           <CheckoutForm builder={builder} country={countryState.country} onPlaced={onPlaced} />

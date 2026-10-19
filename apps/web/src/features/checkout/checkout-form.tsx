@@ -15,7 +15,7 @@ import { useCheckout } from "./use-checkout";
 import type { CheckoutController } from "./use-checkout";
 
 import { Button } from "@/components/ui";
-import { stepHref } from "@/features/builder/state";
+import { builderHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
 import { CARD, CARD_TITLE } from "@/features/order/ui";
 import { formatMoney } from "@/lib/format-money";
@@ -42,7 +42,8 @@ function Failure({
       <p className="font-semibold text-danger wrap-anywhere">{message}</p>
       {needsItemsLink(failure) ? (
         <Link
-          href={stepHref(builder.country, "items")}
+          href={builderHref(builder.country)}
+          onClick={() => builder.goToQuestion("items")}
           className="inline-flex min-h-11 items-center font-semibold text-pink-strong underline underline-offset-4"
         >
           Back to your items
@@ -75,7 +76,12 @@ export function CheckoutFormView({
   const summaryEntries = errorSummaryEntries(controller.summary.errors, labels);
 
   return (
-    <form noValidate onSubmit={controller.submit} className="min-w-0 space-y-6 sm:space-y-8">
+    // On phones the pay bar sticks to the bottom; the scroll margin keeps a focused field above it.
+    <form
+      noValidate
+      onSubmit={controller.submit}
+      className="min-w-0 space-y-6 sm:space-y-8 max-lg:[&_input]:scroll-mb-40"
+    >
       <ErrorSummary key={controller.summary.attempt} entries={summaryEntries} />
       <section aria-labelledby="checkout-contact-heading" className={CARD}>
         <h2 id="checkout-contact-heading" className={SECTION_HEADING}>
@@ -164,7 +170,8 @@ export function CheckoutFormView({
         </p>
       </div>
 
-      <div className="sticky bottom-0 z-10 -mx-4 space-y-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:mx-0 lg:rounded-lg lg:border lg:bg-surface lg:px-5 lg:shadow-lift">
+      {/* Sticky on phones and tablets only; on desktop it sits in flow so it never covers a field. */}
+      <div className="sticky bottom-0 z-10 -mx-4 space-y-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:rounded-lg lg:border-0 lg:bg-surface lg:p-5 lg:shadow-hairline lg:backdrop-blur-none">
         <Failure controller={controller} builder={builder} />
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted sm:text-base" aria-live="polite">

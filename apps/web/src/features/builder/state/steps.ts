@@ -11,7 +11,10 @@ export function builderHref(country: CountryCode, from?: string): string {
   return from === undefined ? base : `${base}?from=${encodeURIComponent(from)}`;
 }
 
-/** URL of a builder step, for example `/pk/build/items`. */
-export function stepHref(country: CountryCode, step: BuilderStep): string {
-  return `/${country.toLowerCase()}/build/${step}`;
+/**
+ * @deprecated The builder is one route now: this returns `builderHref(country)` whatever the step,
+ * so no link points at an old step URL. Use `builderHref` (and `goToQuestion`) instead.
+ */
+export function stepHref(country: CountryCode, _step: BuilderStep): string {
+  return builderHref(country);
 }
