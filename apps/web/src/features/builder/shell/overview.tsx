@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 import type { ReactElement } from "react";
 
+import { SafeScene } from "../questions/safe-scene";
 import { useBuilder } from "../state";
 
 import { colourName, overviewCaption, priceView } from "./overview-copy";
-import { SafeScene } from "./safe-scene";
 
 import { GiftIllustration } from "@/components/gift-illustration";
 
@@ -72,7 +72,13 @@ function Scene(): ReactElement {
     <div className="grid min-h-0 flex-1 [container-type:size] place-items-center">
       <div className="size-[min(100cqw,100cqh)]">
         {design && packaging ? (
-          <SafeScene design={design} packaging={packaging} items={items} motion />
+          <SafeScene
+            design={design}
+            packaging={packaging}
+            items={items}
+            motion
+            fallbackClassName="size-full"
+          />
         ) : (
           <GiftIllustration className="size-full scale-75 opacity-90" />
         )}

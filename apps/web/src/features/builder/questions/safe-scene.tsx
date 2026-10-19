@@ -10,19 +10,25 @@ interface SafeSceneProps {
   items: readonly Item[];
   motion?: boolean;
   className?: string;
+  /** Sizing of the "Preview not available" box; defaults to a full-width square. */
+  fallbackClassName?: string;
 }
 
 /**
  * `GiftScene`, but a packaging whose layout type the renderer does not know shows a plain
  * placeholder instead of crashing the whole screen.
  */
-export function SafeScene({ packaging, ...rest }: SafeSceneProps): ReactElement {
+export function SafeScene({
+  packaging,
+  fallbackClassName = "aspect-square w-full",
+  ...rest
+}: SafeSceneProps): ReactElement {
   if (!isKnownLayoutType(packaging.layoutType)) {
     return (
       <div
         role="img"
         aria-label={`Preview of ${packaging.name} is not available`}
-        className="bg-surface-soft text-muted grid aspect-square w-full place-items-center rounded-card p-4 text-center text-sm"
+        className={`bg-surface-soft text-muted rounded-card grid place-items-center p-4 text-center text-sm ${fallbackClassName}`}
       >
         Preview not available
       </div>

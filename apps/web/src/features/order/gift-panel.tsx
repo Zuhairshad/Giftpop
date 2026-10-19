@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 
 import { CARD_TITLE, META_LABEL, WELL } from "./ui";
 
-import { SafeScene } from "@/features/builder/steps/format/safe-scene";
+import { SafeScene } from "@/features/builder/questions/safe-scene";
 
 /** The gift drawn from the order's frozen snapshots, with its item list. */
 export function GiftPanel({

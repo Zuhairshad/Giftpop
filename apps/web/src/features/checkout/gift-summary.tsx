@@ -2,11 +2,11 @@ import { GiftScene } from "@giftpop/renderer";
 import type { ReactElement } from "react";
 import { useMemo } from "react";
 
-import type { BuilderApi } from "@/features/builder/state";
 import {
   buildPersonalisationRows,
   buildReviewLines,
-} from "@/features/builder/steps/review/review-lines";
+} from "@/features/builder/questions/review/review-lines";
+import type { BuilderApi } from "@/features/builder/state";
 import { CARD_TITLE, META_LABEL, WELL } from "@/features/order/ui";
 import { optimisedImageUrl } from "@/lib/image-url";
 

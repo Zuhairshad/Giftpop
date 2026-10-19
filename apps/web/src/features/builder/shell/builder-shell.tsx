@@ -6,9 +6,9 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 import { useBuilderStore } from "../state/context";
-import { FromLoader } from "../steps/review/from-loader";
-import { INVALID_FROM_MESSAGE, readFromParam, unavailableNotice } from "../steps/review/from-param";
 
+import { FromLoader } from "./from/from-loader";
+import { INVALID_FROM_MESSAGE, readFromParam, unavailableNotice } from "./from/from-param";
 import { setNotice } from "./notice-store";
 import { Overview } from "./overview";
 import { QuestionSurface } from "./question-surface";
