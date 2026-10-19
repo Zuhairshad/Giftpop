@@ -1,25 +1,37 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { signIn } from "@/features/auth/auth-client";
+import { loginErrorMessage } from "@/features/auth/login-errors";
 import { validateLogin, type LoginFieldErrors } from "@/lib/login";
 
-export function LoginForm() {
+interface LoginFormProps {
+  /** Where to go after signing in. Already checked with `safeNextPath` on the server. */
+  next: string;
+}
+
+export function LoginForm({ next }: LoginFormProps) {
+  const router = useRouter();
   const [errors, setErrors] = useState<LoginFieldErrors>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
     const form = new FormData(event.currentTarget);
     const result = validateLogin({
       email: String(form.get("email") ?? ""),
       password: String(form.get("password") ?? ""),
     });
 
+    setFormError(null);
     if (!result.ok) {
       setErrors(result.errors);
       (result.errors.email ? emailRef : passwordRef).current?.focus();
@@ -27,12 +39,28 @@ export function LoginForm() {
     }
 
     setErrors({});
-    // Phase 1 adds the sign-in call. Until then there is nothing to send the credentials to.
-    toast.info("Sign-in arrives in the next phase");
+    setSubmitting(true);
+    try {
+      await signIn(result.data);
+    } catch (error) {
+      setFormError(loginErrorMessage(error));
+      setSubmitting(false);
+      passwordRef.current?.focus();
+      return;
+    }
+    // The cookie is set. Keep the button disabled while the dashboard loads.
+    router.replace(next);
+    router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+      {formError ? (
+        <p role="alert" className="bg-destructive/10 text-destructive rounded-lg px-3 py-2 text-sm">
+          {formError}
+        </p>
+      ) : null}
+
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email" className="text-sm font-medium">
           Email
@@ -74,8 +102,8 @@ export function LoginForm() {
         ) : null}
       </div>
 
-      <Button type="submit" size="lg" className="w-full">
-        Sign in
+      <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+        {submitting ? "Signing in..." : "Sign in"}
       </Button>
     </form>
   );

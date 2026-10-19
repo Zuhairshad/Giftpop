@@ -1,5 +1,6 @@
 "use client";
 
+import type { StaffUser } from "@giftpop/contracts";
 import {
   GiftIcon,
   HandshakeIcon,
@@ -17,6 +18,7 @@ import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -27,7 +29,9 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { UserMenu } from "@/components/user-menu";
 import { navItems } from "@/config/nav";
+import { visibleNavItems } from "@/features/auth/nav-access";
 import { isActiveHref } from "@/lib/nav";
 
 // Icons are presentation only, so they live here and not in the lead's nav config.
@@ -41,7 +45,11 @@ const ICONS: Record<string, LucideIcon> = {
   "/staff": UsersIcon,
 };
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  user: Pick<StaffUser, "name" | "email" | "role">;
+}
+
+export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -58,9 +66,8 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Manage</SidebarGroupLabel>
           <SidebarGroupContent>
-            {/* Phase 1: hide items with `ownerOnly` from staff by role. Today every item is listed. */}
             <SidebarMenu aria-label="Main">
-              {navItems.map((item) => {
+              {visibleNavItems(navItems, user.role).map((item) => {
                 const Icon = ICONS[item.href] ?? GiftIcon;
                 const active = isActiveHref(pathname, item.href);
                 return (
@@ -85,6 +92,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <UserMenu user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
