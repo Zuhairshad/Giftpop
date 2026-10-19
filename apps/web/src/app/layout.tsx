@@ -54,15 +54,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       lang="en"
       className={`${display.variable} ${body.variable} ${script.variable} ${brand.variable}`}
     >
-      <body className="flex min-h-dvh flex-col antialiased">
+      <body className="bg-canvas text-ink flex min-h-dvh flex-col antialiased">
         <a
           href="#main"
-          className="bg-pink text-on-pink sr-only z-50 rounded-soft px-4 py-2 font-semibold focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+          className="bg-primary text-on-primary sr-only z-50 rounded-md px-4 py-2 font-semibold focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
         >
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+        <main id="main" className="gp-main gp-shell">
           {children}
         </main>
         <SiteFooter />

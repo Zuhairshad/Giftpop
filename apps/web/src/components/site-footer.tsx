@@ -1,34 +1,37 @@
 import Link from "next/link";
 
+const LINK =
+  "hover:text-ink flex min-h-11 items-center rounded-md px-1 underline-offset-4 sm:px-2 transition-colors hover:underline";
+
+/** A slim bar (44px, taller only when it must wrap at 320px). The builder hides it via data-viewport-fit="builder". */
 export function SiteFooter() {
   return (
-    <footer className="border-border bg-surface-soft border-t">
-      <div className="text-muted mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <p>
-          <span className="font-display text-pink-strong text-lg font-bold">The Giftpop</span>
-          <span className="block">Every gift is made and packed by hand.</span>
-        </p>
-        <nav aria-label="Footer">
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 font-semibold">
-            <li>
-              <Link
-                href="/track"
-                className="hover:text-foreground underline-offset-4 hover:underline"
-              >
-                Track an order
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/partners"
-                className="hover:text-foreground underline-offset-4 hover:underline"
-              >
-                Partner with us
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+    <footer className="gp-footer bg-canvas/80 text-ink-2 text-[13px] shadow-[0_-1px_0_var(--gp-border)] font-medium">
+      <nav aria-label="Footer" className="gp-shell">
+        <ul className="flex flex-wrap items-center gap-x-0 sm:gap-x-1">
+          <li className="-ml-1 sm:-ml-2">
+            <Link href="/track" className={LINK}>
+              Track an order
+            </Link>
+          </li>
+          <li>
+            <Link href="/partners" className={LINK}>
+              Partner with us
+            </Link>
+          </li>
+          <li className="-mr-1 ml-auto sm:-mr-2">
+            <a
+              href="https://www.instagram.com/the_giftpop"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="@the_giftpop on Instagram, opens in a new tab"
+              className={LINK}
+            >
+              @the_giftpop
+            </a>
+          </li>
+        </ul>
+      </nav>
     </footer>
   );
 }

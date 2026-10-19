@@ -29,6 +29,20 @@
   --color-warning: var(--gp-warning);
   --color-danger: var(--gp-danger);
 
+  /* Names straight from docs/design/giftpop-DESIGN.md (aliases of the tokens above). */
+  --color-canvas: var(--gp-bg);
+  --color-ink: var(--gp-ink);
+  --color-ink-2: var(--gp-ink-soft);
+  --color-faint: var(--gp-muted); /* meta text, 18px and up or non-essential only */
+  --color-hairline: var(--gp-border);
+  --color-hairline-2: var(--gp-border-strong);
+  --color-warm-2: var(--gp-surface-deep);
+  --color-primary: var(--gp-pink);
+  --color-primary-pressed: var(--gp-pink-strong);
+  --color-primary-tint: var(--gp-pink-soft);
+  --color-on-primary: var(--gp-on-pink);
+  --color-focus: var(--gp-focus);
+
   --radius-xs: var(--gp-radius-xs);
   --radius-sm: var(--gp-radius-sm);
   --radius-md: var(--gp-radius-md);
@@ -59,14 +73,191 @@ body {
 :focus-visible {
   outline: 3px solid var(--gp-focus);
   outline-offset: 3px;
-  border-radius: var(--gp-radius-sm);
   /* The ring must be at full colour from the first frame (buttons fade outline-color otherwise). */
   transition: none;
+}
+
+/* Plain links with no radius of their own get a soft ring; shaped controls keep their own radius. */
+:focus-visible:not([class*="rounded"]) {
+  border-radius: var(--gp-radius-sm);
 }
 
 /* Headings that receive focus from code (step changes, form results) show no ring: they are not controls. */
 :is(h1, h2)[tabindex="-1"]:focus {
   outline: none;
+}
+
+/*
+ * Page shell. Header, main and footer share one gutter (16px phones, 40px desktop) and one content width
+ * (1100px). A page that renders an element with data-viewport-fit inside <main> turns the shell into an
+ * exact 100dvh stage: main is full-bleed and fills what header and footer leave.
+ * data-viewport-fit="builder" also hides the footer (the builder uses the space).
+ */
+.gp-shell {
+  width: 100%;
+  margin-inline: auto;
+  max-width: calc(1100px + 2 * var(--gp-gutter));
+  padding-inline: var(--gp-gutter);
+}
+
+.gp-main {
+  flex: 1 1 auto;
+  padding-block: 32px;
+}
+
+@media (min-width: 640px) {
+  .gp-main {
+    padding-block: 48px;
+  }
+}
+
+.gp-header,
+.gp-footer {
+  flex: none;
+}
+
+body:has(main [data-viewport-fit]) {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+body:has(main [data-viewport-fit]) .gp-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body:has(main [data-viewport-fit]) .gp-main > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+body:has(main [data-viewport-fit]) .gp-header .gp-shell,
+body:has(main [data-viewport-fit]) .gp-footer .gp-shell {
+  max-width: none;
+}
+
+body:has(main [data-viewport-fit="builder"]) .gp-footer {
+  display: none;
+}
+
+/* The soft pink and lavender light pools behind the hero and builder overview (decorative, the only gradients). */
+.gp-pools {
+  background-color: var(--gp-bg);
+  background-image:
+    radial-gradient(
+      60% 55% at 70% 52%,
+      color-mix(in srgb, var(--gp-pool-pink) calc(var(--gp-pool-opacity) * 100%), transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 40% at 12% 90%,
+      color-mix(in srgb, var(--gp-pool-lavender) calc(var(--gp-pool-opacity) * 100%), transparent) 0%,
+      transparent 70%
+    );
+}
+
+/*
+ * Type scale (DESIGN.md Typography). Tracking is tight only at 20px and above, written in em so it scales.
+ * Use these instead of raw sizes. They set size, weight, line height, tracking and family together.
+ */
+@layer components {
+  .display-xl,
+  .display-lg,
+  .display-md,
+  .title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  .display-xl {
+    font-size: 44px;
+    line-height: 1.02;
+    letter-spacing: -0.036em;
+  }
+
+  .display-lg {
+    font-size: 36px;
+    line-height: 1.04;
+    letter-spacing: -0.036em;
+  }
+
+  .display-md {
+    font-size: 26px;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .title {
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: -0.027em;
+  }
+
+  .lede {
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--gp-ink-soft);
+  }
+
+  .label {
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  .meta {
+    font-size: 13px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  .caption {
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 500;
+    letter-spacing: 0.125px;
+  }
+
+  @media (min-width: 768px) {
+    .display-xl {
+      font-size: clamp(56px, 6vw, 80px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .display-lg {
+      font-size: 44px;
+      line-height: 1.02;
+    }
+
+    .display-md {
+      font-size: 30px;
+    }
+
+    .title {
+      font-size: 26px;
+    }
+
+    .lede {
+      font-size: 20px;
+      letter-spacing: -0.125px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .display-lg {
+      font-size: 56px;
+      letter-spacing: -0.039em;
+    }
+  }
 }
 
 /* Gentle float for illustrations, only when the visitor has not asked for less motion. */

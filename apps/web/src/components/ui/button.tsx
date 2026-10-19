@@ -6,20 +6,28 @@ import { cn } from "@/lib/cn";
 export type ButtonVariant = "primary" | "tint" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
+// Focus ring comes from the global :focus-visible rule (3px, 3px offset). Never remove it here.
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap select-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors";
+  "inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap select-none " +
+  "transition-[background-color,box-shadow,transform] duration-150 motion-safe:active:translate-y-px " +
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none " +
+  "aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none";
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-pink text-on-pink shadow-cta hover:bg-pink-strong",
-  tint: "bg-pink-soft text-pink-strong hover:bg-pink-soft/70",
-  ghost: "bg-transparent text-foreground hover:bg-warm",
+  primary:
+    "bg-primary text-on-primary shadow-cta hover:bg-primary-pressed active:bg-primary-pressed",
+  tint:
+    "bg-primary-tint text-primary-pressed " +
+    "hover:bg-[color-mix(in_srgb,var(--gp-pink-soft),var(--gp-pink)_14%)] " +
+    "active:bg-[color-mix(in_srgb,var(--gp-pink-soft),var(--gp-pink)_22%)]",
+  ghost: "bg-transparent text-ink hover:bg-warm active:bg-warm-2",
 };
 
 /** Heights are touch targets: 44 (sm), 48 (md), 56 (lg, the one main call to action). */
 const SIZES: Record<ButtonSize, string> = {
-  sm: "min-h-11 px-3 text-sm",
+  sm: "min-h-11 px-3.5 text-sm",
   md: "min-h-12 px-5 text-base",
-  lg: "min-h-14 px-7 text-lg",
+  lg: "min-h-14 px-7 text-[17px] sm:text-lg",
 };
 
 export function buttonClass({

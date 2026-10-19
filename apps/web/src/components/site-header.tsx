@@ -1,41 +1,40 @@
 import Link from "next/link";
 
+import { Logo } from "@/components/logo";
 import { HeaderCountryPicker, HeaderCountrySuggestion } from "@/features/country";
 
 const NAV_LINKS = [
-  { href: "/#choose-country", label: "Build a gift" },
   { href: "/track", label: "Track an order" },
   { href: "/partners", label: "Partner with us" },
 ] as const;
 
+/**
+ * 64px tall (56px on phones): logo left, country picker right. On phones "Track an order" and
+ * "Partner with us" live in the footer bar so the header never crowds; from 768px they show here too.
+ */
 export function SiteHeader() {
   return (
-    <header className="border-border bg-background/90 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="relative mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 sm:px-6">
-        <Link
-          href="/"
-          className="font-display text-pink-strong text-2xl font-bold tracking-tight"
-          aria-label="The Giftpop, home"
-        >
-          The Giftpop
-        </Link>
+    <header className="gp-header bg-canvas/90 sticky top-0 z-40 shadow-[0_1px_0_var(--gp-border)] backdrop-blur">
+      <div className="gp-shell relative flex h-14 items-center justify-between gap-3 md:h-16">
+        <Logo />
 
-        <HeaderCountryPicker />
-
-        <nav aria-label="Main" className="order-last w-full sm:order-none sm:w-auto">
-          <ul className="-mx-1 flex flex-wrap gap-1 text-sm font-semibold">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-muted hover:bg-surface-soft hover:text-foreground flex min-h-11 items-center rounded-full px-3 transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex min-w-0 items-center gap-1">
+          <nav aria-label="Main" className="hidden md:block">
+            <ul className="flex items-center gap-1 text-sm font-medium">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-ink-2 hover:bg-warm hover:text-ink flex min-h-11 items-center rounded-md px-3 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <HeaderCountryPicker />
+        </div>
       </div>
       <HeaderCountrySuggestion />
     </header>

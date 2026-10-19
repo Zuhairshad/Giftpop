@@ -68,11 +68,20 @@
   --gp-shadow-cta: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 6px 16px -6px rgb(214 36 110 / 0.55);
   --gp-shadow: var(--gp-shadow-2);
 
+  /* Page gutter: 16px phones, 40px desktop */
+  --gp-gutter: 16px;
+
   /* Motion (springs live in styles/motion.ts) */
   --gp-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --gp-duration-fast: 120ms;
   --gp-duration: 200ms;
   --gp-duration-slow: 320ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gp-gutter: 40px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
