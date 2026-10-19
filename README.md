@@ -28,8 +28,8 @@ Customers pick a country, build a gift visually (pick a format, pick items, see 
 pnpm install
 docker compose up -d        # MongoDB as a replica set (rs0) on port 27017
 cp apps/api/.env.example   apps/api/.env
-cp apps/web/.env.example   apps/web/.env
-cp apps/admin/.env.example apps/admin/.env
+cp apps/web/.env.example   apps/web/.env.local
+cp apps/admin/.env.example apps/admin/.env.local
 pnpm seed                   # countries, packaging, items and prices
 pnpm dev                    # starts all three apps
 ```
