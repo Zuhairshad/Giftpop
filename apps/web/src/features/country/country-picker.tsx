@@ -20,7 +20,7 @@ type CountryPickerProps = {
 };
 
 const PILL =
-  "border-border bg-surface text-foreground hover:bg-surface-soft inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors";
+  "bg-surface text-foreground shadow-hairline hover:bg-warm inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3 text-sm font-medium transition-colors sm:gap-2 sm:px-4";
 
 export function CountryPicker({ countries, cookieCode, allCountries }: CountryPickerProps) {
   const pathname = usePathname();
@@ -85,12 +85,16 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
         {current ? (
           <>
             <span aria-hidden="true">{flagEmoji(current.code)}</span>
-            <span className="max-w-[9rem] truncate sm:max-w-[14rem]">{current.name}</span>
+            <span className="max-w-[6.5rem] truncate min-[390px]:max-w-[9rem] sm:max-w-[14rem]">
+              {current.name}
+            </span>
           </>
         ) : (
           <>
-            <span aria-hidden="true">Country: </span>
-            <span className="text-pink-strong">Choose</span>
+            <span aria-hidden="true" className="hidden min-[390px]:inline">
+              Country:
+            </span>
+            <span className="text-pink-strong font-semibold">Choose</span>
           </>
         )}
         <span aria-hidden="true" className="text-muted text-xs">
@@ -104,10 +108,10 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
           id={panelId}
           role="group"
           aria-label="Choose your country"
-          className="border-border bg-surface rounded-card shadow-pop absolute inset-x-4 top-full z-50 mt-2 max-h-[70dvh] overflow-y-auto border p-2 sm:inset-x-auto sm:right-6 sm:w-80"
+          className="bg-surface shadow-hairline shadow-float absolute inset-x-4 top-full z-50 mt-2 max-h-[70dvh] overflow-y-auto rounded-lg p-2 sm:inset-x-auto sm:right-6 sm:w-80"
         >
           {countries.length === 0 ? (
-            <p className="text-muted px-3 py-2 text-sm">No countries are open yet.</p>
+            <p className="text-muted px-3 py-3 text-sm">No countries are open yet.</p>
           ) : (
             <ul>
               {countries.map((country) => (
@@ -115,14 +119,19 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
                   <ChooseCountryLink
                     code={country.code}
                     onChosen={() => close(false)}
-                    className="hover:bg-surface-soft flex items-center gap-3 rounded-soft px-3 py-2 text-sm font-semibold"
+                    className="hover:bg-warm flex min-h-12 items-center gap-3 rounded-md px-3 text-sm font-semibold"
                   >
-                    <span aria-hidden="true" className="text-xl">
+                    <span
+                      aria-hidden="true"
+                      className="bg-warm flex size-9 flex-none items-center justify-center rounded-sm text-xl"
+                    >
                       {flagEmoji(country.code)}
                     </span>
                     <span className="min-w-0 flex-1 wrap-anywhere">{country.name}</span>
                     {country.code === currentCode ? (
-                      <span className="text-pink-strong text-xs">Current</span>
+                      <span className="bg-pink-soft text-pink-strong rounded-full px-2 py-0.5 text-xs font-semibold">
+                        Current
+                      </span>
                     ) : null}
                   </ChooseCountryLink>
                 </li>
@@ -132,7 +141,7 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
           <Link
             href="/countries"
             onClick={() => close(false)}
-            className="text-pink-strong hover:bg-surface-soft mt-1 block rounded-soft px-3 py-2 text-sm font-bold"
+            className="text-pink-strong hover:bg-warm border-border mt-1 flex min-h-12 items-center rounded-md border-t px-3 text-sm font-semibold"
           >
             See all countries
           </Link>

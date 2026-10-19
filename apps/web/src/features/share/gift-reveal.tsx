@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 
+import { Button } from "@/components/ui";
+
 /*
  * Every rule sits inside `no-preference`, so a visitor who asks for less motion gets no animation
  * at all. `backwards` fill only hides things before they start, so nothing can stay invisible.
@@ -42,19 +44,19 @@ export function GiftReveal({ scene, details }: GiftRevealProps): ReactElement {
         key={run}
         className="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-12"
       >
-        <div className="gp-reveal-scene mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]">
+        <div className="gp-reveal-scene relative isolate mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]">
+          <span
+            aria-hidden="true"
+            className="bg-pink-soft absolute inset-[4%] -z-10 rounded-full"
+          />
           {scene}
         </div>
         <div className="gp-reveal-details">{details}</div>
       </div>
       <div className="mt-6 text-center motion-reduce:hidden">
-        <button
-          type="button"
-          onClick={() => setRun((n) => n + 1)}
-          className="text-muted hover:text-foreground text-sm font-semibold underline underline-offset-4"
-        >
+        <Button variant="ghost" size="sm" onClick={() => setRun((n) => n + 1)}>
           Watch the reveal again
-        </button>
+        </Button>
       </div>
     </div>
   );

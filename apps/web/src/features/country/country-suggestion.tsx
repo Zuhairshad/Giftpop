@@ -8,6 +8,8 @@ import { ChooseCountryLink } from "./choose-country-link";
 import { flagEmoji } from "./flag";
 import { suggestionHiddenOn } from "./suggestion-visibility";
 
+import { buttonClass } from "@/components/ui";
+
 const DISMISSED_KEY = "gp-country-suggestion-dismissed";
 const listeners = new Set<() => void>();
 
@@ -33,9 +35,6 @@ function dismiss(): void {
   listeners.forEach((listener) => listener());
 }
 
-const BUTTON =
-  "inline-flex min-h-11 items-center rounded-full px-4 text-sm font-bold transition-colors";
-
 /**
  * A polite, dismissible "Shipping to X?" suggestion. Choosing sets the cookie; nothing happens before.
  * It floats over the page under the header (absolute, out of flow) so it appears after hydration
@@ -50,32 +49,32 @@ export function CountrySuggestion({ code, name }: { code: string; name: string }
   return (
     <section
       aria-label="Country suggestion"
-      className="bg-pink-soft text-foreground border-border absolute inset-x-0 top-full border-b shadow-md"
+      className="bg-warm shadow-hairline absolute inset-x-0 top-full"
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 sm:px-6">
-        <p className="min-w-0 text-sm font-semibold wrap-anywhere">
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:px-6">
+        <p className="min-w-0 text-sm font-medium wrap-anywhere">
           <span aria-hidden="true">{flagEmoji(code)} </span>
           Shipping to {name}?
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1">
           <ChooseCountryLink
             code={code}
             onChosen={dismiss}
-            className={`${BUTTON} bg-pink text-on-pink hover:opacity-90`}
+            className={buttonClass({ variant: "tint", size: "sm" })}
           >
             Yes, use {name}
           </ChooseCountryLink>
           <Link
             href="/countries"
             onClick={dismiss}
-            className={`${BUTTON} border-border bg-surface text-foreground hover:bg-surface-soft border`}
+            className={buttonClass({ variant: "ghost", size: "sm" })}
           >
             Choose another
           </Link>
           <button
             type="button"
             onClick={dismiss}
-            className={`${BUTTON} text-muted hover:text-foreground`}
+            className={buttonClass({ variant: "ghost", size: "sm", className: "text-muted" })}
           >
             Not now
           </button>

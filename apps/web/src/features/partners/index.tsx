@@ -5,12 +5,35 @@ import { notLiveCountries, prefillCountry, sortByName } from "./countries";
 import { CountryForm } from "./country-form";
 import { loadCountries } from "./load-countries";
 
-function Notice({ title, children }: { title: string; children: ReactNode }): ReactElement {
+import { StatePanel } from "@/components/placeholder-page";
+import { ButtonLink } from "@/components/ui";
+import { RetryButton } from "@/features/country/retry-button";
+
+function Notice({
+  title,
+  children,
+  retry = false,
+}: {
+  title: string;
+  children: ReactNode;
+  retry?: boolean;
+}): ReactElement {
   return (
-    <section className="bg-surface border-border shadow-pop rounded-blob mx-auto w-full max-w-2xl min-w-0 border p-5 sm:p-10">
-      <h1 className="font-display text-3xl font-bold">{title}</h1>
-      <p className="text-muted mt-3">{children}</p>
-    </section>
+    <StatePanel
+      headingId="partner-notice-heading"
+      title={title}
+      role={retry ? "alert" : "status"}
+      actions={
+        <>
+          {retry ? <RetryButton /> : null}
+          <ButtonLink href="/partners" variant={retry ? "ghost" : "primary"}>
+            Back to partnerships
+          </ButtonLink>
+        </>
+      }
+    >
+      {children}
+    </StatePanel>
   );
 }
 
@@ -18,7 +41,12 @@ const LOAD_FAILED = "We could not load the list of countries. Please try again i
 
 export async function BrandPartnerForm(): Promise<ReactElement> {
   const result = await loadCountries();
-  if (!result.ok) return <Notice title="Want your products in our gifts?">{LOAD_FAILED}</Notice>;
+  if (!result.ok)
+    return (
+      <Notice title="Want your products in our gifts?" retry>
+        {LOAD_FAILED}
+      </Notice>
+    );
   return <BrandForm countries={sortByName(result.countries)} />;
 }
 
@@ -29,7 +57,12 @@ export async function CountryPartnerForm({
   country?: string | string[];
 }): Promise<ReactElement> {
   const result = await loadCountries();
-  if (!result.ok) return <Notice title="Want The Giftpop in your country?">{LOAD_FAILED}</Notice>;
+  if (!result.ok)
+    return (
+      <Notice title="Want The Giftpop in your country?" retry>
+        {LOAD_FAILED}
+      </Notice>
+    );
   const available = notLiveCountries(result.countries);
   if (available.length === 0) {
     return (

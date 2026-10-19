@@ -20,6 +20,8 @@ export type PartnerFormController = {
   errors: PartnerFieldErrors;
   honeypot: string;
   state: SubmitState;
+  /** True after a failed attempt, until the next submit: the error summary shows while it is. */
+  summaryOpen: boolean;
   setField: (name: PartnerFieldName, value: string) => void;
   setHoneypot: (value: string) => void;
   blurField: (name: PartnerFieldName) => void;
@@ -50,6 +52,7 @@ export function usePartnerForm(
   const inFlight = useRef(false);
   const edited = useRef(new Set<PartnerFieldName>());
   const submitAttempted = useRef(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
   function setField(name: PartnerFieldName, value: string): void {
     edited.current.add(name);
@@ -77,10 +80,12 @@ export function usePartnerForm(
     event.preventDefault();
     if (inFlight.current || state.status !== "idle") return;
     submitAttempted.current = true;
+    setSummaryOpen(false);
 
     const result = validatePartnerForm(kind, values);
     if (!result.ok) {
       setErrors(result.errors);
+      setSummaryOpen(true);
       focusField(kind, firstInvalidField(fieldsFor(kind), result.errors));
       return;
     }
@@ -100,6 +105,7 @@ export function usePartnerForm(
         dispatch({ type: "failed", failure });
         if (failure.kind === "fields") {
           setErrors(failure.fields);
+          setSummaryOpen(true);
           focusField(kind, firstInvalidField(fieldsFor(kind), failure.fields));
         }
       })
@@ -108,5 +114,16 @@ export function usePartnerForm(
       });
   }
 
-  return { kind, values, errors, honeypot, state, setField, setHoneypot, blurField, submit };
+  return {
+    kind,
+    values,
+    errors,
+    honeypot,
+    state,
+    summaryOpen,
+    setField,
+    setHoneypot,
+    blurField,
+    submit,
+  };
 }
