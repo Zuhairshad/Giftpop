@@ -20,6 +20,14 @@ async function main(): Promise<void> {
   if (existsSync(API_ENV_PATH)) process.loadEnvFile(API_ENV_PATH);
   const env = parseSeedEnv(process.env);
 
+  // The seed replaces seeded items, packagings, countries and prices, which would
+  // undo staff edits on a live database.
+  if (process.env["NODE_ENV"] === "production" && process.env["SEED_ALLOW_PRODUCTION"] !== "1") {
+    throw new Error(
+      "Refusing to seed with NODE_ENV=production. Set SEED_ALLOW_PRODUCTION=1 to override.",
+    );
+  }
+
   await connectDb({ uri: env.mongodbUri, maxAttempts: 5, baseDelayMs: 250 });
   try {
     // Every call below is an idempotent upsert keyed by a stable id, so a second run changes nothing.

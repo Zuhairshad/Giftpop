@@ -96,7 +96,6 @@ export function ImageUploader({
       ) : null}
       {value && !withAnchor ? (
         <div className="border-input bg-muted/40 w-32 overflow-hidden rounded-lg border">
-          {/* eslint-disable-next-line @next/next/no-img-element -- user-uploaded asset at an arbitrary URL */}
           <img src={value.asset.url} alt={`${label} thumbnail`} className="block h-auto w-full" />
         </div>
       ) : null}

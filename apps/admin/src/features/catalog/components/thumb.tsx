@@ -12,7 +12,6 @@ export function Thumb({ image, color = "#cccccc", label }: ThumbProps) {
   return (
     <span className="bg-muted/50 inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border">
       {image ? (
-        // eslint-disable-next-line @next/next/no-img-element -- user-uploaded asset at an arbitrary URL
         <img src={image.url} alt={label} className="size-full object-contain" />
       ) : (
         <span

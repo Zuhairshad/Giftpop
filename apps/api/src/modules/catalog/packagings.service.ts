@@ -6,6 +6,7 @@ import type {
   SavePackagingRequest,
   SetPricesRequest,
 } from "@giftpop/contracts";
+import { LAYOUT_TYPES, isKnownLayoutType } from "@giftpop/renderer/layouts";
 import { Types } from "mongoose";
 
 import { AppError } from "../../lib/errors";
@@ -18,8 +19,19 @@ function notFound(id: string): AppError {
   return new AppError("NOT_FOUND", 404, `No packaging with id ${id}`);
 }
 
+/** A packaging may only name a layout the renderer can draw (CLAUDE.md rule 8). */
+function assertKnownLayoutType(layoutType: string): void {
+  if (!isKnownLayoutType(layoutType)) {
+    throw new AppError("VALIDATION_ERROR", 422, `Unknown layoutType "${layoutType}"`, {
+      field: "layoutType",
+      allowed: LAYOUT_TYPES,
+    });
+  }
+}
+
 /** Creates the packaging or replaces it, keyed by `id`. Idempotent. */
 export async function upsertPackaging(packaging: Packaging): Promise<Packaging> {
+  assertKnownLayoutType(packaging.layoutType);
   const doc = await PackagingModel.findOneAndReplace(
     { _id: packaging.id },
     toPackagingDoc(packaging),
@@ -43,6 +55,7 @@ export async function replacePackaging(
   id: string,
   request: SavePackagingRequest,
 ): Promise<Packaging> {
+  assertKnownLayoutType(request.layoutType);
   const doc = await PackagingModel.findOneAndReplace(
     { _id: id },
     toPackagingDoc({ ...request, id }),

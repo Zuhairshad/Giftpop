@@ -22,7 +22,7 @@ const EnvObjectSchema = z.object({
     .min(1, "MONGODB_URI is required")
     .refine((uri) => /^mongodb(\+srv)?:\/\//.test(uri), "MONGODB_URI must start with mongodb://"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
-  /** Comma separated list of browser origins allowed to call the API. */
+  /** Comma separated browser origins allowed to call the API. Defaults to WEB_ORIGIN and ADMIN_ORIGIN. */
   CORS_ORIGINS: csv.default(() => []),
   /** How many times to try the first MongoDB connection before giving up. */
   DB_CONNECT_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(100).default(10),
@@ -60,6 +60,16 @@ const EnvSchema = EnvObjectSchema.superRefine((env, ctx) => {
       message: "SESSION_SECRET is required in production",
     });
   }
+  const isHttps = [env.ADMIN_ORIGIN, env.WEB_ORIGIN].some((origin) =>
+    origin.startsWith("https://"),
+  );
+  if (isHttps && !env.SESSION_SECRET) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["SESSION_SECRET"],
+      message: "SESSION_SECRET is required when ADMIN_ORIGIN or WEB_ORIGIN is https",
+    });
+  }
   if (env.STORAGE_DRIVER === "local" && env.NODE_ENV === "production") {
     ctx.addIssue({
       code: "custom",
@@ -77,7 +87,12 @@ const EnvSchema = EnvObjectSchema.superRefine((env, ctx) => {
         });
     }
   }
-}).transform((env) => ({ ...env, SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET }));
+}).transform((env) => ({
+  ...env,
+  SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET,
+  // With no explicit list, browsers may call the API from the store and the admin app only.
+  CORS_ORIGINS: env.CORS_ORIGINS.length > 0 ? env.CORS_ORIGINS : [env.WEB_ORIGIN, env.ADMIN_ORIGIN],
+}));
 
 export type Env = z.output<typeof EnvSchema>;
 

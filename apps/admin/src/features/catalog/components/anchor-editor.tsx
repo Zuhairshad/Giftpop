@@ -81,7 +81,6 @@ export function AnchorEditor({ asset, onChange }: AnchorEditorProps) {
           cursor: dragging ? "grabbing" : "crosshair",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- user-uploaded asset at an arbitrary URL */}
         <img
           src={asset.url}
           alt="Uploaded image"

@@ -18,15 +18,18 @@ describe("majorToMinor", () => {
     expect(majorToMinor(input)).toBe(expected);
   });
 
-  it("rounds half up on the decimal string, with no float drift", () => {
-    expect(majorToMinor("12.345")).toBe(1235);
-    expect(majorToMinor("12.344")).toBe(1234);
-    expect(majorToMinor("0.005")).toBe(1);
-    expect(majorToMinor("0.004999")).toBe(0);
-    expect(majorToMinor("1.005")).toBe(101);
-    expect(majorToMinor("8.675")).toBe(868);
-    expect(majorToMinor("0.285")).toBe(29);
-    expect(majorToMinor("99.995")).toBe(10000);
+  it("rejects more than two decimals instead of rounding", () => {
+    for (const input of ["12.345", "0.005", "0.004999", "1.005", "8.675", "99.995"]) {
+      expect(majorToMinor(input)).toBeNull();
+    }
+  });
+
+  it("keeps exactly two decimals without float drift", () => {
+    expect(majorToMinor("12.34")).toBe(1234);
+    expect(majorToMinor("1.01")).toBe(101);
+    expect(majorToMinor("8.67")).toBe(867);
+    expect(majorToMinor("0.29")).toBe(29);
+    expect(majorToMinor("0.01")).toBe(1);
   });
 
   it.each(["", "  ", ".", "abc", "-5", "1.2.3", "1e3", "12,50", "1,23", "$5", "5 USD"])(
@@ -41,11 +44,12 @@ describe("majorToMinor", () => {
   });
 
   it("always returns an integer", () => {
-    for (const input of ["0.29", "1.15", "19.99", "4.35", "1.255"]) {
+    for (const input of ["0.29", "1.15", "19.99", "4.35"]) {
       expect(Number.isInteger(majorToMinor(input))).toBe(true);
     }
     expect(majorToMinor("0.29")).toBe(29);
     expect(majorToMinor("19.99")).toBe(1999);
+    expect(majorToMinor("1.255")).toBeNull();
   });
 });
 

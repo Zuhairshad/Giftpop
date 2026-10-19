@@ -10,7 +10,7 @@ describe("parseEnv", () => {
     expect(env.PORT).toBe(4000);
     expect(env.NODE_ENV).toBe("development");
     expect(env.LOG_LEVEL).toBe("info");
-    expect(env.CORS_ORIGINS).toEqual([]);
+    expect(env.CORS_ORIGINS).toEqual(["http://localhost:3000", "http://localhost:3001"]);
   });
 
   it("coerces PORT and splits CORS_ORIGINS", () => {
@@ -59,6 +59,12 @@ describe("parseEnv", () => {
         /SESSION_SECRET/,
       );
       expect(() => parseEnv({ ...valid, SESSION_SECRET: "too-short" })).toThrow(/at least 32/);
+    });
+
+    it("requires a real SESSION_SECRET when an origin is https, whatever NODE_ENV says", () => {
+      expect(() => parseEnv({ ...valid, ADMIN_ORIGIN: "https://admin.example.com" })).toThrow(
+        /SESSION_SECRET/,
+      );
     });
 
     it("refuses local storage in production", () => {

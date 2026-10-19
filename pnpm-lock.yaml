@@ -117,6 +117,9 @@ importers:
       '@giftpop/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@giftpop/renderer':
+        specifier: workspace:*
+        version: link:../../packages/renderer
       argon2:
         specifier: ^0.45.1
         version: 0.45.1

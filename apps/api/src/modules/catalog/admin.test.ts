@@ -211,3 +211,42 @@ describe("admin packagings", () => {
     expect(res.body.layers).toEqual({ back });
   });
 });
+
+describe("packaging layoutType", () => {
+  it("rejects a layout the renderer cannot draw on create, replace and upsert", async () => {
+    const created = await request(app)
+      .post("/v1/catalog/admin/packagings")
+      .set(staff)
+      .send(packagingBody({ layoutType: "nope" }));
+    expect(created.status).toBe(422);
+    expect(created.body.error.code).toBe("VALIDATION_ERROR");
+    expect(created.body.error.details).toMatchObject({
+      field: "layoutType",
+      allowed: expect.arrayContaining(["bouquet-fan", "box-grid"]),
+    });
+
+    const ok = await request(app)
+      .post("/v1/catalog/admin/packagings")
+      .set(staff)
+      .send(packagingBody({ slug: "box", layoutType: "box-grid" }));
+    expect(ok.status).toBe(201);
+    const replaced = await request(app)
+      .put(`/v1/catalog/admin/packagings/${ok.body.id}`)
+      .set(staff)
+      .send(packagingBody({ slug: "box", layoutType: "nope" }));
+    expect(replaced.status).toBe(422);
+
+    await expect(upsertPackaging(makePackaging({ layoutType: "nope" }))).rejects.toMatchObject({
+      httpStatus: 422,
+    });
+  });
+
+  it("stores nothing when the layout is rejected", async () => {
+    await request(app)
+      .post("/v1/catalog/admin/packagings")
+      .set(staff)
+      .send(packagingBody({ layoutType: "nope" }));
+    const list = await request(app).get("/v1/catalog/admin/packagings").set(staff);
+    expect(list.body.total).toBe(0);
+  });
+});

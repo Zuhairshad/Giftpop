@@ -7,8 +7,8 @@ const GROUPED_AMOUNT = /^\d{1,3}(?:,\d{3})+(?:\.\d*)?$/;
 
 /**
  * Turns what staff type in major units ("12.50", "1,200") into integer minor
- * units (1250, 120000). Works on the decimal string, never on a float: extra
- * decimals round half up on the digit after the second ("12.345" is 1235).
+ * units (1250, 120000). Works on the decimal string, never on a float, and never
+ * rounds (CLAUDE.md rule 4): more than two decimals is rejected, not rounded.
  * Returns null for anything that is not a non-negative amount.
  */
 export function majorToMinor(input: string): number | null {
@@ -23,11 +23,10 @@ export function majorToMinor(input: string): number | null {
   if (whole === "" && fraction === "") return null;
 
   const wholeUnits = whole === "" ? 0 : Number(whole);
-  const padded = fraction.padEnd(MINOR_DIGITS, "0");
-  const kept = Number(padded.slice(0, MINOR_DIGITS));
-  const roundUp = padded.length > MINOR_DIGITS && Number(padded.charAt(MINOR_DIGITS)) >= 5;
+  if (fraction.length > MINOR_DIGITS) return null;
+  const kept = Number(fraction.padEnd(MINOR_DIGITS, "0"));
 
-  const minor = wholeUnits * MINOR_FACTOR + kept + (roundUp ? 1 : 0);
+  const minor = wholeUnits * MINOR_FACTOR + kept;
   return Number.isSafeInteger(minor) ? minor : null;
 }
 
