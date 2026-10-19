@@ -24,6 +24,8 @@ A customer picks a country first. That choice sets the currency, which items are
 - `cod`: no discount. The customer pays **20% of the total now** as an advance, and the rest on delivery.
 - Both percentages live in one config object read by `contracts/pricing`. They are admin-editable later.
 
+**ASSUMPTION**: shipping is `shipping.flatMinor`, or free when the goods total **before any discount** reaches `shipping.freeOverMinor`. Using the pre-discount total means the payment mode never changes shipping. There is no personalisation fee yet; the pricing function takes one so the owner can add it later.
+
 Until a card gateway is chosen, "pay now" means a manual transfer using the country's `paymentInstructions`. The order waits in `awaiting_payment` until staff record the payment. Card payment is an interface with no implementation yet.
 
 Payment status is separate from order status: `unpaid`, `advance_paid`, `paid`, `refunded`.

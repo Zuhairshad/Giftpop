@@ -1,0 +1,5 @@
+{
+  "extends": "@giftpop/config/tsconfig.react.json",
+  "compilerOptions": { "jsx": "react-jsx" },
+  "include": ["src", "test", "vitest.config.ts"]
+}
