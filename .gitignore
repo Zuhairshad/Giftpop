@@ -1,0 +1,15 @@
+node_modules
+.next
+.turbo
+dist
+coverage
+uploads
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+.claude/worktrees/
+.claude/settings.local.json
+playwright-report
+test-results
+.DS_Store

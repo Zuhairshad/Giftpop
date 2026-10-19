@@ -1,0 +1,4 @@
+.env
+apps/api/.env
+apps/web/.env.local
+apps/admin/.env.local
