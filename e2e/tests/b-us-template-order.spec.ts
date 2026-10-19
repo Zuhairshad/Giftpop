@@ -8,13 +8,13 @@ import { writeFixture } from "../support/fixture";
 test("a customer in the US starts from a featured template and pays now", async ({ page }) => {
   const suffix = uniqueSuffix();
 
-  // The US home lists the featured template; "Start from this" opens it pre-filled.
-  await page.goto("/us");
+  // The builder's first question lists the featured template; "Start from this" opens it pre-filled.
+  await page.goto("/us/build");
   await expect(page.getByRole("heading", { name: FEATURED_TEMPLATE_TITLE })).toBeVisible();
   await page.getByRole("link", { name: `Start from this: ${FEATURED_TEMPLATE_TITLE}` }).click();
 
-  // Review step, loaded from the template: the gift, the card message, both prices.
-  await expect(page).toHaveURL(/\/us\/build\/review/);
+  // Review question, loaded from the template: the gift, the card message, both prices.
+  await expect(page.getByRole("heading", { name: "Your gift is ready", level: 2 })).toBeVisible();
   await expect(page.getByText(/Pay now/i).first()).toBeVisible();
   await expect(page.getByText(/\$\d/).first()).toBeVisible();
   await expect(page.getByText(/Thinking of you/).first()).toBeVisible();

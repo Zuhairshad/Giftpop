@@ -20,13 +20,14 @@ test("a customer in Pakistan builds a gift and orders it with cash on delivery",
 
   // Home, then the country picker.
   await page.goto("/");
-  await page.getByRole("link", { name: "See countries" }).click();
+  await page.getByRole("link", { name: "Build your gift" }).click();
   await page.getByRole("link", { name: /Shop in Pakistan/ }).click();
   await expect(page).toHaveURL(/\/pk$/);
-  await page.getByRole("link", { name: "Start building" }).click();
-  await expect(page).toHaveURL(/\/pk\/build\/format/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Pakistan");
+  await page.getByRole("link", { name: "Build your gift" }).click();
+  await expect(page).toHaveURL(/\/pk\/build/);
 
-  // Format, items, arrange, personalise, review.
+  // Packaging, colours, items, layout, personalise, review.
   await buildGift(page, "Bouquet");
   // The review shows both payment modes side by side, priced in rupees.
   await expect(page.getByText(/PKR/).first()).toBeVisible();
