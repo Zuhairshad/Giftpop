@@ -4,6 +4,11 @@ import { CountryPartnerForm } from "@/features/partners";
 
 export const metadata: Metadata = { title: "Bring The Giftpop to your country" };
 
-export default function CountryPartnerPage() {
-  return <CountryPartnerForm />;
+export default async function CountryPartnerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ country?: string | string[] }>;
+}) {
+  const { country } = await searchParams;
+  return <CountryPartnerForm country={country} />;
 }
