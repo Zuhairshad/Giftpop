@@ -36,11 +36,6 @@ export const AMOUNT_MESSAGES: Record<AmountFailure, string> = {
   too_large: "That amount is too large",
 };
 
-/** Minor units as a plain major-unit string for an input ("1250" USD becomes "12.50"). */
-export function minorToInput(minor: number, currency: string): string {
-  return minorToMajor(minor, currency);
-}
-
 type PaymentsView = Pick<AdminOrderDetail, "payments" | "quote" | "paymentMode" | "status">;
 
 /** Money received so far: payments minus refunds, in integer minor units. */
@@ -82,7 +77,7 @@ export function suggestedAmountMinor(order: PaymentsView, kind: PaymentRecordKin
 /** The suggested amount as typed text; empty when there is nothing to suggest (a refund). */
 export function suggestedAmountInput(order: PaymentsView, kind: PaymentRecordKind): string {
   const minor = suggestedAmountMinor(order, kind);
-  return minor > 0 ? minorToInput(minor, order.quote.currency) : "";
+  return minor > 0 ? minorToMajor(minor, order.quote.currency) : "";
 }
 
 /** Why payments cannot be recorded, or null when they can. */

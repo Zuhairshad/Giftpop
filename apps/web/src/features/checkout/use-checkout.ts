@@ -20,11 +20,16 @@ import type { BuilderApi } from "@/features/builder/state";
 import { getSessionStorage } from "@/features/builder/state/persistence";
 import { apiRequest } from "@/lib/api";
 
+/** The errors from the last failed submit and a counter for it; the summary shows these. */
+export interface SubmitSummary {
+  errors: FieldErrors;
+  attempt: number;
+}
+
 export interface CheckoutController {
   values: FormValues;
   errors: FieldErrors;
-  /** The errors from the last failed submit and a counter for it; the summary shows these. */
-  summary: { errors: FieldErrors; attempt: number };
+  summary: SubmitSummary;
   failure: OrderFailure | null;
   sending: boolean;
   dialCode: string | null;
@@ -43,10 +48,7 @@ export function useCheckout(
 ): CheckoutController {
   const [values, setValues] = useState<FormValues>(EMPTY_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [summary, setSummary] = useState<{ errors: FieldErrors; attempt: number }>({
-    errors: {},
-    attempt: 0,
-  });
+  const [summary, setSummary] = useState<SubmitSummary>({ errors: {}, attempt: 0 });
   const [failure, setFailure] = useState<OrderFailure | null>(null);
   const [sending, setSending] = useState(false);
   const [picked, setPicked] = useState<PaymentMode | null>(null);

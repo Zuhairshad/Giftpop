@@ -4,13 +4,13 @@ import type { OrderStatus } from "@giftpop/contracts";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import type { Resolver } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Field, FormAlert } from "../../../catalog/components/field";
 import { describeActionError } from "../lib/action-errors";
 import { actionFor, CANCEL_WARNING } from "../lib/action-labels";
 import { changeOrderStatus } from "../lib/client";
+import { validationResolver } from "../lib/form-resolver";
 import { EMPTY_STATUS_VALUES, validateStatusForm } from "../lib/status-request";
 import type { StatusFieldName, StatusFormValues } from "../lib/status-request";
 
@@ -58,15 +58,9 @@ function StatusForm({
 }) {
   const router = useRouter();
   const action = actionFor(target);
-  const resolver: Resolver<StatusFormValues> = (values) => {
-    const result = validateStatusForm(target, values);
-    if (result.ok) return { values, errors: {} };
-    const errors: Record<string, { type: string; message: string }> = {};
-    for (const [name, message] of Object.entries(result.errors)) {
-      errors[name] = { type: "validate", message };
-    }
-    return { values: {}, errors };
-  };
+  const resolver = validationResolver<StatusFormValues>((values) =>
+    validateStatusForm(target, values),
+  );
   const form = useForm<StatusFormValues>({ resolver, defaultValues: EMPTY_STATUS_VALUES });
   const [alert, setAlert] = useState<string>();
   const { errors, isSubmitting } = form.formState;
