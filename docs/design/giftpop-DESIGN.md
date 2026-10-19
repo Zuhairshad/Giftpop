@@ -135,7 +135,7 @@ Radius: `xs` 4 (inputs' inner details, tags), `sm` 8 (tile art wells), `md` 12 (
 - **Chip:** pill, `surface`, hairline, 14px/500, 44px tall when interactive (country, tabs).
 - **Tab:** pill; selected is `ink` fill with white label (not pink: pink means "act"); a count badge shows picks per category; the row fades at its scroll edge.
 - **Item tile:** `surface`, hairline, 12px radius; art on a `warm` well; name 13px/500; price 12px `ink-2`. Selected: 2px `primary` ring and a quantity badge top-right. Disabled: 55% opacity, a one-line reason in `warning` ("Out of stock", "Box is full", "Not available in Pakistan").
-- **Counter:** "4 of 6–10 picked" 14px/600 with a 72px progress bar; turns `success` when the minimum is met.
+- **Counter:** "8 of 6–10 picked" 14px/600 with a 72px `primary` progress bar and a `success` check plus `success` text once the minimum is met; "2 spaces left" on the right.
 - **Overview toolbar:** price pill and swatch pill sit together top-left of the overview.
 - **Price pill:** floating over the overview, "Your gift so far" 12px `muted`, amount in `title`. Always from the API quote.
 - **Swatch pill:** wrapper and ribbon colour dots, 28px dots inside a 44px hit area.
@@ -204,5 +204,6 @@ Admin takes colour, type and radius tokens only (`primary`, `ink`, `canvas`, Int
 ## Known gaps
 
 - Hero storyboard timings await the owner's notes on the prompt-motion pieces.
+- The mockup bouquet is kraft with a hot-pink ribbon and 8 items, the hero box is black with gold dots and a pink ribbon; both are examples of wrapper and ribbon colour options, not fixed art.
 - Real packaging illustrations beyond `bouquet-fan` and `box-grid` (round hat box, basket, mug) are rendered with those two layouts for now; the mockup shows the bouquet only.
-- No Terms or Privacy pages exist; the footer bar shows Track an order, Partner with us and Change country.
+- No Terms or Privacy pages exist; the footer bar shows Track an order and Partner with us, with the Instagram handle on the right. The "Gifts from" price, "3–5 day delivery" and "Cash on delivery" ticks come from the country and catalog documents, not from code.
