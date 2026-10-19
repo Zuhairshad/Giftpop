@@ -14,11 +14,13 @@ import { TextField } from "./text-field";
 import { useCheckout } from "./use-checkout";
 import type { CheckoutController } from "./use-checkout";
 
+import { Button } from "@/components/ui";
 import { stepHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
+import { CARD, CARD_TITLE } from "@/features/order/ui";
 import { formatMoney } from "@/lib/format-money";
 
-const SECTION_HEADING = "font-display mb-3 text-2xl font-bold";
+const SECTION_HEADING = `${CARD_TITLE} mb-4`;
 
 const CONTACT_LABELS = { name: "Full name", email: "Email", phone: "Phone" } as const;
 
@@ -35,13 +37,13 @@ function Failure({
   return (
     <div
       role="alert"
-      className="bg-surface-soft border-pink-strong rounded-soft space-y-2 border-2 p-4"
+      className="space-y-2 rounded-lg border-l-4 border-danger bg-surface p-4 shadow-hairline"
     >
-      <p className="font-bold">{message}</p>
+      <p className="font-semibold text-danger wrap-anywhere">{message}</p>
       {needsItemsLink(failure) ? (
         <Link
           href={stepHref(builder.country, "items")}
-          className="text-pink-strong font-semibold underline underline-offset-4"
+          className="inline-flex min-h-11 items-center font-semibold text-pink-strong underline underline-offset-4"
         >
           Back to your items
         </Link>
@@ -73,9 +75,9 @@ export function CheckoutFormView({
   const summaryEntries = errorSummaryEntries(controller.summary.errors, labels);
 
   return (
-    <form noValidate onSubmit={controller.submit} className="min-w-0 space-y-8">
+    <form noValidate onSubmit={controller.submit} className="min-w-0 space-y-6 sm:space-y-8">
       <ErrorSummary key={controller.summary.attempt} entries={summaryEntries} />
-      <section aria-labelledby="checkout-contact-heading">
+      <section aria-labelledby="checkout-contact-heading" className={CARD}>
         <h2 id="checkout-contact-heading" className={SECTION_HEADING}>
           Your details
         </h2>
@@ -119,7 +121,7 @@ export function CheckoutFormView({
         </div>
       </section>
 
-      <section aria-labelledby="checkout-address-heading">
+      <section aria-labelledby="checkout-address-heading" className={CARD}>
         <h2 id="checkout-address-heading" className={SECTION_HEADING}>
           Delivery address
         </h2>
@@ -142,7 +144,7 @@ export function CheckoutFormView({
             </div>
           ))}
         </div>
-        <p className="text-muted mt-3 text-sm">
+        <p className="mt-4 text-sm text-muted">
           Delivering to {country.name}. Usually {country.shipping.deliveryDays.min} to{" "}
           {country.shipping.deliveryDays.max} days.
         </p>
@@ -156,23 +158,30 @@ export function CheckoutFormView({
       />
 
       <div className="space-y-3">
-        <Failure controller={controller} builder={builder} />
-        <p className="text-muted text-sm">
+        <p className="text-sm text-muted">
           By placing this order you agree to our terms of sale and delivery. Your gift is made by
           hand once your payment is recorded.
         </p>
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="bg-pink text-on-pink hover:bg-pink-strong inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-base font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          {sending ? "Placing your order…" : "Place order"}
-        </button>
-        {selectedCard ? (
-          <p className="text-muted text-sm" aria-live="polite">
-            You pay {formatMoney(selectedCard.dueNow.minor, selectedCard.currency)} now.
+      </div>
+
+      <div className="sticky bottom-0 z-10 -mx-4 space-y-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:mx-0 lg:rounded-lg lg:border lg:bg-surface lg:px-5 lg:shadow-lift">
+        <Failure controller={controller} builder={builder} />
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted sm:text-base" aria-live="polite">
+            {selectedCard ? (
+              <>
+                You pay{" "}
+                <strong className="font-display text-lg text-foreground tabular-nums">
+                  {formatMoney(selectedCard.dueNow.minor, selectedCard.currency)}
+                </strong>{" "}
+                now.
+              </>
+            ) : null}
           </p>
-        ) : null}
+          <Button type="submit" size="lg" disabled={!canSubmit} className="w-full sm:w-auto">
+            {sending ? "Placing your order…" : "Place order"}
+          </Button>
+        </div>
       </div>
     </form>
   );

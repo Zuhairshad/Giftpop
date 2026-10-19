@@ -2,7 +2,7 @@ import type { PublicOrderView } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
 import { safeTrackingUrl } from "@/features/order/tracking-link";
-import { CARD } from "@/features/order/ui";
+import { CARD, CARD_TITLE, META_LABEL, SECONDARY } from "@/features/order/ui";
 
 export function ShipmentPanel({
   shipment,
@@ -12,17 +12,17 @@ export function ShipmentPanel({
   const href = safeTrackingUrl(shipment.trackingUrl);
   return (
     <section aria-labelledby="shipment-heading" className={CARD}>
-      <h2 id="shipment-heading" className="font-display text-2xl font-bold">
+      <h2 id="shipment-heading" className={CARD_TITLE}>
         Courier
       </h2>
-      <dl className="mt-2 space-y-2">
+      <dl className="mt-3 space-y-3">
         <div>
-          <dt className="text-muted text-sm font-bold">Courier</dt>
+          <dt className={META_LABEL}>Courier</dt>
           <dd className="wrap-anywhere">{shipment.courier}</dd>
         </div>
         <div>
-          <dt className="text-muted text-sm font-bold">Tracking number</dt>
-          <dd className="wrap-anywhere select-all">{shipment.trackingNumber}</dd>
+          <dt className={META_LABEL}>Tracking number</dt>
+          <dd className="font-semibold wrap-anywhere select-all">{shipment.trackingNumber}</dd>
         </div>
       </dl>
       {href ? (
@@ -30,7 +30,7 @@ export function ShipmentPanel({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-pink-strong mt-3 inline-block font-bold underline underline-offset-4"
+          className={`mt-4 ${SECONDARY} inline-flex min-h-11 items-center justify-center rounded-md px-4 font-semibold`}
         >
           Track with the courier<span className="sr-only"> (opens in a new tab)</span>
         </a>

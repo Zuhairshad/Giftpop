@@ -3,8 +3,9 @@
 import { useRef, useState } from "react";
 import type { ReactElement } from "react";
 
-import { BUTTON_SECONDARY } from "./ui";
+import { META_LABEL, SECONDARY } from "./ui";
 
+import { Button } from "@/components/ui";
 import { copyLink, copyMessage } from "@/features/share/copy-link";
 
 /** The order number, big, with a button that copies it (or selects it when copying is blocked). */
@@ -30,19 +31,19 @@ export function CopyNumber({ number }: { number: string }): ReactElement {
 
   return (
     <div className="space-y-2">
-      <p className="text-muted text-sm font-bold">Your order number</p>
-      <div className="flex flex-wrap items-center gap-3">
+      <p className={META_LABEL}>Your order number</p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <span
           ref={textRef}
-          className="font-display text-3xl font-bold wrap-anywhere select-all sm:text-4xl"
+          className="font-display text-3xl font-bold tracking-tight wrap-anywhere select-all sm:text-4xl"
         >
           {number}
         </span>
-        <button type="button" onClick={onCopy} className={BUTTON_SECONDARY}>
+        <Button variant="ghost" size="sm" onClick={onCopy} className={SECONDARY}>
           Copy order number
-        </button>
+        </Button>
       </div>
-      <p role="status" aria-live="polite" className="text-muted min-h-5 text-sm">
+      <p role="status" aria-live="polite" className="min-h-5 text-sm text-muted">
         {message}
       </p>
     </div>

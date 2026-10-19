@@ -3,10 +3,12 @@ import type { ReactElement } from "react";
 
 import { TrackClient } from "./track-client";
 
+import { StatePanel } from "@/features/order/state-panel";
+
 /** `useSearchParams` needs a Suspense boundary so the page can still be prerendered. */
 export function TrackScreen(): ReactElement {
   return (
-    <Suspense fallback={<p className="text-muted py-6">Loading…</p>}>
+    <Suspense fallback={<StatePanel tone="loading">Loading…</StatePanel>}>
       <TrackClient />
     </Suspense>
   );

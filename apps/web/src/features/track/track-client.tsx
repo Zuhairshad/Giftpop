@@ -7,8 +7,10 @@ import type { ReactElement } from "react";
 
 import { TrackResult } from "./track-result";
 
+import { Button } from "@/components/ui";
 import { LookupForm } from "@/features/order/lookup-form";
-import { BUTTON_SECONDARY } from "@/features/order/ui";
+import { PageHeading } from "@/features/order/page-heading";
+import { SECONDARY } from "@/features/order/ui";
 
 /** Order number plus phone or email, then the order's progress. */
 export function TrackClient(): ReactElement {
@@ -17,20 +19,20 @@ export function TrackClient(): ReactElement {
   const [view, setView] = useState<PublicOrderView | null>(null);
 
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-6 py-6">
-      <h1 className="font-display text-3xl font-bold sm:text-4xl">Track your order</h1>
+    <section className="mx-auto w-full max-w-5xl space-y-6 sm:space-y-8">
+      <PageHeading title="Track your order" eyebrow="Where is my gift?" />
 
       {view ? (
         <>
           <div aria-live="polite">
             <TrackResult view={view} />
           </div>
-          <button type="button" onClick={() => setView(null)} className={BUTTON_SECONDARY}>
+          <Button variant="ghost" onClick={() => setView(null)} className={SECONDARY}>
             Look up another order
-          </button>
+          </Button>
         </>
       ) : (
-        <div className="max-w-xl space-y-3">
+        <div className="max-w-xl space-y-4">
           <p className="text-muted">
             Enter your order number and the phone number or email you used to order.
           </p>

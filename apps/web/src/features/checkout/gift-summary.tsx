@@ -7,6 +7,7 @@ import {
   buildPersonalisationRows,
   buildReviewLines,
 } from "@/features/builder/steps/review/review-lines";
+import { CARD_TITLE, META_LABEL, WELL } from "@/features/order/ui";
 import { optimisedImageUrl } from "@/lib/image-url";
 
 /** The finished gift: the scene, the items and the personal touches. Read-only. */
@@ -23,20 +24,25 @@ export function GiftSummary({ builder }: { builder: BuilderApi }): ReactElement 
   });
 
   return (
-    <section aria-labelledby="checkout-gift-heading" className="min-w-0 space-y-4">
-      <h2 id="checkout-gift-heading" className="font-display text-2xl font-bold">
+    <section
+      aria-labelledby="checkout-gift-heading"
+      className="min-w-0 space-y-4 lg:sticky lg:top-6"
+    >
+      <h2 id="checkout-gift-heading" className={CARD_TITLE}>
         Your gift
       </h2>
-      <div className="mx-auto w-[min(100%,24rem)] lg:w-full">
-        <GiftScene
-          imageUrl={optimisedImageUrl}
-          design={design}
-          packaging={packaging}
-          items={items}
-        />
+      <div className={`${WELL} p-4 sm:p-6`}>
+        <div className="mx-auto w-[min(100%,22rem)] lg:w-full">
+          <GiftScene
+            imageUrl={optimisedImageUrl}
+            design={design}
+            packaging={packaging}
+            items={items}
+          />
+        </div>
       </div>
       <div>
-        <h3 className="font-bold">In your {packaging.name}</h3>
+        <h3 className="font-semibold">In your {packaging.name}</h3>
         <ul className="mt-1 space-y-1">
           {lines.map((line) => (
             <li key={line.itemId} className="wrap-anywhere">
@@ -44,16 +50,16 @@ export function GiftSummary({ builder }: { builder: BuilderApi }): ReactElement 
                 {line.qty} &times; {line.name}
               </span>
               {line.customName ? (
-                <span className="text-muted text-sm"> named &ldquo;{line.customName}&rdquo;</span>
+                <span className="text-sm text-muted"> named &ldquo;{line.customName}&rdquo;</span>
               ) : null}
             </li>
           ))}
         </ul>
       </div>
-      <dl className="space-y-2">
+      <dl className="space-y-3">
         {rows.map((row) => (
           <div key={row.label}>
-            <dt className="text-muted text-sm font-bold">{row.label}</dt>
+            <dt className={META_LABEL}>{row.label}</dt>
             <dd className="wrap-anywhere whitespace-pre-line">{row.value}</dd>
           </div>
         ))}

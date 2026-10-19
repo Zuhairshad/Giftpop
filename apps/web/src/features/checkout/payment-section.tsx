@@ -24,7 +24,7 @@ function Line({
 }): ReactElement {
   return (
     <div className={`flex flex-wrap items-baseline justify-between gap-x-3 ${className}`}>
-      <dt className={strong ? "font-bold" : "text-muted"}>{label}</dt>
+      <dt className={strong ? "font-semibold" : "text-muted"}>{label}</dt>
       <dd className={`ml-auto tabular-nums ${strong ? "font-bold" : ""}`}>{value}</dd>
     </div>
   );
@@ -42,10 +42,8 @@ function Card({
   const money = (minor: number): string => formatMoney(minor, card.currency);
   return (
     <label
-      className={`rounded-card relative flex min-w-0 cursor-pointer flex-col gap-3 p-4 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-[var(--gp-focus)] ${
-        selected
-          ? "border-pink bg-surface-soft border-4"
-          : "border-border bg-surface hover:border-pink-soft border-2"
+      className={`relative flex min-w-0 cursor-pointer flex-col gap-3 rounded-lg bg-surface p-4 sm:p-5 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-[var(--gp-focus)] ${
+        selected ? "shadow-[0_0_0_2px_var(--gp-pink)]" : "shadow-hairline hover:bg-warm"
       }`}
     >
       <input
@@ -56,17 +54,28 @@ function Card({
         onChange={() => onSelect(card.mode)}
         className="sr-only"
       />
-      <span className="flex items-center justify-between gap-2">
-        <span className="font-display text-lg font-bold">{card.title}</span>
+      <span className="flex items-center justify-between gap-3">
+        <span className="font-display text-xl font-bold tracking-tight">{card.title}</span>
         <span
-          className={`rounded-full px-2.5 py-0.5 text-sm font-bold ${
-            selected ? "bg-pink text-on-pink" : "border-border text-muted border"
+          aria-hidden="true"
+          className={`grid size-6 shrink-0 place-items-center rounded-full ${
+            selected ? "bg-pink text-on-pink" : "shadow-[inset_0_0_0_1.5px_var(--gp-border-strong)]"
           }`}
         >
-          {selected ? "✓ Selected" : "Select"}
+          {selected ? (
+            <svg
+              viewBox="0 0 16 16"
+              className="size-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+            >
+              <path d="M3.5 8.5l3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : null}
         </span>
       </span>
-      <span className="text-muted text-sm">{card.summary}</span>
+      <span className="text-sm text-muted">{card.summary}</span>
       <dl className="space-y-1.5 text-sm">
         {card.rows.map((row) => (
           <Line key={row.label} label={row.label} value={rowValue(row, card.currency)} />
@@ -75,10 +84,10 @@ function Card({
           label={card.total.label}
           value={money(card.total.minor)}
           strong
-          className="border-border border-t pt-1.5"
+          className="border-t border-border pt-2"
         />
       </dl>
-      <dl className="bg-surface space-y-1.5 rounded-soft p-3 text-sm">
+      <dl className="space-y-1.5 rounded-md bg-warm p-3 text-sm">
         <Line label={card.dueNow.label} value={money(card.dueNow.minor)} strong />
         {card.dueOnDelivery ? (
           <Line label={card.dueOnDelivery.label} value={money(card.dueOnDelivery.minor)} />
@@ -104,9 +113,11 @@ export function PaymentSection({
 }: PaymentSectionProps): ReactElement {
   return (
     <fieldset className="min-w-0" aria-busy={loading}>
-      <legend className="font-display mb-3 text-2xl font-bold">Payment</legend>
+      <legend className="font-display mb-3 text-2xl leading-tight font-bold tracking-tight">
+        Payment
+      </legend>
       {cards.length === 0 ? (
-        <p role="status" className="text-muted text-sm">
+        <p role="status" className="rounded-lg bg-warm p-4 text-sm text-muted">
           {loading
             ? "Working out the price…"
             : "We could not work out the price. Go back to the review step and try again."}
