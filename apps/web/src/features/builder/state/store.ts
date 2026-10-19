@@ -30,6 +30,8 @@ export interface BuilderStoreOptions {
 export interface BuilderStore {
   /** The same object until something changes, as `useSyncExternalStore` requires. */
   getSnapshot(): BuilderApi;
+  /** The empty pre-hydration state, so the server render and the first client render agree. */
+  getServerSnapshot(): BuilderApi;
   subscribe(listener: () => void): () => void;
   /** True once saved state has been read back (or found missing). Step guards wait for it. */
   isHydrated(): boolean;
@@ -150,8 +152,11 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
     return api;
   }
 
+  const serverSnapshot = getSnapshot();
+
   return {
     getSnapshot,
+    getServerSnapshot: () => serverSnapshot,
     subscribe: (listener) => store.subscribe(listener),
     isHydrated: () => store.getState().hydrated,
     hydrate() {

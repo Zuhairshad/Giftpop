@@ -29,9 +29,12 @@ export function limitMessage(length: number, limit: number, trimmed = false): st
 
 /** Cuts `value` to `limit` characters and says whether it had to. */
 export function clampToLimit(value: string, limit: number): { text: string; trimmed: boolean } {
-  return value.length > limit
-    ? { text: value.slice(0, limit), trimmed: true }
-    : { text: value, trimmed: false };
+  if (value.length <= limit) return { text: value, trimmed: false };
+  const cut = value.slice(0, limit);
+  const last = cut.charCodeAt(cut.length - 1);
+  // Never leave half of an emoji (a lone high surrogate) at the end.
+  const safe = last >= 0xd800 && last <= 0xdbff ? cut.slice(0, -1) : cut;
+  return { text: safe, trimmed: true };
 }
 
 /** An item's own name limit, never above the contract ceiling. */

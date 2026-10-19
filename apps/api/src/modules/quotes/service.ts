@@ -36,6 +36,27 @@ export async function loadValidatedDesign(
   }
 
   const catalog = await getCountryCatalog(code);
+  const palette = catalog.packagings.find((p) => p.packaging.id === design.packagingId)?.packaging;
+  if (palette) {
+    const offered = (colours: { hex: string }[], hex: string) =>
+      colours.some((colour) => colour.hex.toLowerCase() === hex.toLowerCase());
+    for (const [field, colours, hex] of [
+      ["wrapperColor", palette.wrapperColors, design.wrapperColor],
+      ["ribbonColor", palette.ribbonColors, design.ribbonColor],
+    ] as const) {
+      if (!offered(colours, hex)) {
+        throw new AppError(
+          "VALIDATION_ERROR",
+          422,
+          `${palette.name} does not come in that colour`,
+          {
+            field,
+            allowed: colours.map((colour) => colour.hex),
+          },
+        );
+      }
+    }
+  }
   const problems = validateDesign(design, catalog);
   if (problems.length > 0) {
     throw new AppError(

@@ -155,6 +155,19 @@ describe("tab keyboard", () => {
   });
 });
 
+describe("continueState blocking rules", () => {
+  it("blocks on an item that went out of stock but not on text length", () => {
+    expect(
+      continueState([{ code: "OUT_OF_STOCK", message: "Rose is out of stock.", itemId: "a" }])
+        .enabled,
+    ).toBe(false);
+    expect(
+      continueState([{ code: "TEXT_TOO_LONG", message: "Too long.", field: "cardMessage" }])
+        .enabled,
+    ).toBe(true);
+  });
+});
+
 describe("continueState", () => {
   const problem = (code: DesignProblem["code"], message: string): DesignProblem => ({
     code,

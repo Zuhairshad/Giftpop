@@ -112,3 +112,17 @@ describe("nameableItems", () => {
     expect(nameableItems([{ itemId: "9".repeat(24), qty: 1, slot: 0 }], [mug])).toEqual([]);
   });
 });
+
+describe("clampToLimit with emoji", () => {
+  it("never leaves half an emoji at the end", () => {
+    const result = clampToLimit(`${"x".repeat(199)}🎁`, 200);
+    expect(result.trimmed).toBe(true);
+    expect(result.text).toBe("x".repeat(199));
+  });
+  it("keeps a whole emoji that fits", () => {
+    expect(clampToLimit(`${"x".repeat(198)}🎁`, 200)).toEqual({
+      text: `${"x".repeat(198)}🎁`,
+      trimmed: false,
+    });
+  });
+});

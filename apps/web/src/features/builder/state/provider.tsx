@@ -39,5 +39,5 @@ export function BuilderProvider(props: ProviderProps): ReactElement {
 /** Everything a builder screen reads and does. Throws outside `BuilderProvider`. */
 export function useBuilder(): BuilderApi {
   const store = useBuilderStore();
-  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
 }

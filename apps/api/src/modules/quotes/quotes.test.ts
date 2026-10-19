@@ -399,3 +399,30 @@ describe("POST /v1/quotes: design problems reach the 422 response", () => {
     expect(r.codes.sort()).toEqual(["OUT_OF_STOCK", "TOO_FEW_ITEMS"]);
   });
 });
+
+describe("POST /v1/quotes: colours", () => {
+  it("rejects a wrapper or ribbon colour the packaging does not offer", async () => {
+    const { packaging, bar } = await seedWorld();
+    const wrapper = await post({
+      country: "PK",
+      design: makeDesign(packaging, [[bar, 2]], { wrapperColor: "#123456" }),
+    });
+    expect(wrapper.status).toBe(422);
+    expect(wrapper.body.error.details.field).toBe("wrapperColor");
+    const ribbon = await post({
+      country: "PK",
+      design: makeDesign(packaging, [[bar, 2]], { ribbonColor: "#654321" }),
+    });
+    expect(ribbon.status).toBe(422);
+    expect(ribbon.body.error.details.field).toBe("ribbonColor");
+  });
+
+  it("accepts an offered colour written in another letter case", async () => {
+    const { packaging, bar } = await seedWorld();
+    const res = await post({
+      country: "PK",
+      design: makeDesign(packaging, [[bar, 2]], { wrapperColor: "#C9A977" }),
+    });
+    expect(res.status).toBe(200);
+  });
+});

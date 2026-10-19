@@ -18,12 +18,21 @@ import { DesignModel, type DesignDoc } from "./model";
 
 const MAX_SHARE_ID_ATTEMPTS = 5;
 
+/** A stored design that no longer parses is a server-side data fault, never the caller's mistake. */
+export function parseStoredDesign(stored: unknown): Design {
+  const result = DesignSchema.safeParse(stored);
+  if (!result.success) {
+    throw new AppError("INTERNAL", 500, "This gift could not be loaded", undefined);
+  }
+  return result.data;
+}
+
 function toSavedDesign(doc: DesignDoc): SavedDesign {
   return {
     id: doc._id.toHexString(),
     shareId: doc.shareId,
     country: doc.country,
-    design: DesignSchema.parse(doc.design),
+    design: parseStoredDesign(doc.design),
     createdAt: doc.createdAt.toISOString(),
   };
 }

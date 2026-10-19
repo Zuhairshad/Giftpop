@@ -85,13 +85,13 @@ export function StepProgressView({
         <p className="text-muted text-sm font-semibold sm:hidden" aria-hidden="true">
           {progressSummary(current)}
         </p>
-        <ol className="flex items-center gap-1 sm:gap-2">
+        <ol className="flex flex-wrap items-center gap-x-1 gap-y-2 sm:gap-2">
           {progressEntries(current).map((entry, index) => (
             <li key={entry.step} className="flex items-center gap-1 sm:gap-2">
               {index > 0 ? (
                 <span
                   aria-hidden="true"
-                  className={`h-0.5 w-3 rounded-full sm:w-8 ${
+                  className={`h-0.5 w-2 rounded-full sm:w-8 ${
                     entry.status === "upcoming" ? "bg-border" : "bg-pink"
                   }`}
                 />

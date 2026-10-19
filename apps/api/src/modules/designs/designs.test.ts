@@ -275,3 +275,18 @@ describe("GET /v1/designs/:shareId", () => {
     }
   });
 });
+
+describe("GET /v1/designs/:shareId: corrupt stored data", () => {
+  it("answers 500 INTERNAL without details when the stored design no longer parses", async () => {
+    await DesignModel.collection.insertOne({
+      shareId: "BADSTORED1",
+      country: "PK",
+      design: { nope: true },
+      createdAt: new Date(),
+    });
+    const res = await fetchShared("BADSTORED1");
+    expect(res.status).toBe(500);
+    expect(res.body.error.code).toBe("INTERNAL");
+    expect(res.body.error).not.toHaveProperty("details");
+  });
+});

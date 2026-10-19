@@ -83,11 +83,8 @@ export function nextTabIndex(current: number, key: TabKey, count: number): numbe
   return (current + step + count) % count;
 }
 
-const COUNT_RULES: readonly DesignProblemCode[] = [
-  "TOO_FEW_ITEMS",
-  "TOO_MANY_ITEMS",
-  "OVER_CAPACITY",
-];
+/** Text limits are fixed on the personalise step; every other problem is about the gift itself. */
+const NOT_BLOCKING: readonly DesignProblemCode[] = ["TEXT_TOO_LONG"];
 
 export interface ContinueState {
   enabled: boolean;
@@ -97,7 +94,7 @@ export interface ContinueState {
 
 /** The Continue button is on only when the item count and space rules are met. */
 export function continueState(problems: readonly DesignProblem[]): ContinueState {
-  const blocking = problems.find((problem) => COUNT_RULES.includes(problem.code));
+  const blocking = problems.find((problem) => !NOT_BLOCKING.includes(problem.code));
   return blocking
     ? { enabled: false, message: blocking.message }
     : { enabled: true, message: null };
