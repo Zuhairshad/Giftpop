@@ -1,0 +1,36 @@
+# Build context for apps/api/Dockerfile (context = repository root).
+# Keep this small: the API image needs only package manifests, packages/ and apps/api.
+
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/coverage
+**/uploads
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+.git
+.github
+.claude
+.worktreeinclude
+e2e
+docs
+prompts
+
+# Other apps: not part of the API image.
+apps/web
+apps/admin
+
+# Secrets and local config: never copied into an image.
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Test and editor output.
+playwright-report
+test-results
+**/test-results
+.DS_Store
+**/*.log

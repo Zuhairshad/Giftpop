@@ -1,0 +1,92 @@
+name: Deploy web to Vercel
+
+# Deploys apps/web with the Vercel CLI. Disabled until the repository variable DEPLOY_ENABLED is
+# "true". Needs these repository secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID_WEB.
+# Needs this repository variable: VERCEL_CLI_VERSION (an exact version such as 1.2.3).
+# The Vercel project must have Root Directory set to apps/web, "Include source files outside of
+# the Root Directory" on, and API_URL set under Environment Variables. See docs/deploy.md.
+# If you use Vercel's own Git integration instead, you do not need this workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to deploy
+        type: choice
+        options:
+          - production
+          - preview
+        default: production
+  # Enable automatic production deploys on every push to main by removing the comment marks below.
+  # push:
+  #   branches: [main]
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+      VERCEL_CLI_VERSION: ${{ vars.VERCEL_CLI_VERSION }}
+      TARGET: ${{ inputs.target || 'production' }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Check configuration
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          missing=""
+          [ -n "$VERCEL_TOKEN" ] || missing="$missing VERCEL_TOKEN"
+          [ -n "$VERCEL_ORG_ID" ] || missing="$missing VERCEL_ORG_ID"
+          [ -n "$VERCEL_PROJECT_ID" ] || missing="$missing VERCEL_PROJECT_ID_WEB"
+          [ -n "$VERCEL_CLI_VERSION" ] || missing="$missing VERCEL_CLI_VERSION(variable)"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing:$missing"
+            exit 1
+          fi
+
+      # No version input: pnpm/action-setup reads "packageManager" from the root package.json.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # `vercel pull` fetches the project settings and the environment variables for the target
+      # (including API_URL, which next.config.ts reads at build time).
+      - name: Pull Vercel settings
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: pnpm dlx "vercel@${VERCEL_CLI_VERSION}" pull --yes --environment="$TARGET" --token="$VERCEL_TOKEN"
+
+      - name: Build
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ "$TARGET" = "production" ]; then flag="--prod"; else flag=""; fi
+          pnpm dlx "vercel@${VERCEL_CLI_VERSION}" build $flag --token="$VERCEL_TOKEN"
+
+      - name: Deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ "$TARGET" = "production" ]; then flag="--prod"; else flag=""; fi
+          pnpm dlx "vercel@${VERCEL_CLI_VERSION}" deploy --prebuilt $flag --token="$VERCEL_TOKEN"
