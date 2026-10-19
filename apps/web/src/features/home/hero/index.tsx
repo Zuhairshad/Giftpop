@@ -1,10 +1,14 @@
+import type { CountryCode } from "@giftpop/contracts";
+
 import { GiftIllustration } from "@/components/gift-illustration";
 
 /**
  * HERO SLOT. A static placeholder on purpose: the hero motion piece is a separate
  * decision and is not built in phase 5. Replace this component's body when it is.
  */
-export function Hero() {
+export function Hero({ country }: { country?: CountryCode }) {
+  // On a country's home the button goes straight into the builder; on `/` there is no country yet.
+  const startHref = country ? `/${country.toLowerCase()}/build/format` : "#choose-country";
   return (
     <section className="bg-pink-soft rounded-blob relative overflow-hidden px-6 py-10 sm:px-12 sm:py-16">
       <div className="max-w-lg">
@@ -16,7 +20,7 @@ export function Hero() {
           send it to their door.
         </p>
         <a
-          href="#choose-country"
+          href={startHref}
           className="bg-pink text-on-pink shadow-pop hover:bg-pink-strong mt-8 inline-block rounded-full px-7 py-3 text-base font-bold transition-colors"
         >
           Start building

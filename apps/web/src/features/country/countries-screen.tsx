@@ -1,7 +1,6 @@
 import type { PublicCountry } from "@giftpop/contracts";
 import Link from "next/link";
 
-
 import { ChooseCountryLink } from "./choose-country-link";
 import { deliveryEstimate } from "./delivery-copy";
 import { fetchCountriesOrThrow } from "./fetch-countries";

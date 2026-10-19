@@ -12,7 +12,7 @@ export default async function CountryHome({ params }: CountryHomeProps) {
   if (!country) notFound();
   return (
     <div className="space-y-12">
-      <Hero />
+      <Hero country={country} />
       <HomeSections country={country} />
     </div>
   );

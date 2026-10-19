@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-const linkClass =
-  "inline-block rounded-full px-6 py-3 text-base font-bold transition-colors";
+const linkClass = "inline-block rounded-full px-6 py-3 text-base font-bold transition-colors";
 
 export function PartnerBand() {
   return (
