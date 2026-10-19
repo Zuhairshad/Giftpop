@@ -1,0 +1,72 @@
+name: Deploy API image
+
+# Builds the API container image and pushes it to GitHub Container Registry (GHCR).
+# Disabled until the repository variable DEPLOY_ENABLED is set to "true" (Settings, Secrets and
+# variables, Actions, Variables). No other secret is needed: GHCR uses the built-in GITHUB_TOKEN.
+# Pointing the host (Railway, Render, Fly) at the new image is a separate step; see docs/deploy.md.
+
+on:
+  workflow_dispatch:
+  # Enable automatic builds on every push to main by removing the comment marks below.
+  # push:
+  #   branches: [main]
+
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    name: Build and push image
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      # GHCR names must be lower case; the repository owner may not be.
+      - name: Work out the image name
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}-api" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tags: the full commit SHA (use this one to deploy and to roll back) and "latest".
+      - name: Work out tags and labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=sha,format=long,prefix=sha-
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Add the host's own deploy step here once it exists, for example the Railway, Render or
+      # Fly CLI with a token stored as a repository secret. Pass secrets through `env:` and never
+      # print them.
