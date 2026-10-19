@@ -310,3 +310,24 @@ Reading the numbers:
 
 - Accessibility: the builder pages render a nested `<main>` (the layout's `<main id="main">` wraps a page-level `<main>`; seen on `/PK/build/arrange`). Two main landmarks per page.
 - Templates (item 6): wrap the loop body in `templates/service.ts:145` in a try/catch that logs and `continue`s, so one bad row hides one template instead of all.
+
+## Follow-up status (lead, 2026-10-19)
+
+Measured with a production build served by `next start`, bytes the browser downloaded for each route (gzip level 9), 390 px window, after building a gift.
+
+| Route | Before kB | After kB | Motion loaded after |
+|---|---|---|---|
+| `/` | 224.1 | 168.1 | no |
+| `/pk` | 224.5 | 168.5 | no |
+| `/countries` | 172.7 | 167.7 | no |
+| `/track` | 229.7 | 180.2 | no |
+| `/pk/build/items` | 237.3 | 238.0 | yes (animates) |
+| `/pk/build/arrange` | 236.0 | 230.7 | yes (animates) |
+| `/pk/build/review` | 237.2 | 187.1 | no |
+| `/pk/checkout` | 236.9 | 188.0 | no |
+
+- `LazyMotion` + `m`: done. On its own it saved 3.7 kB (motion chunk 51.3 to 47.6), not the estimated 30 kB, because `animate`, motion values and `AnimatePresence` stay. The big win is that `GiftScene` now loads the animated scene lazily from a client module, so routes with only static scenes never download motion.
+- zod: `contracts` is `sideEffects: false` (zod chunk 36.1 to 31.2 kB). The rest stays while client code parses API responses with contract schemas; `zod/mini` would be a contracts-wide change (lead decision, not done).
+- Item cards: `next/image` with `sizes="112px"` (unit test checks the `/_next/image` URL; the seed has no item images, so not measured in a browser). Scene layer images (patch 2) not done.
+- Admin order search: exact match on indexed `searchKeys` with a boot backfill; a test asserts the plan has no `COLLSCAN`.
+- Items step layout shift: 0 (see the accessibility fix status).

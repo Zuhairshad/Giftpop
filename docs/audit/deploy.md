@@ -69,3 +69,10 @@ R2 is **not** a blocker: `apps/api/src/lib/storage/r2.ts` implements `Storage` w
 - Decide findings 1 to 5 (code changes in files this slice does not own).
 - Add the observability variables to the tables in `docs/deploy.md` when that slice merges; the coverage script in the doc fails until they are listed.
 - Record in `docs/decisions.md`: the image builds with `pnpm deploy --prod` using `--config.inject-workspace-packages=true` (no change to `pnpm-workspace.yaml`); web and admin are two Vercel projects with `API_URL` set at build and runtime; deploy workflows are manual and gated by `vars.DEPLOY_ENABLED`.
+
+## Follow-up status (lead, 2026-10-19)
+
+- Finding 3 (seed owner-only): done, `SEED_OWNER_ONLY=1`.
+- Finding 4 (`API_URL` silently localhost): done, web and admin refuse the default when `NODE_ENV=production`; a build with a blank `API_URL` fails with "API_URL is required in production".
+- Finding 6 (`/ready` ping): done, 2 second ping; tested with a hanging ping.
+- Findings 1, 2, 5, 7 to 12: open.

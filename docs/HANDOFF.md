@@ -4,7 +4,7 @@ Written at the end of the first long session. Read `CLAUDE.md`, `docs/product.md
 
 ## State
 
-All six phases are built and merged on one branch. `pnpm verify` (lint, typecheck, tests for the whole repo) and `pnpm build` pass, and `pnpm format:check` passes.
+All six phases are built and merged. `pnpm verify` (lint, typecheck, tests for the whole repo) and `pnpm build` pass, and `pnpm format:check` passes.
 
 | Phase | What | Status |
 |---|---|---|
@@ -18,14 +18,15 @@ All six phases are built and merged on one branch. `pnpm verify` (lint, typechec
 
 Phase 6 done: Playwright flows (`e2e/`, 4 flows, passed 3 runs in a row in isolated mode), security route-walk test and hardening, observability (request ids, masked logs, optional Sentry, `GET /v1/admin/metrics`), performance report and indexes, deploy files (`apps/api/Dockerfile`, `docs/deploy.md`, disabled deploy workflows), private payment proofs, accessibility audit.
 
-## Not finished (do these next)
+## Second session (2026-10-19)
 
-1. **Accessibility leftovers.** The fixes for web and admin are merged (see the two `## Fix status` sections at the end of `docs/audit/accessibility.md`). Not done: layout shift on the items step (footer shifts, no `loading.tsx`), checkout error summary (L2), colour names on the packing sheet (L4), the "+" stepper and template card names (W9), and one axe `label-content-name-mismatch` on admin pages. Re-run `pnpm e2e` once, since item card labels changed.
-2. **Run the `verifier` agent across the whole repo** against every phase's definition of done, fix "Must fix", then run the `code-simplifier` agent (never run across the whole repo yet).
-3. **Record in `docs/decisions.md`** the Phase 6 decisions and low findings: proof `url` now holds the staff file path and the real key is in the Mongoose-only `storageKey`; R2 proofs use `R2_PRIVATE_BUCKET` (falls back to the public bucket when unset); `ReadableStorage` is separate from `Storage` (merge later); login limiter per IP (30 a minute) added; the global guard rejects any `$` or dotted key in bodies and queries; staff writes need an `Origin` equal to `ADMIN_ORIGIN`; deploy assumptions listed in `docs/audit/deploy.md`; the low findings in `docs/audit/security.md` (S11 to S21) and `docs/audit/e2e.md`.
-4. **Performance follow-ups** (not done, in `docs/audit/performance.md`): swap `<img>` for `next/image` in `apps/web/src/features/builder/steps/items/item-art.tsx`; `LazyMotion` in the renderer (about 30 kB); zod is 37 kB on every route through the contracts barrel; admin order search still scans (needs lowercase email plus a `phoneDigits` field and backfill); the admin order list now has the compound indexes.
-5. **Deploy blockers and decisions** (`docs/audit/deploy.md`): `scripts/seed` has no owner-only mode, so creating the first production owner also writes the demo catalog; web and admin `API_URL` silently default to localhost in production; `NOTIFICATIONS_WORKER` defaults to off; `/ready` does not ping Mongo; all rate limiters and the login limiter are in memory, so run one API instance.
-6. Update `CLAUDE.md` Lessons for Phase 6 (a few ideas: load-sensitive tests need generous timeouts; a limiter default store shared between apps logs `ERR_ERL_STORE_REUSE` in tests; audit fixes in generated shadcn files are lost if regenerated).
+Done: money formatting fixed for ICU 78 (PKR showed 100 times too high), e2e isolated run seeds before servers answer, accessibility leftovers (items skeleton and `loading.tsx`, checkout error summary, colour names, stepper and template names, admin account menu), performance follow-ups (motion off non-animating routes, `next/image` item cards, indexed admin search), deploy items (owner-only seed, `API_URL` required in production, `/ready` ping), decisions and lessons. Details are in `docs/decisions.md` and the `Follow-up status` sections of the audits.
+
+## Still open
+
+1. **Deploy** (`docs/audit/deploy.md` findings 1, 2, 5, 7 to 12): proxy shared secret before raising `TRUST_PROXY_HOPS`, require `PUBLIC_ASSET_BASE_URL` with R2 in production, warn when `NOTIFICATIONS_WORKER` is off in production, rate limiters in memory (run one API instance).
+2. **Performance**: scene layer images are still full size (renderer `imageUrl` prop, patch 2 in `docs/audit/performance.md`); zod on the client (31 kB); items and arrange are about 230 kB (motion loads there by design).
+3. Security and e2e lows listed in `docs/decisions.md` (accepted for now).
 
 ## Things only a person can do or confirm
 
