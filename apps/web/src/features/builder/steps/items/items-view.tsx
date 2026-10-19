@@ -18,6 +18,7 @@ import {
   filterItemsByCategory,
   quantityOf,
 } from "./items-copy";
+import { ItemsSkeleton } from "./items-skeleton";
 
 interface ItemsViewProps {
   builder: BuilderApi;
@@ -38,13 +39,9 @@ export function ItemsView({ builder, navigate }: ItemsViewProps): ReactElement {
   const selectedIndex = tabs.indexOf(selected);
 
   if (!packaging || !design) {
-    // The step guard sends the visitor back to the format step; this is only the brief gap before that.
-    return (
-      <div>
-        <StepProgressView current="items" country={country} />
-        <p className="text-muted">Choose a format first.</p>
-      </div>
-    );
+    // Before the store hydrates (and in the brief gap before the step guard sends a visitor with
+    // no format back), hold the grid's space so nothing shifts when the items arrive.
+    return <ItemsSkeleton country={country} />;
   }
 
   const summary = {

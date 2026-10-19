@@ -14,7 +14,8 @@ import {
   nextTabIndex,
   quantityLabel,
   quantityOf,
-  removeLabel,
+  stepperAddLabel,
+  stepperRemoveLabel,
 } from "./items-copy";
 
 describe("counterText", () => {
@@ -125,8 +126,12 @@ describe("labels", () => {
   it("names the action and the item", () => {
     expect(addLabel("Rose", 0)).toBe("Add Rose");
     expect(addLabel("Rose", 2)).toBe("Add one more Rose");
-    expect(removeLabel("Rose")).toBe("Remove one Rose");
     expect(quantityLabel("Rose", 2)).toBe("Rose: 2 picked");
+  });
+
+  it("starts the stepper names with the word for the visible symbol, so voice control can say 'click plus'", () => {
+    expect(stepperAddLabel("Rose")).toBe("Plus: add one more Rose");
+    expect(stepperRemoveLabel("Rose")).toBe("Minus: remove one Rose");
   });
 });
 

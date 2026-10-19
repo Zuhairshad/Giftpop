@@ -35,7 +35,6 @@ export type TemplateCardModel = {
   title: string;
   description: string;
   href: string;
-  linkLabel: string;
   design: Design;
   packaging: Packaging;
   items: Item[];
@@ -53,7 +52,6 @@ export function templateCards(
       title: template.title,
       description: template.description,
       href: startFromHref(country, template.shareId),
-      linkLabel: `Start from this: ${template.title}`,
       design: template.design,
       packaging: template.packaging,
       items: template.items,

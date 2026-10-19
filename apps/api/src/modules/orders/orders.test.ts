@@ -128,6 +128,8 @@ describe("POST /v1/orders: creation", () => {
       minItems: 2,
       maxItems: 4,
       capacityUnits: 8,
+      wrapperColorName: "Kraft",
+      ribbonColorName: "Red",
     });
     expect(order?.items).toEqual([
       expect.objectContaining({

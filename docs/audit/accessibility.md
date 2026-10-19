@@ -245,7 +245,7 @@ Checked with axe 4.14 plus the contrast walker on 19 store screens in light and 
 | W6 | fixed | `--gp-on-accent` token and `text-on-accent` on mint and butter (dark 5.55:1 and 9.04:1, computed). The Delivered pill was not re-rendered. |
 | W7 | fixed | `:focus-visible { transition: none }`. |
 | W8 | fixed | `InertChrome` sets `inert` on header, footer and skip link while the share overlay is mounted. Not Tab-walked. |
-| W9 | partly fixed | Format strip cards and item cards pass axe. The "+" stepper name and template cards untouched. |
+| W9 | fixed | Format strip cards and item cards pass axe. Follow-up: the stepper buttons are named "Plus: add one more X" and "Minus: remove one X"; the template link has no `aria-label` (visible "Start from this" plus a screen-reader-only ": <title>"). axe on the items step: no violations. |
 | W10 | fixed | Success heading is an `h1`. |
 | W11 | fixed | `grid-cols-1` on card grids, hero, how-it-works, price copy and the items mobile bar wrap at 200% text. |
 | W12 | not needed | The reduced-motion rule already exists in web `globals.css`. |
@@ -253,8 +253,8 @@ Checked with axe 4.14 plus the contrast walker on 19 store screens in light and 
 | W14 | fixed | Blur validates only edited fields or after a submit attempt. |
 | W15 | fixed | Suggestion hidden under `/<cc>/build` and `/<cc>/checkout`. |
 | L1 | fixed | 404 title "Page not found"; country home "Gifts to PK". |
-| L2 | not fixed | Checkout error summary is not a one-line change. |
-| CLS | not measured | Banner is now absolutely positioned under the header (cannot push content) and absent in the builder. No `loading.tsx` for items added. Before: 0.445 on Fast 3G (performance report). After: not measured. |
+| L2 | fixed | After a failed submit a `role="alert"` summary at the top of the form says "6 fields need attention" and links each field by its label (labels from the country's address format). It shows the errors of that submit and is remounted per attempt, so it is announced once; focus still goes to the first invalid field. axe: no violations. |
+| CLS | fixed | Banner is absolutely positioned under the header and absent in the builder. The items step rendered one line ("Choose a format first.") before the store hydrated, then the grid pushed the footer down; it now renders `ItemsSkeleton` (same progress bar, heading and grid size), also used by the new `app/[country]/build/items/loading.tsx`. Items step reload at 390 px, Fast 3G, 4x CPU: CLS 0 (before: 0.144 + 0.177). |
 
 ## Fix status: admin
 
@@ -275,8 +275,8 @@ Measured against a separate stack (admin 3601, api 4600, database `giftpop_admin
 | L3 | fixed | Login fields get `aria-invalid` after a failed sign-in. |
 | L5 | fixed | Packaging page h1 is "Packaging". |
 | L6 | fixed | Partner sheet opens on the status select. |
-| L4 | not fixed | Colour names beside the hex values need packaging palette data; not a one-line change. |
-| Dashboard / header label mismatch | partly fixed | Tile `aria-label`s and the "Toggle navigation" label removed. axe `label-content-name-mismatch` (x1 per page) remains for the account menu button (`aria-label` differs from its visible name). Not fixed. |
+| L4 | fixed | Orders now snapshot the palette names of the chosen colours (`packaging.wrapperColorName`, `ribbonColorName`, optional in the contract). Order detail shows swatch (hidden), name, hex; the packing sheet prefers the saved name over the nearest-colour word. Older orders fall back to the nearest word. Checked in the browser: "Kraft #C8A27A", "Hot pink #E8467C". |
+| Dashboard / header label mismatch | fixed | Tile `aria-label`s and the "Toggle navigation" label removed. The account menu button has no `aria-label`; its name is the visible name and role plus a screen-reader-only ", account menu". axe on dashboard and order detail at 1280: no violations. |
 
 Edits to generated `components/ui/*` (re-apply if regenerated): `dialog.tsx`, `sheet.tsx` (A2 keydown), `table.tsx` (A6), `sidebar.tsx` (A3 `aside`, A8 classes), `switch.tsx` (A7), and `ring-ring/50` to `ring-ring` in button, input, select, textarea, checkbox, badge.
 Note: a native date input showed no ring in one Tab-walk sample; a direct check shows its 3 px ring is present, so this was a timing artefact of the script.

@@ -37,10 +37,10 @@ export function FeaturedTemplates({
               ) : null}
               <Link
                 href={card.href}
-                aria-label={card.linkLabel}
                 className="bg-pink-strong text-on-pink hover:bg-pink mt-4 inline-block self-start rounded-full px-5 py-2.5 text-sm font-bold transition-colors"
               >
-                Start from this
+                {/* The name is the visible text plus the title, so voice control matches it (W9). */}
+                Start from this<span className="sr-only">: {card.title}</span>
               </Link>
             </div>
           </li>

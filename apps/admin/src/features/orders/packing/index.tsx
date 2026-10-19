@@ -11,7 +11,7 @@ import {
   addressLines,
   buildChecklist,
   checklistDensity,
-  colourWord,
+  colourName,
   hasPersonalisation,
   packerNotes,
   totalPieces,
@@ -21,8 +21,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { flagEmoji, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-function Swatch({ label, hex }: { label: string; hex: string }) {
-  const word = colourWord(hex);
+function Swatch({ label, hex, name }: { label: string; hex: string; name: string | undefined }) {
+  const word = colourName(hex, name);
   return (
     <div className="flex items-center gap-2">
       <span
@@ -163,8 +163,16 @@ export async function PackingSheet({ id }: { id: string }) {
               Packaging: <span className="text-base normal-case">{order.packaging.name}</span>
             </h2>
             <div className="flex flex-wrap gap-x-5 gap-y-1">
-              <Swatch label="Wrapper" hex={order.design.wrapperColor} />
-              <Swatch label="Ribbon" hex={order.design.ribbonColor} />
+              <Swatch
+                label="Wrapper"
+                hex={order.design.wrapperColor}
+                name={order.packaging.wrapperColorName}
+              />
+              <Swatch
+                label="Ribbon"
+                hex={order.design.ribbonColor}
+                name={order.packaging.ribbonColorName}
+              />
             </div>
           </section>
         </div>

@@ -58,8 +58,16 @@ export function addLabel(name: string, qty: number): string {
   return qty > 0 ? `Add one more ${name}` : `Add ${name}`;
 }
 
-export function removeLabel(name: string): string {
-  return `Remove one ${name}`;
+/**
+ * The stepper buttons show only "+" and "−". Their names start with those symbols' words
+ * so a voice-control user can say "click plus" (WCAG 2.5.3, label in name).
+ */
+export function stepperAddLabel(name: string): string {
+  return `Plus: add one more ${name}`;
+}
+
+export function stepperRemoveLabel(name: string): string {
+  return `Minus: remove one ${name}`;
 }
 
 /** Spoken by the stepper, for example "Rose: 2 picked". */

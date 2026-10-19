@@ -7,7 +7,13 @@ import type { ReactElement } from "react";
 import { priceLabel } from "../format/price-label";
 
 import { ItemArt } from "./item-art";
-import { addControlState, addLabel, quantityLabel, removeLabel } from "./items-copy";
+import {
+  addControlState,
+  addLabel,
+  quantityLabel,
+  stepperAddLabel,
+  stepperRemoveLabel,
+} from "./items-copy";
 
 interface ItemCardProps {
   entry: PricedItem;
@@ -94,7 +100,7 @@ export function ItemCard({
           >
             <button
               type="button"
-              aria-label={removeLabel(item.name)}
+              aria-label={stepperRemoveLabel(item.name)}
               onClick={remove}
               className={`${STEP_BUTTON} border-border bg-surface text-foreground hover:bg-surface-soft`}
             >
@@ -109,7 +115,7 @@ export function ItemCard({
             <button
               type="button"
               aria-disabled={!control.canAdd}
-              aria-label={addLabel(item.name, qty)}
+              aria-label={stepperAddLabel(item.name)}
               onClick={add}
               className={`${STEP_BUTTON} ${
                 control.canAdd

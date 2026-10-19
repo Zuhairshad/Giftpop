@@ -58,6 +58,14 @@ export function colourWord(hex: string): string {
   return bestDistance <= MAX_DISTANCE_SQ ? best : "";
 }
 
+/**
+ * What to call a chosen colour: the packaging palette name saved on the order ("Blush"), or the
+ * nearest colour word for older orders that do not carry one, or "" when neither fits.
+ */
+export function colourName(hex: string, savedName: string | undefined): string {
+  return savedName ?? colourWord(hex);
+}
+
 export interface ChecklistLine {
   itemId: string;
   qty: number;

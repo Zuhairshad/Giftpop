@@ -4,6 +4,7 @@ import {
   addressLines,
   buildChecklist,
   checklistDensity,
+  colourName,
   colourWord,
   hasPersonalisation,
   packerNotes,
@@ -35,6 +36,16 @@ describe("colourWord", () => {
   it("returns nothing for unknown or invalid input", () => {
     expect(colourWord("#4b6c2f9")).toBe("");
     expect(colourWord("nope")).toBe("");
+  });
+});
+
+describe("colourName", () => {
+  it("prefers the palette name saved on the order", () => {
+    expect(colourName("#e6b8b7", "Rose quartz")).toBe("Rose quartz");
+  });
+  it("falls back to the nearest colour word for orders placed before names were saved", () => {
+    expect(colourName("#fa0505", undefined)).toBe("Red");
+    expect(colourName("nope", undefined)).toBe("");
   });
 });
 

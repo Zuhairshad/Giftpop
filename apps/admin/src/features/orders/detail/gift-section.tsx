@@ -1,5 +1,7 @@
 import type { AdminOrderDetail } from "@giftpop/contracts";
 
+import { colourName } from "../packing/view-model";
+
 import { CopyableText } from "./copy-button";
 import { Field, Panel } from "./panel";
 import { ScenePanel } from "./scene-panel";
@@ -7,6 +9,22 @@ import { itemRows, personalisationTexts, sceneInput } from "./view-model";
 
 import { ScrollRegion } from "@/components/scroll-region";
 import { formatMoney } from "@/lib/format";
+
+/** A swatch (hidden from screen readers), the colour's name when known, then its hex (audit L4). */
+function ColourValue({ hex, name }: { hex: string; name: string | undefined }) {
+  const word = colourName(hex, name);
+  return (
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <span
+        aria-hidden
+        className="inline-block size-4 rounded border"
+        style={{ backgroundColor: hex }}
+      />
+      {word ? <span>{word}</span> : null}
+      <span className="text-muted-foreground font-mono uppercase">{hex}</span>
+    </span>
+  );
+}
 
 /** The gift exactly as ordered: drawn from snapshots, items, packaging and the texts to copy. */
 export function GiftSection({ order }: { order: AdminOrderDetail }) {
@@ -73,24 +91,10 @@ export function GiftSection({ order }: { order: AdminOrderDetail }) {
 
         <dl className="grid grid-cols-2 gap-3">
           <Field label="Wrapper colour">
-            <span className="inline-flex items-center gap-2">
-              <span
-                aria-hidden
-                className="inline-block size-4 rounded border"
-                style={{ backgroundColor: order.design.wrapperColor }}
-              />
-              {order.design.wrapperColor}
-            </span>
+            <ColourValue hex={order.design.wrapperColor} name={order.packaging.wrapperColorName} />
           </Field>
           <Field label="Ribbon colour">
-            <span className="inline-flex items-center gap-2">
-              <span
-                aria-hidden
-                className="inline-block size-4 rounded border"
-                style={{ backgroundColor: order.design.ribbonColor }}
-              />
-              {order.design.ribbonColor}
-            </span>
+            <ColourValue hex={order.design.ribbonColor} name={order.packaging.ribbonColorName} />
           </Field>
         </dl>
 

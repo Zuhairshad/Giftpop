@@ -5,6 +5,9 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 
 import { buildAddressFields } from "./address-fields";
+import { ErrorSummary } from "./error-summary";
+import { errorSummaryEntries } from "./error-summary-model";
+import type { FieldName } from "./fields";
 import { failureMessage, needsItemsLink } from "./order-errors";
 import { PaymentSection } from "./payment-section";
 import { TextField } from "./text-field";
@@ -16,6 +19,8 @@ import type { BuilderApi } from "@/features/builder/state";
 import { formatMoney } from "@/lib/format-money";
 
 const SECTION_HEADING = "font-display mb-3 text-2xl font-bold";
+
+const CONTACT_LABELS = { name: "Full name", email: "Email", phone: "Phone" } as const;
 
 function Failure({
   controller,
@@ -61,9 +66,15 @@ export function CheckoutFormView({
   const addressFields = buildAddressFields(country.addressFormat);
   const selectedCard = cards.find((card) => card.mode === selectedMode);
   const canSubmit = !sending && selectedCard !== undefined;
+  const labels: Partial<Record<FieldName, string>> = {
+    ...CONTACT_LABELS,
+    ...Object.fromEntries(addressFields.map((field) => [field.name, field.label])),
+  };
+  const summaryEntries = errorSummaryEntries(controller.summary.errors, labels);
 
   return (
     <form noValidate onSubmit={controller.submit} className="min-w-0 space-y-8">
+      <ErrorSummary key={controller.summary.attempt} entries={summaryEntries} />
       <section aria-labelledby="checkout-contact-heading">
         <h2 id="checkout-contact-heading" className={SECTION_HEADING}>
           Your details
@@ -71,7 +82,7 @@ export function CheckoutFormView({
         <div className="grid gap-4">
           <TextField
             name="name"
-            label="Full name"
+            label={CONTACT_LABELS.name}
             required
             value={values.contact.name}
             onChange={(v) => setField("name", v)}
@@ -81,7 +92,7 @@ export function CheckoutFormView({
           />
           <TextField
             name="email"
-            label="Email"
+            label={CONTACT_LABELS.email}
             required
             type="email"
             inputMode="email"
@@ -93,7 +104,7 @@ export function CheckoutFormView({
           />
           <TextField
             name="phone"
-            label="Phone"
+            label={CONTACT_LABELS.phone}
             required
             type="tel"
             inputMode="tel"

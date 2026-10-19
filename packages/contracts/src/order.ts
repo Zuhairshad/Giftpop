@@ -65,6 +65,9 @@ export const PackagingSnapshotSchema = z.object({
   maxItems: z.number().int().positive(),
   capacityUnits: z.number().int().positive(),
   layers: z.object({ back: AssetSchema.optional(), front: AssetSchema.optional() }).default({}),
+  /** Palette names of the chosen colours when ordered ("Blush"); absent on orders placed before they were kept. */
+  wrapperColorName: z.string().min(1).max(40).optional(),
+  ribbonColorName: z.string().min(1).max(40).optional(),
 });
 export type PackagingSnapshot = z.infer<typeof PackagingSnapshotSchema>;
 

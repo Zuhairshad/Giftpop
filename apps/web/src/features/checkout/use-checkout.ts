@@ -23,6 +23,8 @@ import { apiRequest } from "@/lib/api";
 export interface CheckoutController {
   values: FormValues;
   errors: FieldErrors;
+  /** The errors from the last failed submit and a counter for it; the summary shows these. */
+  summary: { errors: FieldErrors; attempt: number };
   failure: OrderFailure | null;
   sending: boolean;
   dialCode: string | null;
@@ -41,6 +43,10 @@ export function useCheckout(
 ): CheckoutController {
   const [values, setValues] = useState<FormValues>(EMPTY_FORM);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [summary, setSummary] = useState<{ errors: FieldErrors; attempt: number }>({
+    errors: {},
+    attempt: 0,
+  });
   const [failure, setFailure] = useState<OrderFailure | null>(null);
   const [sending, setSending] = useState(false);
   const [picked, setPicked] = useState<PaymentMode | null>(null);
@@ -61,6 +67,7 @@ export function useCheckout(
 
   const showErrors = useCallback((next: FieldErrors) => {
     setErrors(next);
+    setSummary((previous) => ({ errors: next, attempt: previous.attempt + 1 }));
     const first = firstInvalidField(next);
     if (first) setFocusRequest((previous) => ({ field: first, n: (previous?.n ?? 0) + 1 }));
   }, []);
@@ -104,6 +111,7 @@ export function useCheckout(
       setSending(true);
       setFailure(null);
       setErrors({});
+      setSummary((previous) => ({ errors: {}, attempt: previous.attempt }));
       apiRequest("/orders", CreateOrderResponseSchema, {
         method: "POST",
         body: request,
@@ -127,6 +135,7 @@ export function useCheckout(
   return {
     values,
     errors,
+    summary,
     failure,
     sending,
     dialCode,

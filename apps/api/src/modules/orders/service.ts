@@ -3,6 +3,7 @@ import { randomInt } from "node:crypto";
 import {
   ORDER_NUMBER_ALPHABET,
   validateAddress,
+  type ColourOption,
   type CreateOrderRequest,
   type CreateOrderResponse,
   type ItemSnapshot,
@@ -58,6 +59,8 @@ function buildSnapshots(
     };
   });
 
+  const wrapperColorName = paletteName(packaging.wrapperColors, request.design.wrapperColor);
+  const ribbonColorName = paletteName(packaging.ribbonColors, request.design.ribbonColor);
   return {
     packaging: {
       packagingId: packaging.id,
@@ -68,9 +71,16 @@ function buildSnapshots(
       maxItems: packaging.maxItems,
       capacityUnits: packaging.capacityUnits,
       layers: packaging.layers,
+      ...(wrapperColorName ? { wrapperColorName } : {}),
+      ...(ribbonColorName ? { ribbonColorName } : {}),
     },
     items,
   };
+}
+
+/** The palette name for a chosen hex, so staff read "Blush" on the order even after the palette changes. */
+function paletteName(palette: readonly ColourOption[], hex: string): string | undefined {
+  return palette.find((option) => option.hex.toLowerCase() === hex.toLowerCase())?.name;
 }
 
 function stockLines(
