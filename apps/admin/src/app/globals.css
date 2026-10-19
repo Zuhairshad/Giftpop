@@ -7,10 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-bricolage), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,82 +39,87 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
+  --color-primary-pressed: var(--primary-pressed);
+  /* With --radius 12px these give 8 / 10 / 12 / 20 (design: 8 small, 12 control, 20 card). */
+  --radius-sm: calc(var(--radius) * 0.667);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-xl: calc(var(--radius) * 1.667);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.505 0.213 27.518); /* a11y A5: 6:1 on its 10% tint */
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.42 0 0); /* a11y A1: focus ring above 3:1 */
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.42 0 0);
+  /* Giftpop tokens (docs/design/giftpop-DESIGN.md) mapped onto the shadcn names. Hex on purpose: they match the design file one to one. */
+  --background: #fff8f4; /* canvas */
+  --foreground: #2b1733; /* ink */
+  --card: #ffffff; /* surface */
+  --card-foreground: #2b1733;
+  --popover: #ffffff;
+  --popover-foreground: #2b1733;
+  --primary: #d6246e; /* raspberry, 4.8:1 with white */
+  --primary-foreground: #ffffff;
+  --primary-pressed: #ae1659;
+  --secondary: #e9ddfb; /* lavender */
+  --secondary-foreground: #6b3fb5; /* lavender-deep, 6.9:1 on lavender */
+  --muted: #fbefea; /* warm */
+  --muted-foreground: #66506e; /* ink-2, 6.3:1 on warm; the design's lighter "muted" fails 4.5:1 for small text */
+  --accent: #f6e4de; /* warm-2 */
+  --accent-foreground: #2b1733;
+  --destructive: #b3261e; /* danger */
+  --border: rgb(43 23 51 / 10%); /* hairline */
+  --input: #8a7693; /* field edge: 3.9:1 on canvas, WCAG 1.4.11 */
+  --ring: #2b1733; /* focus ink */
+  --chart-1: #d6246e;
+  --chart-2: #6b3fb5;
+  --chart-3: #a05a00;
+  --chart-4: #1e8e5a;
+  --chart-5: #8a5f2e;
+  --radius: 0.75rem;
+  --sidebar: #fbefea;
+  --sidebar-foreground: #2b1733;
+  --sidebar-primary: #d6246e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f6e4de;
+  --sidebar-accent-foreground: #2b1733;
+  --sidebar-border: rgb(43 23 51 / 10%);
+  --sidebar-ring: #2b1733;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.78 0.16 22);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.85 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.85 0 0);
+  --background: #1b1020;
+  --foreground: #fdf1f6;
+  --card: #271a2e;
+  --card-foreground: #fdf1f6;
+  --popover: #271a2e;
+  --popover-foreground: #fdf1f6;
+  --primary: #ff6b9d;
+  --primary-foreground: #2a0f1c;
+  --primary-pressed: #ff8fb5;
+  --secondary: #3e2f5c;
+  --secondary-foreground: #cdb8ff;
+  --muted: #33233b;
+  --muted-foreground: #cdb8d6;
+  --accent: #40304a;
+  --accent-foreground: #fdf1f6;
+  --destructive: #ff8a80;
+  --border: rgb(253 241 246 / 12%);
+  --input: #8a7693;
+  --ring: #fdf1f6;
+  --chart-1: #ff6b9d;
+  --chart-2: #cdb8ff;
+  --chart-3: #d9a92e;
+  --chart-4: #4cc38a;
+  --chart-5: #c69c6d;
+  --sidebar: #271a2e;
+  --sidebar-foreground: #fdf1f6;
+  --sidebar-primary: #ff6b9d;
+  --sidebar-primary-foreground: #2a0f1c;
+  --sidebar-accent: #40304a;
+  --sidebar-accent-foreground: #fdf1f6;
+  --sidebar-border: rgb(253 241 246 / 12%);
+  --sidebar-ring: #fdf1f6;
 }
 
 @layer base {
@@ -127,6 +131,11 @@
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
   }
 }
 
