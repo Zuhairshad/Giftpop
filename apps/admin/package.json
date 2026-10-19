@@ -16,6 +16,7 @@
     "@giftpop/contracts": "workspace:*",
     "@giftpop/renderer": "workspace:*",
     "@hookform/resolvers": "^5.9.2",
+    "@sentry/nextjs": "^11.8.0",
     "@tanstack/react-table": "^9.3.1",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.0",
