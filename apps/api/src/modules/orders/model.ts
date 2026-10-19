@@ -143,6 +143,10 @@ orderSchema.index({ country: 1, status: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
 orderSchema.index({ paymentStatus: 1, status: 1 });
 // Customer tracking looks an order up by number plus the phone or email it was placed with.
+// Dashboard: needs-action counts, orders created per day or window, payments received per day.
+orderSchema.index({ status: 1, "proofs.status": 1 });
+orderSchema.index({ createdAt: -1 });
+orderSchema.index({ "payments.recordedAt": 1 });
 orderSchema.index({ "contact.phone": 1 });
 orderSchema.index({ "contact.email": 1 });
 
