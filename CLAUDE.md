@@ -76,4 +76,6 @@ If an agent needs a dependency, a contract change or a shared-file edit, it does
 
 Add a line here whenever Claude made a mistake that a rule would have prevented.
 
-- (none yet)
+- Overwriting a generated config (`next.config.ts`) dropped the `@tailwindcss/turbopack` loader rule, so Tailwind silently stopped processing CSS. Diff against the generator's output before replacing a generated file.
+- Turbo hides env vars that `turbo.json` does not declare, so `API_URL` never reached `next build` and `MONGODB_URI` never reached `pnpm dev`. Declare every env var an app reads under `env` for its tasks; the API loads `apps/api/.env` itself.
+- A subagent ran `rm -f` on a system path (`/dev/null`) inside a compound command and replaced the device with a plain file. Agents never delete or recreate paths outside the repo; delete only named files inside it.
