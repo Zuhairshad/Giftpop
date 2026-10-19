@@ -75,9 +75,14 @@ describe("countries", () => {
     expect(format("CN")?.region.label).toBe("Province");
   });
 
-  it("mark every dev shipping rate and payment instruction as DEV ONLY", () => {
+  it("give every country neutral payment instructions with a placeholder account", () => {
     for (const country of COUNTRIES) {
-      expect(country.paymentInstructions).toContain("DEV ONLY");
+      const text = country.paymentInstructions;
+      expect(text).toContain("account 0000 0000 0000");
+      expect(text).toContain("reference: your order number");
+      expect(text).not.toMatch(/DEV ONLY/i);
+      // Only zeros: no digit sequence that could be a real account number.
+      expect(text).not.toMatch(/[1-9]/);
     }
   });
 
