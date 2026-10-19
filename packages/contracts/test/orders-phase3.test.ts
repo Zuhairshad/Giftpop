@@ -185,7 +185,8 @@ describe("country dialCode", () => {
     }
   });
   it("reaches the public country the store reads", () => {
-    const { paymentInstructions: _hidden, ...publicCountry } = country;
-    expect(PublicCountrySchema.parse({ ...publicCountry, dialCode: "+92" }).dialCode).toBe("+92");
+    const parsed = PublicCountrySchema.parse({ ...country, dialCode: "+92" });
+    expect(parsed.dialCode).toBe("+92");
+    expect(parsed).not.toHaveProperty("paymentInstructions");
   });
 });
