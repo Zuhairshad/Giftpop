@@ -2,7 +2,7 @@ import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, sep } from "node:path";
 
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { isSafeKey, newAssetKey } from "./keys";
@@ -10,7 +10,7 @@ import { LocalStorage } from "./local";
 import { apiPackageRoot, resolveUploadDir } from "./package-root";
 import { R2Storage, type S3Sender } from "./r2";
 
-import { createStorage } from "./index";
+import { createPrivateStorage, createStorage } from "./index";
 
 describe("keys", () => {
   it("makes unguessable, unique, safe keys", () => {
@@ -174,5 +174,147 @@ describe("createStorage", () => {
 
   it("refuses r2 without its keys", () => {
     expect(() => createStorage({ ...base, STORAGE_DRIVER: "r2" })).toThrow("R2_ACCOUNT_ID");
+  });
+});
+
+describe("LocalStorage get and hidden folders", () => {
+  let dir: string;
+  beforeEach(async () => {
+    dir = await mkdtemp(join(tmpdir(), "giftpop-get-"));
+  });
+  afterEach(async () => {
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it("gets bytes with a content type, null when missing or unsafe", async () => {
+    const storage = new LocalStorage({ rootDir: dir, publicBaseUrl: "http://x" });
+    await storage.put("proofs/a.webp", Buffer.from("img"));
+    expect(await storage.get("proofs/a.webp")).toEqual({
+      body: Buffer.from("img"),
+      contentType: "image/webp",
+    });
+    expect(await storage.get("proofs/missing.webp")).toBeNull();
+    expect(await storage.get("../etc/passwd")).toBeNull();
+    expect(await storage.get("proofs")).toBeNull();
+  });
+
+  it("refuses to read, write or resolve anything in a hidden folder", async () => {
+    const storage = new LocalStorage({
+      rootDir: dir,
+      publicBaseUrl: "http://x",
+      hiddenFolders: ["private"],
+    });
+    expect(storage.resolvePath("private/proofs/a.webp")).toBeUndefined();
+    expect(storage.resolvePath("assets/a.webp")).toBeDefined();
+    expect(await storage.get("private/proofs/a.webp")).toBeNull();
+    await expect(storage.put("private/a.webp", Buffer.from("x"))).rejects.toThrow(
+      "Unsafe storage key",
+    );
+    for (const key of ["private/../private/a.webp", "private/%2e%2e/a.webp", "../private/a.webp"]) {
+      expect(storage.resolvePath(key)).toBeUndefined();
+    }
+  });
+
+  it("the public instance cannot read a file the private instance wrote", async () => {
+    const env = {
+      STORAGE_DRIVER: "local" as const,
+      UPLOAD_DIR: dir,
+      PUBLIC_ASSET_BASE_URL: "http://localhost:4000/v1/assets/files",
+    };
+    const publicStorage = createStorage(env) as LocalStorage;
+    const privateStorage = createPrivateStorage(env);
+    await privateStorage.put("proofs/p.webp", Buffer.from("secret"), "image/webp");
+    expect((await readFile(join(dir, "private", "proofs", "p.webp"))).toString()).toBe("secret");
+    expect(await publicStorage.get("private/proofs/p.webp")).toBeNull();
+    expect(await publicStorage.get("proofs/p.webp")).toBeNull();
+    expect(await privateStorage.get("proofs/p.webp")).not.toBeNull();
+  });
+});
+
+describe("R2Storage get", () => {
+  function getClient(respond: () => unknown) {
+    const sent: unknown[] = [];
+    const client = {
+      send: (command: unknown) => {
+        sent.push(command);
+        return Promise.resolve().then(respond);
+      },
+    } as unknown as S3Sender;
+    return { client, sent };
+  }
+
+  it("reads an object by bucket and key", async () => {
+    const { client, sent } = getClient(() => ({
+      Body: { transformToByteArray: () => Promise.resolve(new Uint8Array([1, 2, 3])) },
+      ContentType: "image/webp",
+    }));
+    const storage = new R2Storage({ client, bucket: "priv", publicBaseUrl: "https://cdn.test" });
+    expect(await storage.get("proofs/a.webp")).toEqual({
+      body: Buffer.from([1, 2, 3]),
+      contentType: "image/webp",
+    });
+    expect(sent[0]).toBeInstanceOf(GetObjectCommand);
+    expect((sent[0] as GetObjectCommand).input).toEqual({ Bucket: "priv", Key: "proofs/a.webp" });
+  });
+
+  it("answers null for a missing object and rethrows other errors", async () => {
+    const missing = getClient(() => {
+      throw Object.assign(new Error("nope"), { name: "NoSuchKey" });
+    });
+    const storage = new R2Storage({
+      client: missing.client,
+      bucket: "b",
+      publicBaseUrl: "https://cdn.test",
+    });
+    expect(await storage.get("proofs/a.webp")).toBeNull();
+    const notFound = getClient(() => {
+      throw Object.assign(new Error("x"), { $metadata: { httpStatusCode: 404 } });
+    });
+    expect(
+      await new R2Storage({
+        client: notFound.client,
+        bucket: "b",
+        publicBaseUrl: "https://cdn.test",
+      }).get("k"),
+    ).toBeNull();
+    const down = getClient(() => {
+      throw new Error("R2 is down");
+    });
+    await expect(
+      new R2Storage({ client: down.client, bucket: "b", publicBaseUrl: "https://cdn.test" }).get(
+        "k",
+      ),
+    ).rejects.toThrow("R2 is down");
+  });
+});
+
+describe("createPrivateStorage (r2)", () => {
+  const r2 = {
+    STORAGE_DRIVER: "r2" as const,
+    UPLOAD_DIR: "uploads",
+    PUBLIC_ASSET_BASE_URL: "https://assets.test",
+    R2_ACCOUNT_ID: "acct",
+    R2_ACCESS_KEY_ID: "key",
+    R2_SECRET_ACCESS_KEY: "secret",
+    R2_BUCKET: "public-bucket",
+  };
+
+  it("uses R2_PRIVATE_BUCKET, falls back to R2_BUCKET, and stores with no-store caching", async () => {
+    const buckets: string[] = [];
+    for (const env of [{ ...r2, R2_PRIVATE_BUCKET: "private-bucket" }, r2]) {
+      const storage = createPrivateStorage(env) as unknown as {
+        bucket: string;
+        cacheControl: string;
+      };
+      buckets.push(storage.bucket);
+      expect(storage.cacheControl).toBe("private, no-store");
+    }
+    expect(buckets).toEqual(["private-bucket", "public-bucket"]);
+  });
+
+  it("refuses r2 without its keys", () => {
+    expect(() =>
+      createPrivateStorage({ ...r2, R2_ACCOUNT_ID: undefined, R2_BUCKET: undefined }),
+    ).toThrow("R2_ACCOUNT_ID");
   });
 });

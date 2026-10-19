@@ -4,7 +4,7 @@ import { MemoryStore } from "express-rate-limit";
 import { z } from "zod";
 
 import { AppError } from "../../lib/errors";
-import { getStorage, type Storage } from "../../lib/storage";
+import { getPrivateStorage, type Storage } from "../../lib/storage";
 import { validateParams } from "../../lib/validate";
 import { createIpLimiter } from "../quotes/rate-limit";
 
@@ -17,6 +17,7 @@ const ParamsSchema = z.object({ number: z.string().trim().min(1).max(40) });
 
 export interface PaymentsRouterOptions {
   limiter?: RequestHandler;
+  /** Must return the private storage: proofs are never public. */
   resolveStorage?: () => Storage;
 }
 
@@ -30,7 +31,7 @@ export function createPaymentsRouter({
     store: proofStore,
     message: "Too many uploads. Try again in a minute.",
   }),
-  resolveStorage = getStorage,
+  resolveStorage = getPrivateStorage,
 }: PaymentsRouterOptions = {}): Router {
   const router = Router();
 

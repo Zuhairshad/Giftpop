@@ -154,7 +154,7 @@ describe("PATCH /:id/proofs/:proofId", () => {
       "accepted",
       "pending",
     ]);
-    expect(res.body.proofs[0].url).toBe("https://x/a.webp");
+    expect(res.body.proofs[0].url).toBe(`/api/admin/orders/${id}/proofs/${proofId}/file`);
   });
 
   it("can reject, and 404s for an unknown proof or order", async () => {

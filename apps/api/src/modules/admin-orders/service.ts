@@ -8,10 +8,12 @@ import type {
 import mongoose from "mongoose";
 
 import { AppError } from "../../lib/errors";
+import type { ReadableStorage, StoredObject } from "../../lib/storage";
 import { releaseStock, type StockLine } from "../catalog/stock.service";
 import { toObjectId, toOrder } from "../orders/mappers";
 import { OrderModel, type OrderDoc } from "../orders/model";
 import { transitionOrder } from "../orders/transition";
+import { proofStorageKey } from "../payments/proof-keys";
 import { recordPayment } from "../payments/service";
 import { StaffModel } from "../staff/model";
 
@@ -124,4 +126,21 @@ export async function reviewProof(
     throw new AppError("NOT_FOUND", 404, "No such order or payment proof");
   }
   return getOrderDetail(orderId);
+}
+
+/** The bytes of one payment proof, from private storage. 404 if the order, proof or object is missing. */
+export async function getProofFile(
+  storage: ReadableStorage,
+  orderId: string,
+  proofId: string,
+): Promise<StoredObject> {
+  const doc = await OrderModel.findOne(
+    { _id: orderId, "proofs._id": toObjectId(proofId) },
+    { "proofs.$": 1 },
+  ).lean<Pick<OrderDoc, "proofs">>();
+  const proof = doc?.proofs[0];
+  const key = proof && proofStorageKey(proof);
+  const object = key ? await storage.get(key) : null;
+  if (!object) throw new AppError("NOT_FOUND", 404, "No such payment proof image");
+  return object;
 }

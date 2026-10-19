@@ -53,6 +53,8 @@ const EnvObjectSchema = z.object({
   R2_ACCESS_KEY_ID: z.string().min(1).optional(),
   R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
   R2_BUCKET: z.string().min(1).optional(),
+  /** Bucket for payment proofs, never served publicly. Falls back to R2_BUCKET when unset. */
+  R2_PRIVATE_BUCKET: z.string().min(1).optional(),
   /** Public base URL that stored files are served from, without a trailing slash. */
   PUBLIC_ASSET_BASE_URL: url("PUBLIC_ASSET_BASE_URL")
     .transform((value) => value.replace(/\/+$/, ""))

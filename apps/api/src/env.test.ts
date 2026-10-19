@@ -85,6 +85,20 @@ describe("parseEnv", () => {
       });
       expect(env.PUBLIC_ASSET_BASE_URL).toBe("https://cdn.example.com");
     });
+
+    it("takes an optional private bucket for payment proofs", () => {
+      const r2 = {
+        ...valid,
+        STORAGE_DRIVER: "r2",
+        R2_ACCOUNT_ID: "a",
+        R2_ACCESS_KEY_ID: "b",
+        R2_SECRET_ACCESS_KEY: "c",
+        R2_BUCKET: "assets",
+        PUBLIC_ASSET_BASE_URL: "https://cdn.example.com",
+      };
+      expect(parseEnv(r2).R2_PRIVATE_BUCKET).toBeUndefined();
+      expect(parseEnv({ ...r2, R2_PRIVATE_BUCKET: "proofs" }).R2_PRIVATE_BUCKET).toBe("proofs");
+    });
   });
 });
 

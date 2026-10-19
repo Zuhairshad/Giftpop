@@ -44,6 +44,8 @@ export interface OrderNoteDoc {
 export interface OrderProofDoc {
   _id: Types.ObjectId;
   url: string;
+  /** Key of the image in private storage. Missing on proofs stored before proofs went private. */
+  storageKey?: string;
   status: PaymentProofStatus;
   uploadedAt: Date;
 }
@@ -108,6 +110,7 @@ const noteSchema = new Schema<OrderNoteDoc>({
 
 const proofSchema = new Schema<OrderProofDoc>({
   url: { type: String, required: true },
+  storageKey: { type: String },
   status: { type: String, required: true, default: "pending" },
   uploadedAt: { type: Date, required: true },
 });
