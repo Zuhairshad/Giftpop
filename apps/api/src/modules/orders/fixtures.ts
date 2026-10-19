@@ -64,6 +64,7 @@ export function orderDocInput(
     shipment: null,
     payments: [],
     proofs: [],
+    notes: [],
     ...overrides,
   };
 }

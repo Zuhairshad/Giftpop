@@ -141,6 +141,7 @@ export async function createOrder(request: CreateOrderRequest): Promise<CreateOr
           history: [{ from: null, to: "awaiting_payment", at: now, actorId: null }],
           shipment: null,
           payments: [],
+          notes: [],
           proofs: [],
         };
         const [created] = await OrderModel.create([doc], { session });

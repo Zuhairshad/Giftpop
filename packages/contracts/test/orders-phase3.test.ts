@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  AddNoteRequestSchema,
+  AdminOrderListQuerySchema,
   BrandRequestInputSchema,
+  DashboardSummarySchema,
   CountrySchema,
   PARTNER_HONEYPOT_FIELD,
   OutboxEntrySchema,
@@ -225,5 +228,53 @@ describe("partner brand link and honeypot", () => {
   });
   it("uses a field name an autofill would not know", () => {
     expect(PARTNER_HONEYPOT_FIELD).not.toMatch(/url|website|email|phone|name|address/i);
+  });
+});
+
+describe("admin order contracts", () => {
+  it("parses list filters from a query string and defaults the page size", () => {
+    const q = AdminOrderListQuerySchema.parse({
+      status: "confirmed",
+      country: "pk",
+      from: "2026-10-01",
+      hasPendingProof: "true",
+      limit: "10",
+    });
+    expect(q).toMatchObject({
+      status: "confirmed",
+      country: "PK",
+      hasPendingProof: true,
+      limit: 10,
+    });
+    expect(AdminOrderListQuerySchema.parse({}).limit).toBe(25);
+  });
+  it("rejects bad filters and over-large pages", () => {
+    for (const bad of [
+      { status: "shipping" },
+      { from: "yesterday" },
+      { limit: "1000" },
+      { country: "pak" },
+      { search: "" },
+    ]) {
+      expect(AdminOrderListQuerySchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
+    }
+  });
+  it("needs note text", () => {
+    expect(AddNoteRequestSchema.safeParse({ text: "  " }).success).toBe(false);
+    expect(AddNoteRequestSchema.parse({ text: " Call before 5pm " }).text).toBe("Call before 5pm");
+  });
+  it("keeps money per currency in the dashboard summary", () => {
+    const ok = DashboardSummarySchema.safeParse({
+      needsAction: { awaitingPaymentWithProof: 1, toMake: 2, toShip: 3, deliveryFailed: 0 },
+      today: {
+        orders: 4,
+        revenue: [
+          { currency: "PKR", amountMinor: 100 },
+          { currency: "USD", amountMinor: 5 },
+        ],
+      },
+      ordersByCountry: [{ country: "PK", orders: 3 }],
+    });
+    expect(ok.success).toBe(true);
   });
 });

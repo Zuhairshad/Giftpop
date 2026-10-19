@@ -34,6 +34,13 @@ export interface OrderPaymentDoc {
   recordedAt: Date;
 }
 
+export interface OrderNoteDoc {
+  _id: Types.ObjectId;
+  text: string;
+  actorId: Types.ObjectId;
+  at: Date;
+}
+
 export interface OrderProofDoc {
   _id: Types.ObjectId;
   url: string;
@@ -65,6 +72,8 @@ export interface OrderDoc {
     shippedAt: Date;
   } | null;
   payments: OrderPaymentDoc[];
+  /** Internal staff notes; never in a customer view. */
+  notes: OrderNoteDoc[];
   proofs: OrderProofDoc[];
   createdAt: Date;
   updatedAt: Date;
@@ -89,6 +98,12 @@ const paymentSchema = new Schema<OrderPaymentDoc>({
   note: { type: String },
   recordedBy: { type: Schema.Types.ObjectId, required: true },
   recordedAt: { type: Date, required: true },
+});
+
+const noteSchema = new Schema<OrderNoteDoc>({
+  text: { type: String, required: true },
+  actorId: { type: Schema.Types.ObjectId, required: true },
+  at: { type: Date, required: true },
 });
 
 const proofSchema = new Schema<OrderProofDoc>({
@@ -117,6 +132,7 @@ const orderSchema = new Schema<OrderDoc>(
     history: { type: [historySchema], required: true },
     shipment: { type: Schema.Types.Mixed, default: null },
     payments: { type: [paymentSchema], default: [] },
+    notes: { type: [noteSchema], default: [] },
     proofs: { type: [proofSchema], default: [] },
   },
   { timestamps: true, collection: "orders", minimize: false },

@@ -46,6 +46,12 @@ export function toOrder(doc: OrderDoc): Order {
       recordedBy: payment.recordedBy.toHexString(),
       recordedAt: iso(payment.recordedAt),
     })),
+    notes: (doc.notes ?? []).map((note) => ({
+      id: note._id.toHexString(),
+      text: note.text,
+      actorId: note.actorId.toHexString(),
+      at: iso(note.at),
+    })),
     proofs: doc.proofs.map((proof) => ({
       id: proof._id.toHexString(),
       url: proof.url,

@@ -1,9 +1,11 @@
 import type { Router } from "express";
 
+import { adminOrdersRouter } from "./admin-orders/router";
 import { assetsRouter } from "./assets/router";
 import { authRouter } from "./auth/router";
 import { catalogRouter } from "./catalog/router";
 import { countriesRouter } from "./countries/router";
+import { dashboardRouter } from "./dashboard/router";
 import { designsRouter } from "./designs/router";
 import { notificationsRouter } from "./notifications/router";
 import { ordersRouter } from "./orders/router";
@@ -34,4 +36,7 @@ export const modules: ApiModule[] = [
   { path: "/notifications", router: notificationsRouter },
   { path: "/partner-requests", router: partnersRouter },
   { path: "/templates", router: templatesRouter },
+  // Staff only (each router guards its own routes with requireStaff).
+  { path: "/admin/orders", router: adminOrdersRouter },
+  { path: "/admin/dashboard", router: dashboardRouter },
 ];

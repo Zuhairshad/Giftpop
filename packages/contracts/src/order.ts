@@ -76,6 +76,14 @@ export const ShipmentSchema = z.object({
 });
 export type Shipment = z.infer<typeof ShipmentSchema>;
 
+export const OrderNoteSchema = z.object({
+  id: ObjectIdSchema,
+  text: z.string().min(1).max(2000),
+  actorId: ObjectIdSchema,
+  at: IsoDateTimeSchema,
+});
+export type OrderNote = z.infer<typeof OrderNoteSchema>;
+
 export const OrderSchema = z.object({
   id: ObjectIdSchema,
   number: OrderNumberSchema,
@@ -95,6 +103,8 @@ export const OrderSchema = z.object({
   history: z.array(StatusHistoryEntrySchema).min(1),
   shipment: ShipmentSchema.nullable(),
   payments: z.array(PaymentRecordSchema),
+  /** Internal staff notes. Never sent to customers. */
+  notes: z.array(OrderNoteSchema).default([]),
   /** Proofs of payment uploaded by the customer. */
   proofs: z.array(PaymentProofSchema).default([]),
   createdAt: IsoDateTimeSchema,
