@@ -1,7 +1,7 @@
 import { SCENE_SIZE } from "./types";
 
 /** Keep a placement's anchor point away from the scene edge. */
-export const SCENE_MARGIN = 40;
+const SCENE_MARGIN = 40;
 
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));

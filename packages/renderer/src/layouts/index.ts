@@ -2,7 +2,6 @@ import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
 import type { LayoutFn, LayoutInput, Placement } from "./types";
 
-export { createRng } from "./prng";
 export { ITEM_BASE_SIZE, SCENE_SIZE, expandDesignItems } from "./types";
 export type { LayoutFn, LayoutInput, Placement } from "./types";
 

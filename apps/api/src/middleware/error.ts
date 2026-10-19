@@ -41,7 +41,7 @@ function respond(
 }
 
 /** Turn any thrown value into a safe `{ error }` response. Never includes a stack. */
-export function normaliseError(error: unknown): Normalised {
+function normaliseError(error: unknown): Normalised {
   if (error instanceof AppError) {
     return respond(error.code, error.httpStatus, error.message, error.details);
   }

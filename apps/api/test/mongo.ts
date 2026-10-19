@@ -17,8 +17,7 @@ export async function startTestMongo(dbName = "giftpop_test"): Promise<TestMongo
   const replSet = await MongoMemoryReplSet.create({
     replSet: { count: 1, storageEngine: "wiredTiger" },
   });
-  const base = replSet.getUri(dbName);
-  return { uri: base, stop: async () => void (await replSet.stop()) };
+  return { uri: replSet.getUri(dbName), stop: async () => void (await replSet.stop()) };
 }
 
 /** Delete every document in every collection, keeping indexes. Call in `beforeEach`. */

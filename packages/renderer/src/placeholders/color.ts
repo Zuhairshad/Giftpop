@@ -1,5 +1,5 @@
 /** Expand `#rgb` or `#rrggbb` to `[r, g, b]`. Anything unparseable becomes mid grey. */
-export function parseHex(hex: string): [number, number, number] {
+function parseHex(hex: string): [number, number, number] {
   const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
   const digits = match?.[1];
   if (!digits) return [128, 128, 128];
