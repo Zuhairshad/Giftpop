@@ -5,7 +5,11 @@ import { connectDb, disconnectDb } from "./db";
 import { EnvError, parseEnv } from "./env";
 import { flushObservability, initObservability } from "./lib/observability/sentry";
 import { createLogger } from "./logger";
-import { shouldRunWorker, startNotificationsWorker } from "./modules/notifications/worker";
+import {
+  shouldRunWorker,
+  startNotificationsWorker,
+  workerOffWarning,
+} from "./modules/notifications/worker";
 import { backfillOrderSearchKeys } from "./modules/orders/search-keys";
 
 function loadDotEnv(): void {
@@ -40,6 +44,8 @@ async function main(): Promise<void> {
     logger.info({ port: env.PORT }, "API listening");
   });
 
+  const workerWarning = workerOffWarning(env);
+  if (workerWarning) logger.warn(workerWarning);
   const worker = shouldRunWorker(env.NOTIFICATIONS_WORKER)
     ? startNotificationsWorker({
         intervalMs: 5000,

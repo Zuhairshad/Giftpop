@@ -24,9 +24,9 @@ Done: money formatting fixed for ICU 78 (PKR showed 100 times too high), e2e iso
 
 ## Still open
 
-1. **Deploy** (`docs/audit/deploy.md` findings 1, 2, 5, 7 to 12): proxy shared secret before raising `TRUST_PROXY_HOPS`, require `PUBLIC_ASSET_BASE_URL` with R2 in production, warn when `NOTIFICATIONS_WORKER` is off in production, rate limiters in memory (run one API instance).
-2. **Performance**: scene layer images are still full size (renderer `imageUrl` prop, patch 2 in `docs/audit/performance.md`); zod on the client (31 kB); items and arrange are about 230 kB (motion loads there by design).
-3. Security and e2e lows listed in `docs/decisions.md` (accepted for now).
+1. **Deploy** (`docs/audit/deploy.md` findings 1, 7 to 12): the proxy shared secret before raising `TRUST_PROXY_HOPS` (owner decision, spans three apps); rate limiters in memory (run one API instance).
+2. **Performance**: items and arrange are about 230 kB against the 200 kB budget because they animate (owner decision); zod on the client (31 kB).
+3. Security and e2e lows listed in `docs/decisions.md` (accepted for now). Verifier "Should fix": about 12 list-response schemas are wrapped locally in web and admin instead of coming from contracts; some audit reports still list items as open that are fixed (security S6, S7, S10).
 
 ## Things only a person can do or confirm
 

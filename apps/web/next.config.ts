@@ -32,6 +32,9 @@ const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@giftpop/contracts", "@giftpop/renderer"],
+  // The browser needs the asset hosts to know which images the optimiser accepts
+  // (`src/lib/image-url.ts`). A public URL list, not a secret.
+  env: { NEXT_PUBLIC_ASSET_BASE_URLS: assetBaseUrls.map((url) => url.href).join(",") },
   poweredByHeader: false,
   images: {
     // Uploads are already normalised to WebP by the API (CLAUDE.md rule 9), so AVIF would only

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { startNotificationsWorker, shouldRunWorker } from "./worker";
+import { startNotificationsWorker, shouldRunWorker, workerOffWarning } from "./worker";
 
 const processOutbox = vi.hoisted(() => vi.fn<() => Promise<number>>());
 vi.mock("./service", () => ({ processOutbox }));
@@ -11,6 +11,16 @@ beforeEach(() => {
   processOutbox.mockResolvedValue(0);
 });
 afterEach(() => vi.useRealTimers());
+
+describe("workerOffWarning", () => {
+  it("warns only in production with the worker off", () => {
+    expect(workerOffWarning({ NODE_ENV: "production", NOTIFICATIONS_WORKER: "off" })).toMatch(
+      /NOTIFICATIONS_WORKER is off/,
+    );
+    expect(workerOffWarning({ NODE_ENV: "production", NOTIFICATIONS_WORKER: "on" })).toBeNull();
+    expect(workerOffWarning({ NODE_ENV: "development", NOTIFICATIONS_WORKER: "off" })).toBeNull();
+  });
+});
 
 describe("shouldRunWorker", () => {
   it("is true only for on", () => {

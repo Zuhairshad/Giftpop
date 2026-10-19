@@ -1,6 +1,7 @@
 import type { Design, Item, Packaging } from "@giftpop/contracts";
 
 import { SceneSvg, StaticItemArt, StaticLayer } from "./scene/art";
+import { withImageUrls, type ImageUrlFn } from "./scene/image-urls";
 import { buildSceneModel } from "./scene/model";
 import { MotionScene } from "./scene/MotionScene";
 
@@ -17,6 +18,11 @@ export interface GiftSceneProps {
    */
   motion?: boolean;
   className?: string;
+  /**
+   * Rewrites each image URL for the width it is drawn at (for example to an image resizing
+   * service). Applied here, before either path, so only plain data reaches the client scene.
+   */
+  imageUrl?: ImageUrlFn;
 }
 
 function placementTransform(x: number, y: number, rotation: number, scale: number): string {
@@ -31,7 +37,14 @@ function placementTransform(x: number, y: number, rotation: number, scale: numbe
  * a client component that draws the same markup and adds animation, loaded lazily
  * with this static scene shown until it arrives.
  */
-export function GiftScene({ design, packaging, items, motion = false, className }: GiftSceneProps) {
+export function GiftScene({
+  design,
+  motion = false,
+  className,
+  imageUrl,
+  ...assets
+}: GiftSceneProps) {
+  const { packaging, items } = withImageUrls(assets, imageUrl);
   const scene = (
     <StaticScene design={design} packaging={packaging} items={items} className={className} />
   );
@@ -47,7 +60,12 @@ export function GiftScene({ design, packaging, items, motion = false, className 
   );
 }
 
-function StaticScene({ design, packaging, items, className }: Omit<GiftSceneProps, "motion">) {
+function StaticScene({
+  design,
+  packaging,
+  items,
+  className,
+}: Omit<GiftSceneProps, "motion" | "imageUrl">) {
   const model = buildSceneModel({ design, packaging, items });
   return (
     <SceneSvg label={model.label} layoutType={model.layoutType} className={className}>

@@ -328,6 +328,6 @@ Measured with a production build served by `next start`, bytes the browser downl
 
 - `LazyMotion` + `m`: done. On its own it saved 3.7 kB (motion chunk 51.3 to 47.6), not the estimated 30 kB, because `animate`, motion values and `AnimatePresence` stay. The big win is that `GiftScene` now loads the animated scene lazily from a client module, so routes with only static scenes never download motion.
 - zod: `contracts` is `sideEffects: false` (zod chunk 36.1 to 31.2 kB). The rest stays while client code parses API responses with contract schemas; `zod/mini` would be a contracts-wide change (lead decision, not done).
-- Item cards: `next/image` with `sizes="112px"` (unit test checks the `/_next/image` URL; the seed has no item images, so not measured in a browser). Scene layer images (patch 2) not done.
+- Item cards: `next/image` with `sizes="112px"` (unit test checks the `/_next/image` URL; the seed has no item images, so not measured in a browser). Scene images (patch 2): done through a `GiftScene` `imageUrl` prop that rewrites the asset URLs before rendering; only hosts under `PUBLIC_ASSET_BASE_URL` are resized, others load as they are.
 - Admin order search: exact match on indexed `searchKeys` with a boot backfill; a test asserts the plan has no `COLLSCAN`.
 - Items step layout shift: 0 (see the accessibility fix status).

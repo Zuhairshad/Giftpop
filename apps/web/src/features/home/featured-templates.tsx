@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import type { TemplateCardModel } from "./view-models";
 
+import { optimisedImageUrl } from "@/lib/image-url";
+
 export function FeaturedTemplates({
   cards,
   countryName,
@@ -24,6 +26,7 @@ export function FeaturedTemplates({
           >
             <div className="bg-surface-soft aspect-square w-full">
               <GiftScene
+                imageUrl={optimisedImageUrl}
                 design={card.design}
                 packaging={card.packaging}
                 items={card.items}

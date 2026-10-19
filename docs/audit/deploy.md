@@ -75,4 +75,6 @@ R2 is **not** a blocker: `apps/api/src/lib/storage/r2.ts` implements `Storage` w
 - Finding 3 (seed owner-only): done, `SEED_OWNER_ONLY=1`.
 - Finding 4 (`API_URL` silently localhost): done, web and admin refuse the default when `NODE_ENV=production`; a build with a blank `API_URL` fails with "API_URL is required in production".
 - Finding 6 (`/ready` ping): done, 2 second ping; tested with a hanging ping.
-- Findings 1, 2, 5, 7 to 12: open.
+- Finding 2: already enforced in `apps/api/src/env.ts` (production refuses local storage; R2 refuses a localhost asset host).
+- Finding 5: done, boot logs a warning when the worker is off in production.
+- Findings 1, 7 to 12: open (1 needs an owner decision).

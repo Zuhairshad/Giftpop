@@ -2,6 +2,8 @@ import type { Item, ItemShape } from "@giftpop/contracts";
 import Image from "next/image";
 import type { ReactElement, ReactNode } from "react";
 
+import { canOptimise } from "@/lib/image-url";
+
 const EDGE = "rgb(58 34 48 / 0.35)";
 const SHINE = "rgb(255 255 255 / 0.45)";
 
@@ -115,6 +117,8 @@ export function ItemArt({ item }: { item: Item }): ReactElement {
         width={item.image.width}
         height={item.image.height}
         sizes="112px"
+        // An image under a host the optimiser does not allow still loads, at full size.
+        unoptimized={!canOptimise(item.image.url)}
         className="size-full object-contain"
       />
     );

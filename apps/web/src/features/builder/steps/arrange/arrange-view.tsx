@@ -12,6 +12,7 @@ import type { ReorderRow } from "./reorder-list";
 import { StepProgress } from "@/features/builder/components/progress";
 import type { BuilderApi } from "@/features/builder/state";
 import { stepHref } from "@/features/builder/state";
+import { optimisedImageUrl } from "@/lib/image-url";
 
 /** What this screen needs from the builder store. */
 export type ArrangeBuilder = Pick<
@@ -90,7 +91,13 @@ export function ArrangeView({ builder }: { builder: ArrangeBuilder }) {
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
         <section aria-label="Your gift" className="lg:sticky lg:top-24">
           <div className="bg-surface-soft border-border shadow-pop rounded-blob mx-auto w-full max-w-[17rem] border p-3 sm:max-w-md sm:p-6 lg:max-w-none">
-            <GiftScene design={design} packaging={packaging} items={sceneItems} motion />
+            <GiftScene
+              imageUrl={optimisedImageUrl}
+              design={design}
+              packaging={packaging}
+              items={sceneItems}
+              motion
+            />
           </div>
           <div className="mt-4 flex justify-center">
             <button type="button" onClick={handleShuffle} className={SECONDARY}>

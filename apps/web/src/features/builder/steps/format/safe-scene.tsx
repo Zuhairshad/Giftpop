@@ -2,6 +2,8 @@ import type { Design, Item, Packaging } from "@giftpop/contracts";
 import { GiftScene, isKnownLayoutType } from "@giftpop/renderer";
 import type { ReactElement } from "react";
 
+import { optimisedImageUrl } from "@/lib/image-url";
+
 interface SafeSceneProps {
   design: Design;
   packaging: Packaging;
@@ -26,5 +28,5 @@ export function SafeScene({ packaging, ...rest }: SafeSceneProps): ReactElement 
       </div>
     );
   }
-  return <GiftScene packaging={packaging} {...rest} />;
+  return <GiftScene imageUrl={optimisedImageUrl} packaging={packaging} {...rest} />;
 }

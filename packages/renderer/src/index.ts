@@ -1,5 +1,7 @@
 export { GiftScene, describeGift } from "./GiftScene";
 export type { GiftSceneProps } from "./GiftScene";
+export { ITEM_IMAGE_WIDTH, LAYER_IMAGE_WIDTH } from "./scene/image-urls";
+export type { ImageUrlFn } from "./scene/image-urls";
 // `AnimatedGiftScene` is not re-exported here: importing it from the barrel would put motion on
 // every route. Use `<GiftScene motion />` (loads it lazily) or `@giftpop/renderer/animated`.
 export {

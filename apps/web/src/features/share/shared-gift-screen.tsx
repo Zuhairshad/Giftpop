@@ -9,6 +9,8 @@ import { makeYourOwnHref, orderThisGiftHref } from "./links";
 import { buildSharedItemRows, describeSharedGiftState } from "./shared-gift-view";
 import type { SharedItemRow } from "./shared-gift-view";
 
+import { optimisedImageUrl } from "@/lib/image-url";
+
 const PRIMARY_LINK =
   "bg-pink text-on-pink hover:bg-pink-strong inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-bold transition-colors";
 const SECONDARY_LINK =
@@ -52,7 +54,14 @@ export function SharedGiftScreen({ view }: { view: SharedDesignView }): ReactEle
   const recipient = recipientName.trim();
   const message = cardMessage.trim();
 
-  const scene = <GiftScene design={view.design} packaging={view.packaging} items={view.items} />;
+  const scene = (
+    <GiftScene
+      imageUrl={optimisedImageUrl}
+      design={view.design}
+      packaging={view.packaging}
+      items={view.items}
+    />
+  );
 
   const details = (
     <div className="space-y-6">

@@ -12,6 +12,7 @@ import { buildPersonalisationRows, buildReviewLines } from "./review-lines";
 import { SharePanel } from "./share-panel";
 
 import { checkoutHref } from "@/features/share/links";
+import { optimisedImageUrl } from "@/lib/image-url";
 
 const PRIMARY =
   "bg-pink text-on-pink hover:bg-pink-strong inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-bold transition-colors";
@@ -61,7 +62,12 @@ export function ReviewScreen({ builder, leftOutNotice }: ReviewScreenProps): Rea
 
       <div className="grid gap-8 md:grid-cols-2 md:items-start">
         <div className="mx-auto w-[min(100%,28rem)] md:w-full">
-          <GiftScene design={design} packaging={packaging} items={items} />
+          <GiftScene
+            imageUrl={optimisedImageUrl}
+            design={design}
+            packaging={packaging}
+            items={items}
+          />
         </div>
 
         <div className="space-y-6">

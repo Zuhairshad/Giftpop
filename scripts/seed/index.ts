@@ -29,6 +29,13 @@ async function main(): Promise<void> {
       name: "Owner",
       password: env.ownerPassword,
     });
+    // `createOwner` returns an existing account unchanged, whatever its role.
+    if (owner.role !== "owner" || !owner.active) {
+      throw new Error(
+        `${owner.email} already exists as an ${owner.active ? "active" : "inactive"} ${owner.role}. ` +
+          "Nothing was changed. Use another email, or change that account in the admin.",
+      );
+    }
     if (env.ownerOnly) {
       console.log("Owner ready (SEED_OWNER_ONLY=1: no countries, catalog or prices written).");
       console.log(`  owner:      ${owner.email}`);

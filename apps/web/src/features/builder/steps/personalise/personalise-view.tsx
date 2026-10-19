@@ -12,6 +12,7 @@ import { nameableItems } from "./limits";
 import { StepProgress } from "@/features/builder/components/progress";
 import { stepHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
+import { optimisedImageUrl } from "@/lib/image-url";
 
 /** What this screen needs from the builder store. */
 export type PersonaliseBuilder = Pick<
@@ -66,7 +67,12 @@ export function PersonaliseView({ builder }: { builder: PersonaliseBuilder }) {
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
         <div className="space-y-6 lg:sticky lg:top-24">
           <div className="bg-surface-soft border-border shadow-pop rounded-blob mx-auto w-48 border p-3 sm:w-64 lg:w-72">
-            <GiftScene design={design} packaging={packaging} items={sceneItems} />
+            <GiftScene
+              imageUrl={optimisedImageUrl}
+              design={design}
+              packaging={packaging}
+              items={sceneItems}
+            />
           </div>
           <CardPreview recipientName={builder.recipientName} message={builder.cardMessage} />
         </div>

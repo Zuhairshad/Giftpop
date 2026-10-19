@@ -7,6 +7,7 @@ import {
   buildPersonalisationRows,
   buildReviewLines,
 } from "@/features/builder/steps/review/review-lines";
+import { optimisedImageUrl } from "@/lib/image-url";
 
 /** The finished gift: the scene, the items and the personal touches. Read-only. */
 export function GiftSummary({ builder }: { builder: BuilderApi }): ReactElement | null {
@@ -27,7 +28,12 @@ export function GiftSummary({ builder }: { builder: BuilderApi }): ReactElement 
         Your gift
       </h2>
       <div className="mx-auto w-[min(100%,24rem)] lg:w-full">
-        <GiftScene design={design} packaging={packaging} items={items} />
+        <GiftScene
+          imageUrl={optimisedImageUrl}
+          design={design}
+          packaging={packaging}
+          items={items}
+        />
       </div>
       <div>
         <h3 className="font-bold">In your {packaging.name}</h3>
