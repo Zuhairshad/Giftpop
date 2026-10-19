@@ -116,7 +116,7 @@ export function ReorderList({ rows, onMove }: ReorderListProps) {
             />
 
             <span className="min-w-0 flex-1">
-              <span className="block leading-snug font-bold break-words" data-item-name>
+              <span className="block leading-snug font-bold wrap-anywhere" data-item-name>
                 {item.name}
               </span>
               <span className="sr-only">

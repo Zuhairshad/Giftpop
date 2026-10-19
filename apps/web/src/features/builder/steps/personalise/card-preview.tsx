@@ -16,10 +16,10 @@ export function CardPreview({ recipientName, message }: CardPreviewProps) {
         Card preview
       </figcaption>
       <div className="bg-surface/80 mt-3 min-h-40 rounded-soft p-4">
-        <p className="font-display text-xl font-bold break-words">
+        <p className="font-display text-xl font-bold wrap-anywhere">
           {name ? `Dear ${name},` : <span className="text-muted">Dear friend,</span>}
         </p>
-        <p className="mt-2 break-words whitespace-pre-wrap">
+        <p className="mt-2 wrap-anywhere whitespace-pre-wrap">
           {text || <span className="text-muted">Your message will appear here.</span>}
         </p>
         <p className="font-display text-pink-strong mt-4 text-right text-lg font-bold">

@@ -4,7 +4,6 @@ import { GiftScene } from "@giftpop/renderer";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-
 import { ColourSwatches } from "./colour-swatches";
 import { moveAnnouncement } from "./reorder";
 import { ReorderList } from "./reorder-list";

@@ -66,7 +66,7 @@ export function SharedGiftScreen({ view }: { view: SharedDesignView }): ReactEle
 
       {message ? (
         <figure className="bg-surface border-border shadow-pop rounded-card border p-5">
-          <blockquote className="font-display text-lg leading-relaxed break-words whitespace-pre-line">
+          <blockquote className="font-display text-lg leading-relaxed wrap-anywhere whitespace-pre-line">
             {message}
           </blockquote>
         </figure>

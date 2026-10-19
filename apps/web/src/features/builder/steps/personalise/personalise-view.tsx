@@ -13,7 +13,6 @@ import { StepProgress } from "@/features/builder/components/progress";
 import { stepHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
 
-
 /** What this screen needs from the builder store. */
 export type PersonaliseBuilder = Pick<
   BuilderApi,

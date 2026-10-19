@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useMemo } from "react";
 import type { ReactElement } from "react";
 
-
 import { StepProgress } from "../../components/progress";
 import { stepHref } from "../../state";
 import type { BuilderApi } from "../../state";
@@ -94,7 +93,7 @@ export function ReviewScreen({ builder, leftOutNotice }: ReviewScreenProps): Rea
               {personalisation.map((row) => (
                 <div key={row.label}>
                   <dt className="text-muted text-sm font-bold">{row.label}</dt>
-                  <dd className="break-words whitespace-pre-line">{row.value}</dd>
+                  <dd className="wrap-anywhere whitespace-pre-line">{row.value}</dd>
                 </div>
               ))}
             </dl>

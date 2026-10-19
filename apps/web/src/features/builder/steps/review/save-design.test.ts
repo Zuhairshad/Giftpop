@@ -4,7 +4,6 @@ import { describeSaveError } from "./save-design";
 
 import { ApiError, ApiNetworkError } from "@/lib/api-errors";
 
-
 describe("describeSaveError", () => {
   it("passes on the network message", () => {
     expect(describeSaveError(new ApiNetworkError("Could not reach the server."))).toBe(

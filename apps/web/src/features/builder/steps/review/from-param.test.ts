@@ -10,7 +10,6 @@ import {
 import { ID_BAR, ID_MUG, makeSharedView } from "@/features/share/shared-view.fixture";
 import { ApiError } from "@/lib/api-errors";
 
-
 describe("readFromParam", () => {
   it("reads no param", () => {
     expect(readFromParam(null)).toEqual({ kind: "none" });

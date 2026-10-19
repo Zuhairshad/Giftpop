@@ -18,7 +18,6 @@ import { moveInList } from "../reorder";
 
 import type { BuilderApi } from "@/features/builder/state";
 
-
 const id = (n: number): string => n.toString(16).padStart(24, "0");
 
 export const FAKE_PACKAGING: Packaging = {
