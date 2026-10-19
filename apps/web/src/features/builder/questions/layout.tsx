@@ -5,7 +5,6 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-import { layoutReady } from "./can-continue";
 import { moveAnnouncement } from "./layout/reorder";
 import { ReorderList } from "./layout/reorder-list";
 import type { ReorderRow } from "./layout/reorder-list";
@@ -81,9 +80,4 @@ export function LayoutBody(): ReactElement {
       </div>
     </div>
   );
-}
-
-/** Nothing to decide here: every arrangement is valid. */
-export function useLayoutCanContinue(): boolean {
-  return layoutReady();
 }

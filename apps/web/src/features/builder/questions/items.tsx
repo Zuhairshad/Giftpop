@@ -5,7 +5,6 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-import { itemsReady } from "./can-continue";
 import { CategoryTabs, panelId, tabId } from "./items/category-tabs";
 import { Counter } from "./items/counter";
 import { ItemTile } from "./items/item-tile";
@@ -94,9 +93,4 @@ export function ItemsBody(): ReactElement {
       </div>
     </div>
   );
-}
-
-/** Item count is within min and max and the gift fits (text limits are checked later). */
-export function useItemsCanContinue(): boolean {
-  return itemsReady(useBuilder());
 }

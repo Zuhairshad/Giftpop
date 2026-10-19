@@ -80,7 +80,7 @@ function Scene(): ReactElement {
             fallbackClassName="size-full"
           />
         ) : (
-          <GiftIllustration className="size-full scale-75 opacity-90" />
+          <GiftIllustration className="size-full" />
         )}
       </div>
     </div>

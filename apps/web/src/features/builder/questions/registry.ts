@@ -1,13 +1,21 @@
 import type { ComponentType } from "react";
 
-import { ColoursBody, useColoursCanContinue } from "./colours";
 import { QUESTION_IDS } from "./ids";
 import type { QuestionId } from "./ids";
-import { ItemsBody, useItemsCanContinue } from "./items";
-import { LayoutBody, useLayoutCanContinue } from "./layout";
-import { PackagingBody, usePackagingCanContinue } from "./packaging";
-import { PersonaliseBody, usePersonaliseCanContinue } from "./personalise";
-import { ReviewBody, useReviewCanContinue } from "./review";
+import { LAZY_BODIES } from "./lazy-bodies";
+import { PackagingBody } from "./packaging";
+import { ReviewCheckoutAction } from "./review/checkout-action";
+import {
+  useColoursCanContinue,
+  useItemsCanContinue,
+  useLayoutCanContinue,
+  usePackagingCanContinue,
+  usePersonaliseCanContinue,
+  useReviewCanContinue,
+} from "./use-can-continue";
+
+/** Where a body comes from: bundled with the shell, or a chunk loaded when needed (`body-loader`). */
+export type QuestionBody = { eager: ComponentType } | { load: () => Promise<ComponentType> };
 
 export interface QuestionDef {
   id: QuestionId;
@@ -15,11 +23,14 @@ export interface QuestionDef {
   title: string;
   /** Names the next move, never just "Next". */
   continueLabel: string;
-  /** True when the body draws its own actions (review: save and share, go to checkout), so the shell adds none. */
-  ownsActions: boolean;
+  /**
+   * The question's own primary action, drawn in the footer in place of the continue button
+   * (review: the link to checkout). It takes the footer's sizing classes.
+   */
+  Action?: ComponentType<{ className?: string }>;
   /** The answer controls. Rendered inside the shell's surface; reads and writes the builder store. */
-  Body: ComponentType;
-  /** A hook the shell calls to enable the continue button for this question. */
+  body: QuestionBody;
+  /** A hook the shell calls to enable the primary action for this question. */
   useCanContinue: () => boolean;
 }
 
@@ -29,48 +40,44 @@ const DEFS: readonly QuestionDef[] = [
     id: "packaging",
     title: "What should your gift come in?",
     continueLabel: "Continue to colours",
-    ownsActions: false,
-    Body: PackagingBody,
+    // The first question most visitors see, so it ships with the shell.
+    body: { eager: PackagingBody },
     useCanContinue: usePackagingCanContinue,
   },
   {
     id: "colours",
     title: "Pick your colours",
     continueLabel: "Continue to items",
-    ownsActions: false,
-    Body: ColoursBody,
+    body: { load: LAZY_BODIES.colours },
     useCanContinue: useColoursCanContinue,
   },
   {
     id: "items",
     title: "What goes inside?",
     continueLabel: "Continue to layout",
-    ownsActions: false,
-    Body: ItemsBody,
+    body: { load: LAZY_BODIES.items },
     useCanContinue: useItemsCanContinue,
   },
   {
     id: "layout",
     title: "Happy with the layout?",
     continueLabel: "Continue to personalise",
-    ownsActions: false,
-    Body: LayoutBody,
+    body: { load: LAZY_BODIES.layout },
     useCanContinue: useLayoutCanContinue,
   },
   {
     id: "personalise",
     title: "Who's it for?",
     continueLabel: "Continue to review",
-    ownsActions: false,
-    Body: PersonaliseBody,
+    body: { load: LAZY_BODIES.personalise },
     useCanContinue: usePersonaliseCanContinue,
   },
   {
     id: "review",
     title: "Your gift is ready",
     continueLabel: "Continue to checkout",
-    ownsActions: true,
-    Body: ReviewBody,
+    Action: ReviewCheckoutAction,
+    body: { load: LAZY_BODIES.review },
     useCanContinue: useReviewCanContinue,
   },
 ];
@@ -86,3 +93,8 @@ export function getQuestion(id: QuestionId): QuestionDef {
   if (!def) throw new Error(`No question registered for "${id}"`);
   return def;
 }
+
+/** The questions whose bodies load on demand, in flow order. */
+export const LAZY_QUESTION_IDS: readonly QuestionId[] = QUESTIONS.filter(
+  (question) => "load" in question.body,
+).map((question) => question.id);

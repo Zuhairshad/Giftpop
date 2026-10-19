@@ -1,12 +1,15 @@
 "use client";
 
 import { LazyMotion, domAnimation } from "motion/react";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
 
+import { preloadQuestionBodies } from "../questions/body-loader";
+import { LAZY_QUESTION_IDS } from "../questions/registry";
 import { useBuilder } from "../state";
 import { useBuilderStore } from "../state/context";
 
+import { afterLoadIdle } from "./after-load-idle";
 import { FromLoader } from "./from/from-loader";
 import { INVALID_FROM_MESSAGE, readFromParam, unavailableNotice } from "./from/from-param";
 import { setNotice } from "./notice-store";
@@ -54,6 +57,10 @@ export function BuilderShell({ from }: { from: string | null }): ReactElement {
     current = trackQuestion(tracking, question, hydrated);
     setTracking(current);
   }
+
+  // The later questions' bodies are separate chunks: fetch them once the page is idle, so moving on
+  // never waits for the network (the body skeleton covers a slow or failed fetch).
+  useEffect(() => afterLoadIdle(() => preloadQuestionBodies(LAZY_QUESTION_IDS)), []);
 
   const loading = from !== null && !loaded;
   return (
