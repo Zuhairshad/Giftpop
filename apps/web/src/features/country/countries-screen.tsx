@@ -1,68 +1,12 @@
 import type { PublicCountry } from "@giftpop/contracts";
-import Link from "next/link";
 
-import { ChooseCountryLink } from "./choose-country-link";
-import { deliveryEstimate } from "./delivery-copy";
+import { ComingSoonCountryCard, LiveCountryCard } from "./country-cards";
 import { fetchCountriesOrThrow } from "./fetch-countries";
-import { flagEmoji } from "./flag";
 import { groupCountries } from "./group";
+import { RetryButton } from "./retry-button";
 
-import { formatMoney } from "@/lib/format-money";
-
-const CARD =
-  "border-border bg-surface rounded-card shadow-pop flex min-w-0 items-center gap-4 border p-4 sm:p-5";
-
-function LiveCard({ country }: { country: PublicCountry }) {
-  return (
-    <li>
-      <ChooseCountryLink
-        code={country.code}
-        className={`${CARD} hover:bg-surface-soft transition-colors`}
-      >
-        <span aria-hidden="true" className="text-5xl leading-none">
-          {flagEmoji(country.code)}
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="font-display text-foreground block text-xl font-bold wrap-anywhere">
-            {country.name}
-          </span>
-          <span className="text-muted block text-sm">
-            {country.currency} · {deliveryEstimate(country.shipping.deliveryDays)}
-          </span>
-          <span className="text-muted block text-sm">
-            Shipping from {formatMoney(country.shipping.flatMinor, country.currency, "en")}
-          </span>
-        </span>
-        <span className="text-pink-strong shrink-0 text-sm font-bold">
-          Shop<span className="sr-only"> in {country.name}</span> →
-        </span>
-      </ChooseCountryLink>
-    </li>
-  );
-}
-
-function ComingSoonCard({ country }: { country: PublicCountry }) {
-  return (
-    <li className={`${CARD} flex-wrap`}>
-      <span aria-hidden="true" className="text-4xl leading-none opacity-70">
-        {flagEmoji(country.code)}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="font-display text-foreground block text-lg font-bold wrap-anywhere">
-          {country.name}
-        </span>
-        <span className="text-muted block text-sm">Coming soon</span>
-      </span>
-      <Link
-        href={`/partners/countries?country=${encodeURIComponent(country.code)}`}
-        className="border-border text-pink-strong hover:bg-surface-soft rounded-full border px-4 py-1.5 text-sm font-bold transition-colors"
-      >
-        Bring The Giftpop here
-        <span className="sr-only"> to {country.name}</span>
-      </Link>
-    </li>
-  );
-}
+import { StatePanel } from "@/components/placeholder-page";
+import { ButtonLink } from "@/components/ui";
 
 export async function CountriesScreen() {
   let countries: PublicCountry[] | null = null;
@@ -72,24 +16,43 @@ export async function CountriesScreen() {
     countries = null;
   }
 
+  if (countries === null) {
+    return (
+      <StatePanel
+        role="alert"
+        script="Hang on"
+        title="We could not load the country list"
+        actions={
+          <>
+            <RetryButton />
+            <ButtonLink href="/" variant="ghost">
+              Go to the home page
+            </ButtonLink>
+          </>
+        }
+      >
+        Check your connection, then try again. If it keeps happening, come back in a few minutes.
+      </StatePanel>
+    );
+  }
+
   return (
     <div className="space-y-10">
-      <header className="max-w-2xl space-y-2">
-        <h1 className="font-display text-foreground text-3xl font-bold sm:text-4xl">
+      <header className="max-w-3xl space-y-2">
+        <p
+          aria-hidden="true"
+          className="font-script text-pink-strong text-2xl leading-none font-bold"
+        >
+          Pick your country
+        </p>
+        <h1 className="font-display text-foreground text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
           Where should we send your gift?
         </h1>
-        <p className="text-muted">
+        <p className="text-muted text-lg">
           Each country has its own gifts, prices and delivery times. Pick yours to start building.
         </p>
       </header>
-
-      {countries === null ? (
-        <p role="alert" className="bg-surface-soft text-foreground rounded-card p-4">
-          We could not load the country list. Refresh the page to try again.
-        </p>
-      ) : (
-        <CountryLists countries={countries} />
-      )}
+      <CountryLists countries={countries} />
     </div>
   );
 }
@@ -99,15 +62,26 @@ function CountryLists({ countries }: { countries: PublicCountry[] }) {
   return (
     <>
       <section aria-labelledby="live-countries" className="space-y-4">
-        <h2 id="live-countries" className="font-display text-foreground text-2xl font-bold">
+        <h2
+          id="live-countries"
+          className="font-display text-foreground text-2xl font-bold tracking-tight"
+        >
           We ship to
         </h2>
         {live.length === 0 ? (
-          <p className="text-muted">No countries are open yet. Check back soon.</p>
+          <div className="bg-warm rounded-lg p-5">
+            <p className="text-foreground font-semibold">No countries are open yet.</p>
+            <p className="text-muted mt-1 text-sm">
+              Check back soon, or ask us to open yours below. If this looks wrong, try again.
+            </p>
+            <div className="mt-4">
+              <RetryButton />
+            </div>
+          </div>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {live.map((country) => (
-              <LiveCard key={country.code} country={country} />
+              <LiveCountryCard key={country.code} country={country} />
             ))}
           </ul>
         )}
@@ -117,13 +91,13 @@ function CountryLists({ countries }: { countries: PublicCountry[] }) {
         <section aria-labelledby="coming-soon-countries" className="space-y-4">
           <h2
             id="coming-soon-countries"
-            className="font-display text-foreground text-2xl font-bold"
+            className="font-display text-foreground text-2xl font-bold tracking-tight"
           >
             Coming soon
           </h2>
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {comingSoon.map((country) => (
-              <ComingSoonCard key={country.code} country={country} />
+              <ComingSoonCountryCard key={country.code} country={country} />
             ))}
           </ul>
         </section>

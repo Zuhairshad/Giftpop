@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 
 import { SelectControl, TextAreaControl, TextControl } from "./controls";
 import type { CountryOption } from "./controls";
+import { FIELD_LABELS } from "./fields";
 import type { PartnerFieldName } from "./fields";
 import { FormFrame } from "./form-frame";
 import { usePartnerForm } from "./use-partner-form";
@@ -37,14 +38,14 @@ export function CountryForm({ countries, initialCountry }: CountryFormProps): Re
     >
       <SelectControl
         {...common("country")}
-        label="Country"
+        label={FIELD_LABELS.country}
         required
         placeholder="Choose a country"
         options={countries}
       />
       <TextControl
         {...common("contactName")}
-        label="Contact name"
+        label={FIELD_LABELS.contactName}
         required
         maxLength={80}
         autoComplete="name"
@@ -52,7 +53,7 @@ export function CountryForm({ countries, initialCountry }: CountryFormProps): Re
       <div className="grid gap-5 sm:grid-cols-2">
         <TextControl
           {...common("email")}
-          label="Email"
+          label={FIELD_LABELS.email}
           required
           type="email"
           maxLength={200}
@@ -60,7 +61,7 @@ export function CountryForm({ countries, initialCountry }: CountryFormProps): Re
         />
         <TextControl
           {...common("phone")}
-          label="Phone"
+          label={FIELD_LABELS.phone}
           required
           type="tel"
           maxLength={20}
@@ -69,12 +70,17 @@ export function CountryForm({ countries, initialCountry }: CountryFormProps): Re
       </div>
       <TextAreaControl
         {...common("offering")}
-        label="What you offer"
+        label={FIELD_LABELS.offering}
         required
         maxLength={1000}
         hint="For example: a workshop, a shop, delivery in your city, or local suppliers."
       />
-      <TextAreaControl {...common("message")} label="Message" required={false} maxLength={2000} />
+      <TextAreaControl
+        {...common("message")}
+        label={FIELD_LABELS.message}
+        required={false}
+        maxLength={2000}
+      />
     </FormFrame>
   );
 }

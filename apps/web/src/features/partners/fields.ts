@@ -49,3 +49,16 @@ export function emptyValues(kind: PartnerRequestKind, country = ""): PartnerValu
 
 export const MAX_CATEGORIES = 20;
 export const MAX_CATEGORY_LENGTH = 40;
+
+/** The visible label of each field, also used by the error summary. */
+export const FIELD_LABELS: Record<PartnerFieldName, string> = {
+  brandName: "Brand name",
+  contactName: "Contact name",
+  email: "Email",
+  phone: "Phone",
+  country: "Country",
+  categories: "Product categories",
+  link: "Website or Instagram",
+  offering: "What you offer",
+  message: "Message",
+};

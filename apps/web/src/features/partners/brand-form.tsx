@@ -4,6 +4,7 @@ import type { PublicCountry } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
 import { SelectControl, TextAreaControl, TextControl } from "./controls";
+import { FIELD_LABELS } from "./fields";
 import type { PartnerFieldName } from "./fields";
 import { FormFrame } from "./form-frame";
 import { usePartnerForm } from "./use-partner-form";
@@ -33,14 +34,14 @@ export function BrandForm({ countries }: BrandFormProps): ReactElement {
     >
       <TextControl
         {...common("brandName")}
-        label="Brand name"
+        label={FIELD_LABELS.brandName}
         required
         maxLength={120}
         autoComplete="organization"
       />
       <TextControl
         {...common("contactName")}
-        label="Contact name"
+        label={FIELD_LABELS.contactName}
         required
         maxLength={80}
         autoComplete="name"
@@ -48,7 +49,7 @@ export function BrandForm({ countries }: BrandFormProps): ReactElement {
       <div className="grid gap-5 sm:grid-cols-2">
         <TextControl
           {...common("email")}
-          label="Email"
+          label={FIELD_LABELS.email}
           required
           type="email"
           maxLength={200}
@@ -56,7 +57,7 @@ export function BrandForm({ countries }: BrandFormProps): ReactElement {
         />
         <TextControl
           {...common("phone")}
-          label="Phone"
+          label={FIELD_LABELS.phone}
           required
           type="tel"
           maxLength={20}
@@ -65,25 +66,30 @@ export function BrandForm({ countries }: BrandFormProps): ReactElement {
       </div>
       <SelectControl
         {...common("country")}
-        label="Country"
+        label={FIELD_LABELS.country}
         required
         placeholder="Choose a country"
         options={countries}
       />
       <TextControl
         {...common("categories")}
-        label="Product categories"
+        label={FIELD_LABELS.categories}
         required
         hint="Separate with commas, for example: candles, tea, chocolate."
       />
       <TextControl
         {...common("link")}
-        label="Website or Instagram"
+        label={FIELD_LABELS.link}
         required
         maxLength={300}
         autoComplete="url"
       />
-      <TextAreaControl {...common("message")} label="Message" required={false} maxLength={2000} />
+      <TextAreaControl
+        {...common("message")}
+        label={FIELD_LABELS.message}
+        required={false}
+        maxLength={2000}
+      />
     </FormFrame>
   );
 }

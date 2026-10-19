@@ -5,7 +5,7 @@ import { partnerFieldId } from "./fields";
 import type { PartnerFieldName } from "./fields";
 
 const CONTROL =
-  "border-border bg-surface text-foreground placeholder:text-muted/70 min-w-0 w-full rounded-soft border-2 px-4 py-3 text-base focus-visible:border-pink aria-[invalid=true]:border-pink-strong";
+  "border-border-strong bg-surface text-foreground placeholder:text-muted/70 min-h-12 min-w-0 w-full rounded-md border px-4 py-3 text-base focus-visible:border-foreground aria-[invalid=true]:border-danger aria-[invalid=true]:border-2";
 
 type CommonProps = {
   kind: PartnerRequestKind;
@@ -18,6 +18,24 @@ type CommonProps = {
   required: boolean;
   hint?: string;
 };
+
+/** A small alert circle, so an error is never shown by colour alone. */
+export function ErrorIcon(): ReactElement {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+      aria-hidden="true"
+      focusable="false"
+      className="mt-0.5 flex-none"
+    >
+      <circle cx="8" cy="8" r="7" fill="currentColor" />
+      <path d="M8 4.2v4.6" stroke="var(--gp-surface)" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="8" cy="11.4" r="1" fill="var(--gp-surface)" />
+    </svg>
+  );
+}
 
 function Shell({
   id,
@@ -36,11 +54,9 @@ function Shell({
 }): ReactElement {
   return (
     <div className="min-w-0">
-      <label htmlFor={id} className="mb-1.5 block font-bold">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold">
         {label}
-        {required ? null : (
-          <span className="text-muted ml-2 text-sm font-semibold">(optional)</span>
-        )}
+        {required ? null : <span className="text-muted ml-2 font-normal">(optional)</span>}
       </label>
       {children}
       {hint ? (
@@ -49,8 +65,12 @@ function Shell({
         </p>
       ) : null}
       {error ? (
-        <p id={`${id}-error`} className="text-pink-strong mt-1.5 text-sm font-bold">
-          {error}
+        <p
+          id={`${id}-error`}
+          className="text-danger mt-1.5 flex items-start gap-1.5 text-sm font-semibold"
+        >
+          <ErrorIcon />
+          <span className="min-w-0 wrap-anywhere">{error}</span>
         </p>
       ) : null}
     </div>
@@ -110,7 +130,7 @@ export function TextAreaControl(
         aria-describedby={describedBy(id, hint, error)}
         onChange={(event) => onChange(event.target.value)}
         onBlur={onBlur}
-        className={`${CONTROL} resize-y`}
+        className={`${CONTROL} min-h-28 resize-y`}
       />
     </Shell>
   );
