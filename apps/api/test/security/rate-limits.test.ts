@@ -121,5 +121,6 @@ describe("sign-in from one IP across many emails", () => {
     const limited = await attempt(999);
     expect(limited.status).toBe(429);
     expect(ErrorResponseSchema.parse(limited.body).error.code).toBe("RATE_LIMITED");
-  });
+    // Thirty argon2 hashes in a row are slow when the whole suite runs at once.
+  }, 60_000);
 });

@@ -187,7 +187,7 @@ describe("login enumeration and timing", () => {
     const known: number[] = [];
     for (let i = 0; i < 3; i += 1) {
       resetLoginRateLimit();
-  resetLoginIpRateLimit();
+      resetLoginIpRateLimit();
       unknown.push(await time(`nobody${i}@giftpop.test`));
       known.push(await time("real@giftpop.test"));
     }

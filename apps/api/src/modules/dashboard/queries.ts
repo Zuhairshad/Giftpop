@@ -84,6 +84,6 @@ export function ordersByCountryQuery(now: Date): DashboardQuery {
       { $group: { _id: "$country", orders: { $sum: 1 } } },
       { $sort: { orders: -1, _id: 1 } },
     ],
-    hint: { createdAt: -1 },
+    hint: { createdAt: -1, country: 1 },
   };
 }

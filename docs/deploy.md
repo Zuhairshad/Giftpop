@@ -67,8 +67,8 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 | `LOG_LEVEL`                | No (`info`)                        | `info`                                                           | No      | `fatal`, `error`, `warn`, `info`, `debug`, `trace` or `silent`.                                                                                   |
 | `DB_CONNECT_MAX_ATTEMPTS`  | No (10)                            | `10`                                                             | No      | First MongoDB connection attempts before the process exits.                                                                                       |
 | `DB_CONNECT_BASE_DELAY_MS` | No (250)                           | `250`                                                            | No      | First retry delay; doubles each attempt up to 10 seconds.                                                                                         |
-
-Observability variables (for example `SENTRY_DSN`) belong to another slice; add them here when that slice merges. The coverage check below fails until you do.
+| `SENTRY_DSN` | No | `https://key@o0.ingest.sentry.io/0` | Yes | Empty means error reporting is off. |
+| `SENTRY_TRACES_SAMPLE_RATE` | No | `0` | No | 0 to 1; default 0. |
 
 ### Web (`apps/web`, Vercel project 1)
 

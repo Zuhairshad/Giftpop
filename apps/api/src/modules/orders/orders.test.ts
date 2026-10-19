@@ -258,7 +258,11 @@ describe("POST /v1/orders: rollback and stock", () => {
     });
 
     const [a, b] = await Promise.all([place(single), place(single)]);
-    expect([a.status, b.status].sort(), JSON.stringify([a.body, b.body])).toEqual([201, 409]);
+    // The loser is refused either at the stock update (409) or, when the winner has already
+    // committed by the time it validates, as an out-of-stock design (422). Both leave nothing behind.
+    const statuses = [a.status, b.status].sort();
+    expect(statuses[0], JSON.stringify([a.body, b.body])).toBe(201);
+    expect([409, 422]).toContain(statuses[1]);
     expect(await stockOf(world.bar)).toBe(0);
     expect(await OrderModel.countDocuments()).toBe(1);
   });

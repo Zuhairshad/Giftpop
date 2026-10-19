@@ -3,6 +3,7 @@ import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
 
 import { AppError, isDuplicateKeyError } from "../lib/errors";
+import { reportError } from "../lib/observability/sentry";
 
 interface HttpError {
   status: number;
@@ -82,6 +83,9 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
     return;
   }
   const { status, body } = normaliseError(error);
-  if (status >= 500) req.log.error({ err: error }, "Unhandled error");
+  if (status >= 500) {
+    req.log.error({ err: error }, "Unhandled error");
+    reportError(error, req.id);
+  }
   res.status(status).json(body);
 };

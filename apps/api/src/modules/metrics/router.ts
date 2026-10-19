@@ -1,3 +1,4 @@
+import { MetricsResponseSchema } from "@giftpop/contracts";
 import { Router } from "express";
 
 import { requireStaff } from "../../middleware/require-staff";
@@ -16,8 +17,7 @@ export function createMetricsRouter(options: MetricsRouterOptions = {}): Router 
   router.get("/", requireStaff(), async (_req, res, next) => {
     try {
       res.setHeader("cache-control", "no-store");
-      // TODO(contracts): parse with MetricsResponseSchema once the lead adds it.
-      res.json(await getMetrics(now()));
+      res.json(MetricsResponseSchema.parse(await getMetrics(now())));
     } catch (err) {
       next(err);
     }

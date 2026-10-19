@@ -149,5 +149,15 @@ orderSchema.index({ createdAt: -1 });
 orderSchema.index({ "payments.recordedAt": 1 });
 orderSchema.index({ "contact.phone": 1 });
 orderSchema.index({ "contact.email": 1 });
+// Admin order list: every filter combination sorts by (createdAt, _id) for the cursor, so each
+// index ends in _id and the sort never happens in memory.
+orderSchema.index({ createdAt: -1, _id: -1 });
+orderSchema.index({ status: 1, createdAt: -1, _id: -1 });
+orderSchema.index({ country: 1, createdAt: -1, _id: -1 });
+orderSchema.index({ country: 1, status: 1, createdAt: -1, _id: -1 });
+orderSchema.index({ paymentStatus: 1, createdAt: -1, _id: -1 });
+orderSchema.index({ "proofs.status": 1, createdAt: -1, _id: -1 });
+// Covers the dashboard's orders-by-country pipeline.
+orderSchema.index({ createdAt: -1, country: 1 });
 
 export const OrderModel = model<OrderDoc>("Order", orderSchema);

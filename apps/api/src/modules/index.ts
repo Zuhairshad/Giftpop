@@ -7,6 +7,7 @@ import { catalogRouter } from "./catalog/router";
 import { countriesRouter } from "./countries/router";
 import { dashboardRouter } from "./dashboard/router";
 import { designsRouter } from "./designs/router";
+import { metricsRouter } from "./metrics/router";
 import { notificationsRouter } from "./notifications/router";
 import { ordersRouter } from "./orders/router";
 import { partnersRouter } from "./partners/router";
@@ -39,4 +40,5 @@ export const modules: ApiModule[] = [
   // Staff only (each router guards its own routes with requireStaff).
   { path: "/admin/orders", router: adminOrdersRouter },
   { path: "/admin/dashboard", router: dashboardRouter },
+  { path: "/admin/metrics", router: metricsRouter },
 ];

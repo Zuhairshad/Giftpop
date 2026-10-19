@@ -100,9 +100,11 @@ describe("stock", () => {
       postOrder(app, body, randomUUID()),
     ]);
 
-    expect(results.map((r) => r.status).sort(), JSON.stringify(results.map((r) => r.body))).toEqual(
-      [201, 409],
-    );
+    // The loser is refused at the stock update (409) or, if the winner already committed when it
+    // validates, as an out-of-stock design (422). Both leave nothing behind.
+    const statuses = results.map((r) => r.status).sort();
+    expect(statuses[0], JSON.stringify(results.map((r) => r.body))).toBe(201);
+    expect([409, 422]).toContain(statuses[1]);
     expect(await orderCount()).toBe(1);
     expect(await priceRow("item", bar, "PK")).toMatchObject({ stockQty: 0, inStock: false });
     // The loser's transaction rolled back, so it left no notification either.

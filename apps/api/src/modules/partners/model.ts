@@ -56,5 +56,8 @@ const partnerRequestSchema = new Schema(
 );
 partnerRequestSchema.index({ kind: 1, status: 1, createdAt: -1 });
 partnerRequestSchema.index({ country: 1 });
+partnerRequestSchema.index({ createdAt: -1, _id: -1 });
+partnerRequestSchema.index({ status: 1, createdAt: -1, _id: -1 });
+partnerRequestSchema.index({ kind: 1, createdAt: -1, _id: -1 });
 
 export const PartnerRequestModel = model<PartnerRequestDoc>("PartnerRequest", partnerRequestSchema);

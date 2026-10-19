@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { createApp } from "./app";
 import { connectDb, disconnectDb } from "./db";
 import { EnvError, parseEnv } from "./env";
+import { flushObservability, initObservability } from "./lib/observability/sentry";
 import { createLogger } from "./logger";
 import { shouldRunWorker, startNotificationsWorker } from "./modules/notifications/worker";
 
@@ -18,6 +19,7 @@ async function main(): Promise<void> {
   loadDotEnv();
   const env = parseEnv(process.env);
   const logger = createLogger(env);
+  await initObservability(env);
 
   await connectDb({
     uri: env.MONGODB_URI,
@@ -55,7 +57,8 @@ async function main(): Promise<void> {
     forceExit.unref();
     worker?.stop();
     server.close((closeError) => {
-      disconnectDb()
+      flushObservability()
+        .then(() => disconnectDb())
         .catch((dbError: unknown) => logger.error({ err: dbError }, "Error closing MongoDB"))
         .finally(() => process.exit(closeError ? 1 : 0));
     });

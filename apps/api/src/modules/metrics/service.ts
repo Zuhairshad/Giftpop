@@ -1,4 +1,4 @@
-import { ORDER_STATUSES, type OrderStatus } from "@giftpop/contracts";
+import { ORDER_STATUSES, type MetricsResponse, type OrderStatus } from "@giftpop/contracts";
 
 import { isDbReady } from "../../db";
 import { OutboxModel } from "../notifications/model";
@@ -8,34 +8,6 @@ import { APP_VERSION } from "./version";
 
 const MINUTE_MS = 60_000;
 const DAY_MS = 86_400_000;
-
-/**
- * TODO(contracts): move to packages/contracts as `MetricsResponseSchema` (proposal in
- * docs/audit/observability.md) and replace this interface with the inferred type.
- */
-export interface MetricsResponse {
-  generatedAt: string;
-  orders: {
-    byStatus: Record<OrderStatus, number>;
-    createdLast24h: number;
-    createdLast7d: number;
-    /** Minutes since the oldest order still `awaiting_payment` was placed; null when none. */
-    oldestAwaitingPaymentAgeMinutes: number | null;
-    /** Minutes since the oldest order still `confirmed` was placed; null when none. */
-    oldestConfirmedAgeMinutes: number | null;
-  };
-  outbox: {
-    pending: number;
-    failed: number;
-    /** Minutes the most overdue pending message has waited past its due time; null when none. */
-    oldestPendingAgeMinutes: number | null;
-  };
-  process: {
-    uptimeSeconds: number;
-    mongoReady: boolean;
-    version: string;
-  };
-}
 
 /** Index key patterns the queries are written for; passed as `hint` and checked by tests. */
 export const METRICS_HINTS = {
