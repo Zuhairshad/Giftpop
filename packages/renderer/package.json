@@ -3,9 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts",
-    "./layouts": "./src/layouts/index.ts"
+    "./layouts": "./src/layouts/index.ts",
+    "./animated": "./src/animated.ts"
   },
   "scripts": {
     "lint": "eslint .",

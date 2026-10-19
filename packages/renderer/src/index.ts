@@ -1,7 +1,7 @@
 export { GiftScene, describeGift } from "./GiftScene";
 export type { GiftSceneProps } from "./GiftScene";
-export { AnimatedGiftScene } from "./AnimatedGiftScene";
-export type { AnimatedGiftSceneProps } from "./AnimatedGiftScene";
+// `AnimatedGiftScene` is not re-exported here: importing it from the barrel would put motion on
+// every route. Use `<GiftScene motion />` (loads it lazily) or `@giftpop/renderer/animated`.
 export {
   LAYOUTS,
   LAYOUT_TYPES,

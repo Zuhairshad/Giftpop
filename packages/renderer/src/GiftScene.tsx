@@ -1,8 +1,8 @@
 import type { Design, Item, Packaging } from "@giftpop/contracts";
 
-import { AnimatedGiftScene } from "./AnimatedGiftScene";
 import { SceneSvg, StaticItemArt, StaticLayer } from "./scene/art";
 import { buildSceneModel } from "./scene/model";
+import { MotionScene } from "./scene/MotionScene";
 
 export { describeGift } from "./describe";
 
@@ -28,19 +28,26 @@ function placementTransform(x: number, y: number, rotation: number, scale: numbe
  *
  * The static path (`motion` off) is a pure render with no state or effects, so
  * it works in Server Components. `motion` hands over to `AnimatedGiftScene`,
- * a client component that draws the same markup and adds animation.
+ * a client component that draws the same markup and adds animation, loaded lazily
+ * with this static scene shown until it arrives.
  */
 export function GiftScene({ design, packaging, items, motion = false, className }: GiftSceneProps) {
-  if (motion) {
-    return (
-      <AnimatedGiftScene
-        design={design}
-        packaging={packaging}
-        items={items}
-        className={className}
-      />
-    );
-  }
+  const scene = (
+    <StaticScene design={design} packaging={packaging} items={items} className={className} />
+  );
+  if (!motion) return scene;
+  return (
+    <MotionScene
+      design={design}
+      packaging={packaging}
+      items={items}
+      className={className}
+      fallback={scene}
+    />
+  );
+}
+
+function StaticScene({ design, packaging, items, className }: Omit<GiftSceneProps, "motion">) {
   const model = buildSceneModel({ design, packaging, items });
   return (
     <SceneSvg label={model.label} layoutType={model.layoutType} className={className}>

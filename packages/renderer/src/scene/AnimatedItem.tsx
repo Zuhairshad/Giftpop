@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useMotionTemplate, useMotionValue, useTransform } from "motion/react";
+import { animate, m, useMotionTemplate, useMotionValue, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -75,7 +75,7 @@ export function AnimatedItem({
   }, [p.x, p.y, p.rotation, p.scale, reduced, x, y, rotation, scale, pop]);
 
   return (
-    <motion.g
+    <m.g
       {...itemMotionProps(reduced, startsEntering)}
       // Origin at the scene's 0,0 so rotate and scale pivot on the anchor, as in the static
       // scene. Motion ignores a plain `transformOrigin` for SVG and defaults to 50% 50%;
@@ -84,6 +84,6 @@ export function AnimatedItem({
       data-item-index={entry.key}
     >
       <AnimatedItemArt art={art} nearViewport={nearViewport} />
-    </motion.g>
+    </m.g>
   );
 }

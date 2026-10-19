@@ -1,4 +1,4 @@
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -107,11 +107,17 @@ describe("GiftScene", () => {
     expect(container.querySelectorAll("[data-item-index]")).toHaveLength(3);
   });
 
-  it("hands over to the client variant when motion is on, with the same labels", () => {
+  it("hands over to the client variant when motion is on, with the same labels", async () => {
     const off = render(<GiftScene design={design} packaging={packaging} items={items} />);
     const offLabel = off.getByRole("img").getAttribute("data-layout");
     off.unmount();
     const on = render(<GiftScene design={design} packaging={packaging} items={items} motion />);
+    // The static scene stands in while the animated one loads, so the scene is never empty.
+    expect(on.container.querySelectorAll("[data-item-index]")).toHaveLength(3);
+    // Animated items pivot on the view box; static ones carry only a transform.
+    await waitFor(() =>
+      expect(on.container.querySelectorAll("g[style*='transform-box']")).toHaveLength(3),
+    );
     expect(on.getByRole("img", { name: /Item 1.*Item 2.*Item 3/ })).toBeTruthy();
     expect(on.getByRole("img").getAttribute("data-layout")).toBe(offLabel);
     expect(on.container.querySelectorAll("[data-item-index]")).toHaveLength(3);

@@ -1,4 +1,5 @@
 import type { Item, ItemShape } from "@giftpop/contracts";
+import Image from "next/image";
 import type { ReactElement, ReactNode } from "react";
 
 const EDGE = "rgb(58 34 48 / 0.35)";
@@ -105,15 +106,15 @@ const SILHOUETTES: Record<ItemShape, (color: string) => ReactNode> = {
 /** Picture for an item card: the uploaded image, or the silhouette for its shape and colour. */
 export function ItemArt({ item }: { item: Item }): ReactElement {
   if (item.image) {
+    // Resized by the Next image optimiser (host from PUBLIC_ASSET_BASE_URL), so a 112 px card
+    // no longer downloads the full upload. Lazy by default.
     return (
-      // Asset URLs come from object storage on a host `next/image` is not configured for.
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={item.image.url}
         alt=""
         width={item.image.width}
         height={item.image.height}
-        loading="lazy"
+        sizes="112px"
         className="size-full object-contain"
       />
     );

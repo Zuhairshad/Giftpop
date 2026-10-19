@@ -1,7 +1,7 @@
 "use client";
 
 import type { Asset, Design, Item, Packaging } from "@giftpop/contracts";
-import { AnimatePresence, useReducedMotion } from "motion/react";
+import { AnimatePresence, LazyMotion, domAnimation, useReducedMotion } from "motion/react";
 
 import { AnimatedItem } from "./scene/AnimatedItem";
 import { LayerPlaceholder, SceneSvg } from "./scene/art";
@@ -64,36 +64,45 @@ export function AnimatedGiftScene({
   const { ref, nearViewport } = useSceneObservers(onSizeChange);
 
   return (
-    <SceneSvg label={model.label} layoutType={model.layoutType} className={className} svgRef={ref}>
-      <g data-layer="back">
-        <AnimatedLayer
-          side="back"
-          asset={model.layers.back}
-          model={model}
-          nearViewport={nearViewport}
-        />
-      </g>
-      <g data-layer="items">
-        <AnimatePresence initial={false}>
-          {model.entries.map((entry) => (
-            <AnimatedItem
-              key={entry.key}
-              entry={entry}
-              reduced={reduced}
-              entering={mounted}
-              nearViewport={nearViewport}
-            />
-          ))}
-        </AnimatePresence>
-      </g>
-      <g data-layer="front">
-        <AnimatedLayer
-          side="front"
-          asset={model.layers.front}
-          model={model}
-          nearViewport={nearViewport}
-        />
-      </g>
-    </SceneSvg>
+    // `LazyMotion` + `m` load only the DOM animation features instead of the full `motion`
+    // component (performance audit, about 30 kB). `strict` throws if a plain `motion.*` sneaks in.
+    <LazyMotion features={domAnimation} strict>
+      <SceneSvg
+        label={model.label}
+        layoutType={model.layoutType}
+        className={className}
+        svgRef={ref}
+      >
+        <g data-layer="back">
+          <AnimatedLayer
+            side="back"
+            asset={model.layers.back}
+            model={model}
+            nearViewport={nearViewport}
+          />
+        </g>
+        <g data-layer="items">
+          <AnimatePresence initial={false}>
+            {model.entries.map((entry) => (
+              <AnimatedItem
+                key={entry.key}
+                entry={entry}
+                reduced={reduced}
+                entering={mounted}
+                nearViewport={nearViewport}
+              />
+            ))}
+          </AnimatePresence>
+        </g>
+        <g data-layer="front">
+          <AnimatedLayer
+            side="front"
+            asset={model.layers.front}
+            model={model}
+            nearViewport={nearViewport}
+          />
+        </g>
+      </SceneSvg>
+    </LazyMotion>
   );
 }
