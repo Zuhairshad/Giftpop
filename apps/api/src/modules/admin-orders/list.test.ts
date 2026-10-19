@@ -1,11 +1,14 @@
+import type { AdminOrderListQuery } from "@giftpop/contracts";
 import { Types } from "mongoose";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { clearDatabase, useTestMongo } from "../../../test/mongo";
-import { insertOrder } from "../orders/fixtures";
+import { insertOrder, orderDocInput } from "../orders/fixtures";
 import { OrderModel, type OrderDoc } from "../orders/model";
+import { backfillOrderSearchKeys } from "../orders/search-keys";
 
 import { api, createAdminApp, signIn, type StaffSession } from "./admin-orders.test-utils";
+import { buildFilter } from "./list";
 
 useTestMongo();
 beforeAll(async () => {
@@ -148,6 +151,48 @@ describe("GET / cursor pagination", () => {
       const res = await list(`cursor=${cursor}`);
       expect(res.status, cursor).toBe(400);
       expect(res.body.error.code).toBe("VALIDATION_ERROR");
+    }
+  });
+});
+
+describe("search keys", () => {
+  it("stores the lower-cased email and the phone digits on every new order", async () => {
+    const id = await insertOrder("awaiting_payment", {
+      contact: { name: "Sara", email: " Sara@Example.com ", phone: "+92 300-1234567" },
+    } as Partial<OrderDoc>);
+    const stored = await OrderModel.findById(id).lean();
+    expect(stored?.searchKeys).toEqual({ email: "sara@example.com", phoneDigits: "923001234567" });
+    // The frozen contact is untouched.
+    expect(stored?.contact.email).toBe(" Sara@Example.com ");
+  });
+
+  it("finds an order placed before the keys existed once the backfill has run", async () => {
+    const input = orderDocInput({ number: "GP-PK-OLDOLD", status: "awaiting_payment" });
+    await OrderModel.collection.insertOne({
+      ...input,
+      contact: { name: "Old", email: "Old@Example.com", phone: "+92 (300) 765-4321" },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    expect(numbers((await list("search=old@example.com")).body)).toEqual([]);
+
+    expect(await backfillOrderSearchKeys()).toBe(1);
+    expect(await backfillOrderSearchKeys()).toBe(0);
+
+    expect(numbers((await list("search=old@example.com")).body)).toEqual(["GP-PK-OLDOLD"]);
+    expect(numbers((await list("search=923007654321")).body)).toEqual(["GP-PK-OLDOLD"]);
+  });
+
+  it("searches by email and phone through indexes, not a collection scan", async () => {
+    for (let i = 0; i < 30; i += 1) await insertOrder("awaiting_payment");
+    for (const search of ["someone@example.com", "+92 300 1234567"]) {
+      const filter = buildFilter({ search } as AdminOrderListQuery);
+      const plan: unknown = await OrderModel.find(filter)
+        .sort({ createdAt: -1, _id: -1 })
+        .explain("executionStats");
+      const text = JSON.stringify(plan);
+      expect(text, search).not.toContain("COLLSCAN");
+      expect(text, search).toMatch(/searchKeys\.(email|phoneDigits)_1/);
     }
   });
 });

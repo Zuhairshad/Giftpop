@@ -9,6 +9,16 @@ export function normaliseEmail(value: string): string {
   return value.trim().toLowerCase();
 }
 
+/** What staff search orders by, stored on the order beside the frozen contact. */
+export interface OrderSearchKeys {
+  email: string;
+  phoneDigits: string;
+}
+
+export function searchKeysFor(contact: Pick<Contact, "email" | "phone">): OrderSearchKeys {
+  return { email: normaliseEmail(contact.email), phoneDigits: normalisePhone(contact.phone) };
+}
+
 /**
  * Whether what a customer typed (a phone or an email) is the contact the order was
  * placed with. Customers have no accounts, so this plus the order number is the

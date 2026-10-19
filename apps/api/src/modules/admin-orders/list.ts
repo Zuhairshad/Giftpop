@@ -6,6 +6,7 @@ import type {
 import { Types, type QueryFilter } from "mongoose";
 
 import { AppError } from "../../lib/errors";
+import { searchKeysFor } from "../orders/contact";
 import { OrderModel, type OrderDoc } from "../orders/model";
 
 const badCursor = () => new AppError("VALIDATION_ERROR", 400, "That page cursor is not valid");
@@ -40,8 +41,6 @@ export function decodeCursor(raw: string): Cursor {
   throw badCursor();
 }
 
-const escapeRegex = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 function startOfDay(day: string): Date {
   const date = new Date(`${day}T00:00:00.000Z`);
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== day) {
@@ -50,14 +49,15 @@ function startOfDay(day: string): Date {
   return date;
 }
 
+/** Exact matches on the order number and the stored search keys, so each branch uses an index. */
 function searchClause(search: string): QueryFilter<OrderDoc> {
+  const keys = searchKeysFor({ email: search, phone: search });
   const or: QueryFilter<OrderDoc>[] = [
     { number: search.toUpperCase() },
-    { "contact.email": { $regex: `^${escapeRegex(search)}$`, $options: "i" } },
+    { "searchKeys.email": keys.email },
   ];
-  const digits = search.replace(/\D/g, "");
-  if (/^[\d\s+()-]+$/.test(search) && digits.length >= 3) {
-    or.push({ "contact.phone": { $regex: `^\\D*${digits.split("").join("\\D*")}\\D*$` } });
+  if (/^[\d\s+()-]+$/.test(search) && keys.phoneDigits.length >= 3) {
+    or.push({ "searchKeys.phoneDigits": keys.phoneDigits });
   }
   return { $or: or };
 }

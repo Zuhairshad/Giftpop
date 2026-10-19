@@ -6,6 +6,7 @@ import { EnvError, parseEnv } from "./env";
 import { flushObservability, initObservability } from "./lib/observability/sentry";
 import { createLogger } from "./logger";
 import { shouldRunWorker, startNotificationsWorker } from "./modules/notifications/worker";
+import { backfillOrderSearchKeys } from "./modules/orders/search-keys";
 
 function loadDotEnv(): void {
   try {
@@ -30,6 +31,9 @@ async function main(): Promise<void> {
 
   // Dashboard queries hint their indexes, so they must exist before traffic arrives.
   await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
+  // Orders placed before admin search keys existed get them once; later boots update nothing.
+  const backfilled = await backfillOrderSearchKeys();
+  if (backfilled > 0) logger.info({ orders: backfilled }, "Backfilled order search keys");
 
   const app = createApp({ env, logger });
   const server = app.listen(env.PORT, () => {

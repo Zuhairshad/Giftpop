@@ -15,6 +15,8 @@ import type {
 } from "@giftpop/contracts";
 import { model, Schema, type Types } from "mongoose";
 
+import { searchKeysFor, type OrderSearchKeys } from "./contact";
+
 export interface OrderHistoryDoc {
   from: OrderStatus | null;
   to: OrderStatus;
@@ -56,6 +58,12 @@ export interface OrderDoc {
   number: string;
   country: string;
   contact: Contact;
+  /**
+   * Lower-cased email and phone digits for the admin search, set when the order is created
+   * (never edited). Mongoose-only, not part of the contract. Older orders get it from
+   * `backfillOrderSearchKeys` at boot.
+   */
+  searchKeys?: OrderSearchKeys;
   address: Address;
   design: Design;
   packaging: PackagingSnapshot;
@@ -124,6 +132,10 @@ const orderSchema = new Schema<OrderDoc>(
       email: { type: String, required: true },
       phone: { type: String, required: true },
     },
+    searchKeys: {
+      email: { type: String },
+      phoneDigits: { type: String },
+    },
     address: { type: Schema.Types.Mixed, required: true },
     design: { type: Schema.Types.Mixed, required: true },
     packaging: { type: Schema.Types.Mixed, required: true },
@@ -140,6 +152,14 @@ const orderSchema = new Schema<OrderDoc>(
   },
   { timestamps: true, collection: "orders", minimize: false },
 );
+
+// Admin search matches these exactly, so an order is found through an index, not a scan.
+orderSchema.index({ "searchKeys.email": 1 });
+orderSchema.index({ "searchKeys.phoneDigits": 1 });
+
+orderSchema.pre("validate", function setSearchKeys() {
+  if (this.isNew) this.searchKeys = searchKeysFor(this.contact);
+});
 
 // Admin list: filter by country and status, newest first.
 orderSchema.index({ country: 1, status: 1, createdAt: -1 });
