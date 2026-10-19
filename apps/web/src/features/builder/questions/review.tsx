@@ -5,6 +5,8 @@ import type { ReactElement } from "react";
 import { useBuilder } from "../state";
 
 import { reviewReady } from "./can-continue";
+import { CardPanel } from "./review/card-panel";
+import { cardSummary } from "./review/card-summary";
 import { PriceSection } from "./review/price-section";
 import { SharePanel } from "./review/share-panel";
 
@@ -23,9 +25,12 @@ export function ReviewBody(): ReactElement {
     return <p className="text-muted text-sm">Pick what your gift comes in first.</p>;
   }
   const blocked = problems.length > 0;
+  const card = cardSummary(design.personalisation);
 
   return (
     <div className="space-y-5">
+      {card ? <CardPanel card={card} /> : null}
+
       <PriceSection quote={builder.quote} status={builder.quoteStatus} />
 
       {blocked ? (
