@@ -1,20 +1,7 @@
 import { useId } from "react";
-import type { ComponentProps, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
-
-/** Shared look for text inputs, textareas and selects: 48px tall, 12px radius, hairline-2 border. */
-export function inputClass({
-  invalid = false,
-  className,
-}: { invalid?: boolean; className?: string } = {}) {
-  return cn(
-    "block w-full min-h-12 rounded-md border bg-surface px-3.5 text-base text-ink placeholder:text-faint",
-    "transition-colors disabled:cursor-not-allowed disabled:opacity-50",
-    invalid ? "border-danger" : "border-hairline-2 hover:border-ink-2/60",
-    className,
-  );
-}
 
 type FieldA11y = {
   id: string;
@@ -35,7 +22,7 @@ type FieldProps = {
 
 /**
  * A visible label above any control, with an optional hint and an error line (icon plus text, never
- * colour alone). Use it for selects and custom controls; `TextInput` and `TextArea` wrap it.
+ * colour alone). The control is passed in as a render function and gets the id and aria attributes.
  */
 export function Field({ label, optional, hint, error, className, children }: FieldProps) {
   const id = useId();
@@ -78,58 +65,5 @@ export function Field({ label, optional, hint, error, className, children }: Fie
         </p>
       ) : null}
     </div>
-  );
-}
-
-type LabelProps = Pick<FieldProps, "label" | "optional" | "hint" | "error"> & {
-  fieldClassName?: string;
-};
-
-/** A labelled single-line input. */
-export function TextInput({
-  label,
-  optional,
-  hint,
-  error,
-  fieldClassName,
-  className,
-  ...props
-}: Omit<ComponentProps<"input">, "id"> & LabelProps) {
-  return (
-    <Field label={label} optional={optional} hint={hint} error={error} className={fieldClassName}>
-      {(control) => (
-        <input
-          className={inputClass({ invalid: Boolean(error), className })}
-          {...control}
-          {...props}
-        />
-      )}
-    </Field>
-  );
-}
-
-/** A labelled multi-line input (card message). Customer text wraps anywhere. */
-export function TextArea({
-  label,
-  optional,
-  hint,
-  error,
-  fieldClassName,
-  className,
-  ...props
-}: Omit<ComponentProps<"textarea">, "id"> & LabelProps) {
-  return (
-    <Field label={label} optional={optional} hint={hint} error={error} className={fieldClassName}>
-      {(control) => (
-        <textarea
-          className={inputClass({
-            invalid: Boolean(error),
-            className: cn("py-3 wrap-anywhere", className),
-          })}
-          {...control}
-          {...props}
-        />
-      )}
-    </Field>
   );
 }

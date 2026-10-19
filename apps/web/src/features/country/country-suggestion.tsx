@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
 import { ChooseCountryLink } from "./choose-country-link";
+import { COUNTRY_PILL_ATTR } from "./country-picker";
 import { flagEmoji } from "./flag";
 import { suggestionHiddenOn } from "./suggestion-visibility";
 
@@ -35,10 +36,16 @@ function dismiss(): void {
   listeners.forEach((listener) => listener());
 }
 
+/** "Not now" removes the banner; focus moves on to the header country pill, the next control. */
+function dismissAndMoveFocus(): void {
+  dismiss();
+  document.querySelector<HTMLElement>(`[${COUNTRY_PILL_ATTR}]`)?.focus();
+}
+
 /**
  * A polite, dismissible "Shipping to X?" suggestion. Choosing sets the cookie; nothing happens before.
- * It floats over the page under the header (absolute, out of flow) so it appears after hydration
- * without pushing any content down.
+ * It sits in normal flow above the sticky header, so it pushes the page down and scrolls away with it
+ * instead of covering headings. It appears after hydration (the dismissal lives in sessionStorage).
  */
 export function CountrySuggestion({ code, name }: { code: string; name: string }) {
   // The server snapshot is "dismissed" so the banner appears after hydration, never mismatching.
@@ -49,9 +56,9 @@ export function CountrySuggestion({ code, name }: { code: string; name: string }
   return (
     <section
       aria-label="Country suggestion"
-      className="bg-warm shadow-hairline absolute inset-x-0 top-full"
+      className="gp-suggestion bg-warm shadow-hairline flex-none"
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:px-6">
+      <div className="gp-shell flex flex-wrap items-center gap-x-4 gap-y-1 py-2">
         <p className="min-w-0 text-sm font-medium wrap-anywhere">
           <span aria-hidden="true">{flagEmoji(code)} </span>
           Shipping to {name}?
@@ -73,7 +80,7 @@ export function CountrySuggestion({ code, name }: { code: string; name: string }
           </Link>
           <button
             type="button"
-            onClick={dismiss}
+            onClick={dismissAndMoveFocus}
             className={buttonClass({ variant: "ghost", size: "sm", className: "text-muted" })}
           >
             Not now

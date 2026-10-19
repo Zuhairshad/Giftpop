@@ -19,6 +19,9 @@ type CountryPickerProps = {
   allCountries: PickerCountry[];
 };
 
+/** Marks the header country pill so the suggestion banner can hand focus to it after "Not now". */
+export const COUNTRY_PILL_ATTR = "data-country-pill";
+
 const PILL =
   "bg-surface text-foreground shadow-hairline hover:bg-warm inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3 text-sm font-medium transition-colors sm:gap-2 sm:px-4";
 
@@ -76,6 +79,7 @@ export function CountryPicker({ countries, cookieCode, allCountries }: CountryPi
       <button
         ref={buttonRef}
         type="button"
+        {...{ [COUNTRY_PILL_ATTR]: "" }}
         className={PILL}
         aria-expanded={open}
         aria-controls={panelId}

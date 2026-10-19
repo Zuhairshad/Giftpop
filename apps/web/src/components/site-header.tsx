@@ -14,29 +14,32 @@ const NAV_LINKS = [
  */
 export function SiteHeader() {
   return (
-    <header className="gp-header bg-canvas/90 sticky top-0 z-40 shadow-[0_1px_0_var(--gp-border)] backdrop-blur">
-      <div className="gp-shell relative flex h-14 items-center justify-between gap-3 md:h-16">
-        <Logo />
-
-        <div className="flex min-w-0 items-center gap-1">
-          <nav aria-label="Main" className="hidden md:block">
-            <ul className="flex items-center gap-1 text-sm font-medium">
-              {NAV_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-ink-2 hover:bg-warm hover:text-ink flex min-h-11 items-center rounded-md px-3 transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <HeaderCountryPicker />
-        </div>
-      </div>
+    <>
+      {/* In flow above the sticky header: it pushes the page down and scrolls away with it. */}
       <HeaderCountrySuggestion />
-    </header>
+      <header className="gp-header bg-canvas/90 sticky top-0 z-40 shadow-[0_1px_0_var(--gp-border)] backdrop-blur">
+        <div className="gp-shell relative flex h-14 items-center justify-between gap-3 md:h-16">
+          <Logo />
+
+          <div className="flex min-w-0 items-center gap-1">
+            <nav aria-label="Main" className="hidden md:block">
+              <ul className="flex items-center gap-1 text-sm font-medium">
+                {NAV_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-ink-2 hover:bg-warm hover:text-ink flex min-h-11 items-center rounded-md px-3 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <HeaderCountryPicker />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }
