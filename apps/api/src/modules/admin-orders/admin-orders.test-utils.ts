@@ -14,7 +14,10 @@ export const BASE = "/v1/admin/orders";
 
 export function createAdminApp(): Express {
   return createTestApp([
-    { path: "/auth", router: createAuthRouter({ loginLimiter: createLoginLimiter({ limit: 100_000 }) }) },
+    {
+      path: "/auth",
+      router: createAuthRouter({ loginLimiter: createLoginLimiter({ limit: 100_000 }) }),
+    },
     { path: "/admin/orders", router: adminOrdersRouter },
   ]);
 }

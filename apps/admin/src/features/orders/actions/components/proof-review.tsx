@@ -8,7 +8,6 @@ import { FormAlert } from "../../../catalog/components/field";
 import { describeActionError } from "../lib/action-errors";
 import { reviewPaymentProof } from "../lib/client";
 
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

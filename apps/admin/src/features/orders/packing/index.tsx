@@ -61,7 +61,9 @@ function Checklist({ order }: { order: AdminOrderDetail }) {
             <span className="w-14 shrink-0 text-right packing-qty text-3xl leading-none font-bold tabular-nums">
               {line.qty}x
             </span>
-            <span className={cn("packing-name min-w-0 flex-1 leading-tight wrap-anywhere", nameSize)}>
+            <span
+              className={cn("packing-name min-w-0 flex-1 leading-tight wrap-anywhere", nameSize)}
+            >
               <span className="font-medium">{line.name}</span>
               {line.customName ? (
                 <span className="packing-custom block text-2xl font-bold">
