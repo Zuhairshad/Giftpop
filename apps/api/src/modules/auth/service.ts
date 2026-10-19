@@ -5,7 +5,7 @@ import { StaffModel, toStaffUser } from "../staff/model";
 
 import { normaliseEmail } from "./email";
 import { burnPasswordCheck, hashPassword, verifyPassword } from "./password";
-import { createSession } from "./sessions";
+import { createSession, toSession } from "./sessions";
 
 export interface CreateOwnerInput {
   email: string;
@@ -58,8 +58,5 @@ export async function login(email: string, password: string): Promise<LoginResul
   if (!passwordOk || !staff.active) throw invalidLogin();
 
   const { token, expiresAt } = await createSession(staff._id);
-  return {
-    token,
-    session: { user: toStaffUser(staff), expiresAt: expiresAt.toISOString() },
-  };
+  return { token, session: toSession(staff, expiresAt) };
 }

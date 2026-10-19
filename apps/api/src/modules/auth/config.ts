@@ -1,4 +1,8 @@
+import { STAFF_SESSION_DAYS } from "@giftpop/contracts";
+
 import { parseEnv } from "../../env";
+
+export const SESSION_TTL_MS = STAFF_SESSION_DAYS * 24 * 60 * 60 * 1000;
 
 export interface AuthConfig {
   /** Peppers the hash of session tokens. */

@@ -44,30 +44,23 @@ export function toItem(doc: ItemDoc): Item {
   };
 }
 
+/** Only the layers that exist, so absent means absent. */
+function presentLayers(layers: Partial<Packaging["layers"]> | undefined): Packaging["layers"] {
+  return {
+    ...(layers?.back && { back: layers.back }),
+    ...(layers?.front && { front: layers.front }),
+  };
+}
+
 export function toPackagingDoc(packaging: Packaging): PackagingDoc {
   const { id, layers, ...rest } = packaging;
-  return {
-    ...rest,
-    _id: toObjectId(id),
-    layers: {
-      ...(layers.back && { back: layers.back }),
-      ...(layers.front && { front: layers.front }),
-    },
-  };
+  return { ...rest, _id: toObjectId(id), layers: presentLayers(layers) };
 }
 
 export function toPackaging(doc: PackagingDoc): Packaging {
   const { _id, layers, ...rest } = doc;
-  return {
-    ...rest,
-    id: _id.toHexString(),
-    description: doc.description,
-    // Mongoose drops empty objects, so a packaging with no layers comes back without `layers`.
-    layers: {
-      ...(layers?.back && { back: layers.back }),
-      ...(layers?.front && { front: layers.front }),
-    },
-  };
+  // Mongoose drops empty objects, so a packaging with no layers comes back without `layers`.
+  return { ...rest, id: _id.toHexString(), layers: presentLayers(layers) };
 }
 
 export function toPriceEntry(doc: CountryPriceDoc): PriceEntry {

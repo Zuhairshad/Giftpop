@@ -7,7 +7,7 @@ import type { z } from "zod";
 export type PackagingFormInput = z.input<typeof SavePackagingRequestSchema>;
 
 /** What the packaging form edits. Layer images are handled by the uploaders. */
-export type PackagingFormValues = Omit<z.input<typeof SavePackagingRequestSchema>, "layers">;
+export type PackagingFormValues = Omit<PackagingFormInput, "layers">;
 
 export interface PackagingLayers {
   back?: Asset | undefined;

@@ -1,13 +1,13 @@
 "use client";
 
-import type { StaffUser } from "@giftpop/contracts";
-import { CheckIcon, CopyIcon, UserPlusIcon } from "lucide-react";
+import { UserPlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
 import { toast } from "sonner";
 
 import { generateTemporaryPassword, validateInvite, type InviteValues } from "./invite";
+import { InviteCreated, type CreatedAccount } from "./invite-created";
 import { createStaff } from "./staff-client";
 import { staffErrorMessage } from "./staff-errors";
 
@@ -40,16 +40,10 @@ const resolver: Resolver<InviteValues> = (values) => {
 const SELECT_CLASS =
   "border-input dark:bg-input/30 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive h-8 w-full rounded-lg border bg-transparent px-2 text-sm outline-none focus-visible:ring-3";
 
-interface Created {
-  user: StaffUser;
-  password: string;
-}
-
 export function InviteDialog() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [created, setCreated] = useState<Created | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [created, setCreated] = useState<CreatedAccount | null>(null);
   const {
     register,
     handleSubmit,
@@ -64,7 +58,6 @@ export function InviteDialog() {
     if (!next) {
       reset(EMPTY);
       setCreated(null);
-      setCopied(false);
     }
   }
 
@@ -83,15 +76,6 @@ export function InviteDialog() {
     }
   });
 
-  async function copyPassword(password: string) {
-    try {
-      await navigator.clipboard.writeText(password);
-      setCopied(true);
-    } catch {
-      toast.error("Could not copy. Select the password and copy it by hand.");
-    }
-  }
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button />}>
@@ -100,40 +84,7 @@ export function InviteDialog() {
       </DialogTrigger>
       <DialogContent>
         {created ? (
-          <>
-            <DialogHeader>
-              <DialogTitle>Account created</DialogTitle>
-              <DialogDescription>
-                Give {created.user.name} this temporary password now. It is shown once and cannot be
-                looked up later.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Sign in as {created.user.email}</span>
-              <div className="flex items-center gap-2">
-                <code className="bg-muted min-w-0 flex-1 rounded-lg px-2.5 py-1.5 font-mono text-sm break-all select-all">
-                  {created.password}
-                </code>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => void copyPassword(created.password)}
-                >
-                  {copied ? (
-                    <CheckIcon data-icon="inline-start" aria-hidden="true" />
-                  ) : (
-                    <CopyIcon data-icon="inline-start" aria-hidden="true" />
-                  )}
-                  {copied ? "Copied" : "Copy password"}
-                </Button>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" onClick={() => handleOpenChange(false)}>
-                Done
-              </Button>
-            </DialogFooter>
-          </>
+          <InviteCreated created={created} onDone={() => handleOpenChange(false)} />
         ) : (
           <>
             <DialogHeader>

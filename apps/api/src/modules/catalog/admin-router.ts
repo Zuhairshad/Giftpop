@@ -4,15 +4,13 @@ import {
   SaveItemRequestSchema,
   SavePackagingRequestSchema,
   SetPricesRequestSchema,
-  ObjectIdSchema,
   type SaveItemRequest,
   type SavePackagingRequest,
   type SetPricesRequest,
 } from "@giftpop/contracts";
 import { Router, type Request } from "express";
-import { z } from "zod";
 
-import { validateBody, validateParams } from "../../lib/validate";
+import { IdParamsSchema, validateBody, validateParams, type IdParams } from "../../lib/validate";
 
 import {
   createItem,
@@ -31,9 +29,6 @@ import {
   replacePackaging,
   setPackagingPrices,
 } from "./packagings.service";
-
-const IdParamsSchema = z.object({ id: ObjectIdSchema });
-type IdParams = z.infer<typeof IdParamsSchema>;
 
 /**
  * Staff routes, mounted at `/admin`. The parent router puts `requireStaff()` in

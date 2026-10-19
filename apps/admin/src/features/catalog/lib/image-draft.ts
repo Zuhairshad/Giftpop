@@ -17,7 +17,7 @@ export interface ImageDraft {
 }
 
 /** The inline asset from an API record (an upload response has an id and a date besides). */
-export function toAsset(record: Asset): Asset {
+function toAsset(record: Asset): Asset {
   return AssetSchema.parse(record);
 }
 

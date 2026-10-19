@@ -19,17 +19,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface CountriesTableProps {
-  countries: readonly Country[];
-  /** Owners can add and edit. Anyone else sees the table only (the API refuses their writes). */
-  canEdit: boolean;
-}
-
 const MODE_LABELS = new Map<string, string>(
   PAYMENT_MODE_OPTIONS.map((option) => [option.value, option.value === "cod" ? "COD" : "Prepaid"]),
 );
 
-export function CountriesTable({ countries, canEdit }: CountriesTableProps) {
+/** Owner-only: the page checks the role before it renders this. */
+export function CountriesTable({ countries }: { countries: readonly Country[] }) {
   const [editing, setEditing] = useState<Country | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -40,14 +35,12 @@ export function CountriesTable({ countries, canEdit }: CountriesTableProps) {
 
   return (
     <div className="grid grid-cols-1 gap-4">
-      {canEdit ? (
-        <div>
-          <Button onClick={() => openFor(null)}>
-            <PlusIcon data-icon="inline-start" />
-            Add country
-          </Button>
-        </div>
-      ) : null}
+      <div>
+        <Button onClick={() => openFor(null)}>
+          <PlusIcon data-icon="inline-start" />
+          Add country
+        </Button>
+      </div>
 
       <div className="rounded-lg border">
         <Table>
@@ -58,20 +51,15 @@ export function CountriesTable({ countries, canEdit }: CountriesTableProps) {
               <TableHead>Status</TableHead>
               <TableHead>Payment modes</TableHead>
               <TableHead>Shipping</TableHead>
-              {canEdit ? (
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              ) : null}
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {countries.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={canEdit ? 6 : 5}
-                  className="text-muted-foreground py-8 text-center"
-                >
+                <TableCell colSpan={6} className="text-muted-foreground py-8 text-center">
                   No countries yet.
                 </TableCell>
               </TableRow>
@@ -106,18 +94,16 @@ export function CountriesTable({ countries, canEdit }: CountriesTableProps) {
                 <TableCell>
                   {country.shipping.deliveryDays.min}&ndash;{country.shipping.deliveryDays.max} days
                 </TableCell>
-                {canEdit ? (
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openFor(country)}
-                      aria-label={`Edit ${country.name}`}
-                    >
-                      Edit
-                    </Button>
-                  </TableCell>
-                ) : null}
+                <TableCell className="text-right">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openFor(country)}
+                    aria-label={`Edit ${country.name}`}
+                  >
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

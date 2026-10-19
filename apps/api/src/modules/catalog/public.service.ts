@@ -5,6 +5,7 @@ import { CountryModel, type CountryDoc } from "../countries/model";
 
 import { toItem, toPackaging } from "./mappers";
 import {
+  CATALOG_SORT,
   CountryPriceModel,
   ItemModel,
   PackagingModel,
@@ -12,8 +13,6 @@ import {
   type ItemDoc,
   type PackagingDoc,
 } from "./model";
-
-const SORT = { sortOrder: 1, name: 1, _id: 1 } as const;
 
 type PriceByTarget = Map<string, CountryPriceDoc>;
 
@@ -42,10 +41,10 @@ export async function getCountryCatalog(code: CountryCode): Promise<CatalogRespo
 
   const [itemDocs, packagingDocs] = await Promise.all([
     ItemModel.find({ _id: { $in: [...itemPrices.keys()] }, active: true })
-      .sort(SORT)
+      .sort(CATALOG_SORT)
       .lean<ItemDoc[]>(),
     PackagingModel.find({ _id: { $in: [...packagingPrices.keys()] }, active: true })
-      .sort(SORT)
+      .sort(CATALOG_SORT)
       .lean<PackagingDoc[]>(),
   ]);
 

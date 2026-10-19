@@ -1,20 +1,17 @@
 import {
   AssetUploadResponseSchema,
-  ObjectIdSchema,
   UpdateAssetAnchorRequestSchema,
   type AssetUploadResponse,
 } from "@giftpop/contracts";
 import { Router } from "express";
-import { z } from "zod";
 
 import { AppError } from "../../lib/errors";
 import { ASSET_CACHE_CONTROL, getStorage, LocalStorage, type Storage } from "../../lib/storage";
+import { IdParamsSchema } from "../../lib/validate";
 import { requireStaff } from "../../middleware/require-staff";
 
 import { createAsset, updateAssetAnchor } from "./service";
 import { readUpload } from "./upload";
-
-const IdParamsSchema = z.object({ id: ObjectIdSchema });
 
 /**
  * Routes under `/v1/assets`. Pass `resolveStorage` to use a different driver (tests do).

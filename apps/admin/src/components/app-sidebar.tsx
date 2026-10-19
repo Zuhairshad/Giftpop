@@ -34,7 +34,7 @@ import { navItems } from "@/config/nav";
 import { visibleNavItems } from "@/features/auth/nav-access";
 import { isActiveHref } from "@/lib/nav";
 
-// Icons are presentation only, so they live here and not in the lead's nav config.
+// Icons are presentation only, so they live here and not in the nav config.
 const ICONS: Record<string, LucideIcon> = {
   "/": LayoutDashboardIcon,
   "/orders": ShoppingBagIcon,

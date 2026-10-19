@@ -1,7 +1,7 @@
-import { STAFF_COOKIE_NAME, STAFF_SESSION_DAYS } from "@giftpop/contracts";
+import { STAFF_COOKIE_NAME } from "@giftpop/contracts";
 import type { CookieOptions, Request, Response } from "express";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { SESSION_TTL_MS } from "./config";
 
 export function sessionCookieOptions(secure: boolean): CookieOptions {
   return {
@@ -9,7 +9,7 @@ export function sessionCookieOptions(secure: boolean): CookieOptions {
     sameSite: "lax",
     path: "/",
     secure,
-    maxAge: STAFF_SESSION_DAYS * DAY_MS,
+    maxAge: SESSION_TTL_MS,
   };
 }
 

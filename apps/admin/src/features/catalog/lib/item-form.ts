@@ -6,7 +6,7 @@ import type { z } from "zod";
 export type ItemFormInput = z.input<typeof SaveItemRequestSchema>;
 
 /** What the item form edits. The image is handled by the uploader, not by form fields. */
-export type ItemFormValues = Omit<z.input<typeof SaveItemRequestSchema>, "image">;
+export type ItemFormValues = Omit<ItemFormInput, "image">;
 
 export const DEFAULT_PERSONALIZATION_MAX_LENGTH = 20;
 
@@ -55,13 +55,4 @@ export function buildSaveItemRequest(
       ? { personalizationMaxLength }
       : {}),
   });
-}
-
-/** Item value defaults when staff switch "Personalizable" on. */
-export function withPersonalizationDefault<T extends { personalizationMaxLength?: number }>(
-  values: T,
-): T {
-  return values.personalizationMaxLength === undefined
-    ? { ...values, personalizationMaxLength: DEFAULT_PERSONALIZATION_MAX_LENGTH }
-    : values;
 }

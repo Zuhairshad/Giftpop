@@ -1,5 +1,10 @@
+import { ObjectIdSchema } from "@giftpop/contracts";
 import type { RequestHandler } from "express";
-import type { z } from "zod";
+import { z } from "zod";
+
+/** `/:id` route params for any resource keyed by a Mongo ObjectId. */
+export const IdParamsSchema = z.object({ id: ObjectIdSchema });
+export type IdParams = z.infer<typeof IdParamsSchema>;
 
 type Source = "body" | "query" | "params";
 

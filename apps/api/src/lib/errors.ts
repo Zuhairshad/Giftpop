@@ -12,3 +12,15 @@ export class AppError extends Error {
     this.name = "AppError";
   }
 }
+
+const MONGO_DUPLICATE_KEY = 11000;
+
+/** True for the error MongoDB raises when a write breaks a unique index. */
+export function isDuplicateKeyError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === MONGO_DUPLICATE_KEY
+  );
+}

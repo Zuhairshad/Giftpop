@@ -6,18 +6,10 @@ import type {
   UpdateCountryRequest,
 } from "@giftpop/contracts";
 
-import { AppError } from "../../lib/errors";
+import { AppError, isDuplicateKeyError } from "../../lib/errors";
 
 import { toCountry, toPublicCountry } from "./mappers";
 import { CountryModel, type CountryDoc } from "./model";
-
-const DUPLICATE_KEY = 11000;
-
-function isDuplicateKey(error: unknown): boolean {
-  return (
-    typeof error === "object" && error !== null && "code" in error && error.code === DUPLICATE_KEY
-  );
-}
 
 /** Creates the country or replaces its settings, keyed by `code`. Idempotent. */
 export async function upsertCountry(country: Country): Promise<Country> {
@@ -45,7 +37,7 @@ export async function createCountry(request: CreateCountryRequest): Promise<Coun
     const created = await CountryModel.create(request);
     return toCountry(created.toObject());
   } catch (error) {
-    if (isDuplicateKey(error)) {
+    if (isDuplicateKeyError(error)) {
       throw new AppError("CONFLICT", 409, `Country ${request.code} already exists`);
     }
     throw error;

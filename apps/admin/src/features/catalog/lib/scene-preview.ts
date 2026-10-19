@@ -9,6 +9,8 @@ export interface ScenePreview {
 
 const HEX_COLOUR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 const FALLBACK_COLOUR = "#cccccc";
+const DEFAULT_WRAPPER_COLOUR = "#c8a27a";
+const DEFAULT_RIBBON_COLOUR = "#c0392b";
 const MAX_PREVIEW_COPIES = 20;
 const MAX_PREVIEW_ITEMS = 40;
 
@@ -37,8 +39,8 @@ function wholeNumber(value: number, fallback: number): number {
 function baseDesign(packagingId: string): Omit<Design, "items"> {
   return {
     packagingId,
-    wrapperColor: "#c8a27a",
-    ribbonColor: "#c0392b",
+    wrapperColor: DEFAULT_WRAPPER_COLOUR,
+    ribbonColor: DEFAULT_RIBBON_COLOUR,
     arrangementSeed: 7,
     personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
   };
@@ -57,8 +59,8 @@ export interface PreviewPackagingFields {
 function previewPackaging(fields: PreviewPackagingFields): Packaging {
   const min = wholeNumber(fields.minItems, 1);
   const max = Math.max(min, wholeNumber(fields.maxItems, min));
-  const wrapper = safeColour(fields.wrapperColor, "#c8a27a");
-  const ribbon = safeColour(fields.ribbonColor, "#c0392b");
+  const wrapper = safeColour(fields.wrapperColor, DEFAULT_WRAPPER_COLOUR);
+  const ribbon = safeColour(fields.ribbonColor, DEFAULT_RIBBON_COLOUR);
   return {
     id: previewId(1),
     slug: "preview",
@@ -162,8 +164,8 @@ export function buildPackagingPreview(fields: PreviewPackagingFields): ScenePrev
     items,
     design: {
       ...baseDesign(packaging.id),
-      wrapperColor: packaging.wrapperColors[0]?.hex ?? "#c8a27a",
-      ribbonColor: packaging.ribbonColors[0]?.hex ?? "#c0392b",
+      wrapperColor: packaging.wrapperColors[0]?.hex ?? DEFAULT_WRAPPER_COLOUR,
+      ribbonColor: packaging.ribbonColors[0]?.hex ?? DEFAULT_RIBBON_COLOUR,
       items: lines,
     },
   };

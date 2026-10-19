@@ -12,7 +12,7 @@ import { Types } from "mongoose";
 import { AppError } from "../../lib/errors";
 
 import { toItem, toItemDoc } from "./mappers";
-import { ItemModel, type ItemDoc } from "./model";
+import { CATALOG_SORT, ItemModel, type ItemDoc } from "./model";
 import { listPrices, setPrices } from "./prices.service";
 
 function escapeRegex(text: string): string {
@@ -60,7 +60,7 @@ export async function listItems(query: ItemListQuery): Promise<Paginated<Item>> 
 
   const [docs, total] = await Promise.all([
     ItemModel.find(filter)
-      .sort({ sortOrder: 1, name: 1, _id: 1 })
+      .sort(CATALOG_SORT)
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .lean<ItemDoc[]>(),

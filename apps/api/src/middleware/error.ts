@@ -2,7 +2,7 @@ import { TransitionError, type ApiErrorCode, type ErrorResponse } from "@giftpop
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
 
-import { AppError } from "../lib/errors";
+import { AppError, isDuplicateKeyError } from "../lib/errors";
 
 interface HttpError {
   status: number;
@@ -18,10 +18,6 @@ function isHttpError(error: unknown): error is HttpError {
     "type" in error &&
     typeof error.type === "string"
   );
-}
-
-function hasMongoCode(error: unknown, code: number): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === code;
 }
 
 interface Normalised {
@@ -60,7 +56,7 @@ function normaliseError(error: unknown): Normalised {
       return respond("VALIDATION_ERROR", 400, "Request body could not be read");
     }
   }
-  if (hasMongoCode(error, 11000)) {
+  if (isDuplicateKeyError(error)) {
     return respond("CONFLICT", 409, "That record already exists");
   }
   return respond("INTERNAL", 500, "Something went wrong");

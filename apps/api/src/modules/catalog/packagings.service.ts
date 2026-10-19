@@ -12,7 +12,7 @@ import { Types } from "mongoose";
 import { AppError } from "../../lib/errors";
 
 import { toPackaging, toPackagingDoc } from "./mappers";
-import { PackagingModel, type PackagingDoc } from "./model";
+import { CATALOG_SORT, PackagingModel, type PackagingDoc } from "./model";
 import { listPrices, setPrices } from "./prices.service";
 
 function notFound(id: string): AppError {
@@ -69,7 +69,7 @@ export async function listPackagings(query: PaginationQuery): Promise<Paginated<
   const { page, pageSize } = query;
   const [docs, total] = await Promise.all([
     PackagingModel.find()
-      .sort({ sortOrder: 1, name: 1, _id: 1 })
+      .sort(CATALOG_SORT)
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .lean<PackagingDoc[]>(),

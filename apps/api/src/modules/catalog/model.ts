@@ -92,6 +92,9 @@ countryPriceSchema.index({ country: 1, kind: 1, targetId: 1 }, { unique: true })
 // Admin price grid: every country for one item or packaging.
 countryPriceSchema.index({ kind: 1, targetId: 1 });
 
+/** List order for items and packagings: staff-set order, then name, then id for a stable tie-break. */
+export const CATALOG_SORT = { sortOrder: 1, name: 1, _id: 1 } as const;
+
 export const ItemModel = model<ItemDoc>("Item", itemSchema);
 export const PackagingModel = model<PackagingDoc>("Packaging", packagingSchema);
 export const CountryPriceModel = model<CountryPriceDoc>("CountryPrice", countryPriceSchema);

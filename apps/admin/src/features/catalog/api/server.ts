@@ -1,4 +1,4 @@
-import { PricesResponseSchema, SessionSchema, StaffUserSchema } from "@giftpop/contracts";
+import { PackagingSchema, PricesResponseSchema } from "@giftpop/contracts";
 import type { ItemListQuery } from "@giftpop/contracts";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -10,22 +10,17 @@ import {
   ItemPageSchema,
   ItemResponseSchema,
   PackagingListSchema,
-  PackagingResponseSchema,
 } from "./schemas";
 
 import { apiFetch, isApiError } from "@/lib/api";
 
 /** Server Component loaders. They forward the incoming session cookie to the API. */
 
-async function getRaw<S extends z.ZodType>(path: string, schema: S): Promise<z.infer<S>> {
-  const cookie = (await headers()).get("cookie");
-  return apiFetch(path, schema, { headers: cookie ? { cookie } : {} });
-}
-
-/** Like `getRaw`, but a 401 sends the user to sign in and a 404 shows the not-found page. */
+/** A 401 sends the user to sign in and a 404 shows the not-found page. */
 async function get<S extends z.ZodType>(path: string, schema: S): Promise<z.infer<S>> {
+  const cookie = (await headers()).get("cookie");
   try {
-    return await getRaw(path, schema);
+    return await apiFetch(path, schema, { headers: cookie ? { cookie } : {} });
   } catch (error) {
     if (isApiError(error) && error.status === 401) redirect("/login");
     if (isApiError(error) && error.status === 404) notFound();
@@ -65,25 +60,9 @@ export function loadPackagings() {
 }
 
 export function loadPackaging(id: string) {
-  return get(`/catalog/admin/packagings/${encodeURIComponent(id)}`, PackagingResponseSchema);
+  return get(`/catalog/admin/packagings/${encodeURIComponent(id)}`, PackagingSchema);
 }
 
 export function loadPackagingPrices(id: string) {
   return get(`/catalog/admin/packagings/${encodeURIComponent(id)}/prices`, PricesResponseSchema);
-}
-
-export type ViewerRole = "owner" | "staff" | "unknown";
-
-/**
- * The signed-in user's role, read from `/auth/me`. Only used to hide controls that the
- * API would refuse anyway; "unknown" (an unexpected answer) keeps them visible.
- */
-export async function loadViewerRole(): Promise<ViewerRole> {
-  try {
-    const me = await getRaw("/auth/me", SessionSchema.or(StaffUserSchema));
-    return "user" in me ? me.user.role : me.role;
-  } catch (error) {
-    if (isApiError(error) && error.status === 403) return "staff";
-    return "unknown";
-  }
 }

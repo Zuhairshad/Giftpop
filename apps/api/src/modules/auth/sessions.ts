@@ -1,14 +1,13 @@
 import { createHmac, randomBytes } from "node:crypto";
 
-import { STAFF_SESSION_DAYS } from "@giftpop/contracts";
+import type { Session } from "@giftpop/contracts";
 import type { Types } from "mongoose";
 
-import { StaffModel, type StaffDoc } from "../staff/model";
+import { StaffModel, toStaffUser, type StaffDoc } from "../staff/model";
 
-import { getAuthConfig } from "./config";
+import { getAuthConfig, SESSION_TTL_MS } from "./config";
 import { SessionModel } from "./model";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
 /** 32 random bytes in base64url. Anything else cannot be one of our tokens. */
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
@@ -23,9 +22,14 @@ export interface CreatedSession {
 
 export async function createSession(staffId: Types.ObjectId): Promise<CreatedSession> {
   const token = randomBytes(32).toString("base64url");
-  const expiresAt = new Date(Date.now() + STAFF_SESSION_DAYS * DAY_MS);
+  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
   await SessionModel.create({ tokenHash: hashToken(token), staffId, expiresAt });
   return { token, expiresAt };
+}
+
+/** The response body for a signed-in staff member. */
+export function toSession(staff: StaffDoc, expiresAt: Date): Session {
+  return { user: toStaffUser(staff), expiresAt: expiresAt.toISOString() };
 }
 
 export interface ActiveSession {

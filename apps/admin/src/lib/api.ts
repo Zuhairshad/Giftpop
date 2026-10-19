@@ -30,7 +30,7 @@ export function isApiError(error: unknown): error is ApiError {
 
 export interface ApiRequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  /** Sent as JSON. Build it from a contract type; never include prices. */
+  /** Sent as JSON, or as multipart when it is a `FormData`. Build JSON from a contract type; never include prices. */
   body?: unknown;
   headers?: Record<string, string>;
   signal?: AbortSignal;
@@ -67,15 +67,17 @@ export async function apiFetch<S extends z.ZodType>(
   const { method = "GET", body, headers, signal, fetchImpl = fetch, baseUrl } = options;
   const url = `${resolveBase(baseUrl)}${path.startsWith("/") ? path : `/${path}`}`;
 
+  // The browser sets the multipart boundary itself, so a form body gets no Content-Type.
+  const isForm = body instanceof FormData;
   const init: RequestInit = {
     method,
     credentials: "include",
     headers: {
       Accept: "application/json",
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(body !== undefined && !isForm ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
-    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    ...(body !== undefined ? { body: isForm ? body : JSON.stringify(body) } : {}),
     ...(signal ? { signal } : {}),
   };
 

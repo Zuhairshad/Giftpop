@@ -1,15 +1,14 @@
-import { LoginRequestSchema, type LoginRequest, type Session } from "@giftpop/contracts";
+import { LoginRequestSchema, type LoginRequest } from "@giftpop/contracts";
 import { Router, type RequestHandler } from "express";
 
 import { AppError } from "../../lib/errors";
 import { validateBody } from "../../lib/validate";
-import { toStaffUser } from "../staff/model";
 
 import { getAuthConfig } from "./config";
 import { clearSessionCookie, readSessionToken, setSessionCookie } from "./cookie";
 import { createLoginLimiter, defaultLoginStore } from "./rate-limit";
 import { login } from "./service";
-import { deleteSession, findActiveSession } from "./sessions";
+import { deleteSession, findActiveSession, toSession } from "./sessions";
 
 export interface AuthRouterOptions {
   /** Replace the login limiter, for example with a tighter or fresh one in tests. */
@@ -38,11 +37,7 @@ export function createAuthRouter({
   router.get("/me", async (req, res) => {
     const active = await findActiveSession(readSessionToken(req));
     if (!active) throw new AppError("UNAUTHENTICATED", 401, "Sign in to continue");
-    const session: Session = {
-      user: toStaffUser(active.staff),
-      expiresAt: active.expiresAt.toISOString(),
-    };
-    res.json(session);
+    res.json(toSession(active.staff, active.expiresAt));
   });
 
   return router;
