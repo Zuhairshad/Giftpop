@@ -1,7 +1,7 @@
 import type { Quote } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
-import { buildAmounts } from "./amounts";
+import { buildAmounts, dueNowNote } from "./amounts";
 
 const prepaid: Quote = {
   currency: "PKR",
@@ -22,6 +22,19 @@ const cod: Quote = {
   dueNowMinor: 2100,
   dueOnDeliveryMinor: 8400,
 };
+
+describe("dueNowNote", () => {
+  const money = (minor: number): string => `PKR ${minor / 100}`;
+  it("names what is left for delivery on cash on delivery", () => {
+    expect(dueNowNote(cod, money)).toBe(
+      "This is the advance. You pay the other PKR 84 when it is delivered.",
+    );
+  });
+  it("names the discount when paying in full", () => {
+    expect(dueNowNote(prepaid, money)).toBe("The full amount, with PKR 20 off for paying now.");
+    expect(dueNowNote({ ...prepaid, discountMinor: 0 }, money)).toBe("The full amount.");
+  });
+});
 
 describe("buildAmounts", () => {
   it("shows the discount, free shipping and nothing on delivery for prepaid", () => {

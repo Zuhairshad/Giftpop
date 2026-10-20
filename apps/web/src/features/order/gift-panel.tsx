@@ -2,57 +2,53 @@ import { snapshotsToSceneDocs } from "@giftpop/contracts";
 import type { PublicOrderView } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
-import { CARD_TITLE, META_LABEL, WELL } from "./ui";
+import { ItemList } from "./item-list";
+import { CARD, CARD_TITLE, META_LABEL, WELL } from "./ui";
 
 import { SafeScene } from "@/features/builder/questions/safe-scene";
 
-/** The gift drawn from the order's frozen snapshots, with its item list. */
+/** The gift drawn from the order's frozen snapshots, with its item list and card. */
 export function GiftPanel({
   view,
 }: {
   view: Pick<PublicOrderView, "design" | "packaging" | "items">;
 }): ReactElement {
   const { packaging, items } = snapshotsToSceneDocs(view);
+  const byId = new Map(items.map((item) => [item.id, item]));
   const { cardMessage, recipientName, itemNames } = view.design.personalisation;
+  const recipient = recipientName.trim();
+  const message = cardMessage.trim();
+  const rows = view.items.map((item) => ({
+    key: item.itemId,
+    name: item.name,
+    qty: item.qty,
+    item: byId.get(item.itemId),
+    customName: itemNames[item.itemId]?.trim() || null,
+  }));
+
   return (
-    <section aria-labelledby="gift-heading" className="space-y-4">
-      <h2 id="gift-heading" className={CARD_TITLE}>
+    <section aria-labelledby="gift-heading" className={`${CARD} space-y-5`}>
+      <h2 id="gift-heading" className={`${CARD_TITLE} wrap-anywhere`}>
         Your {view.packaging.name}
       </h2>
       <div className={`${WELL} p-4 sm:p-6`}>
-        <div className="mx-auto w-[min(100%,28rem)] md:w-full">
+        <div className="mx-auto w-[min(100%,20rem)]">
           <SafeScene design={view.design} packaging={packaging} items={items} />
         </div>
       </div>
-      <ul className="space-y-1.5">
-        {view.items.map((item) => {
-          const named = itemNames[item.itemId]?.trim();
-          return (
-            <li key={item.itemId} className="flex flex-wrap items-baseline gap-x-2">
-              <span className="font-semibold wrap-anywhere">
-                {item.qty} &times; {item.name}
-              </span>
-              {named ? (
-                <span className="text-sm text-muted wrap-anywhere">
-                  named &ldquo;{named}&rdquo;
-                </span>
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
-      {recipientName.trim() || cardMessage.trim() ? (
-        <dl className="space-y-3 rounded-lg bg-surface p-4 shadow-hairline">
-          {recipientName.trim() ? (
+      <ItemList rows={rows} />
+      {recipient || message ? (
+        <dl className="border-border space-y-3 border-t pt-4">
+          {recipient ? (
             <div>
               <dt className={META_LABEL}>For</dt>
-              <dd className="wrap-anywhere">{recipientName}</dd>
+              <dd className="wrap-anywhere">{recipient}</dd>
             </div>
           ) : null}
-          {cardMessage.trim() ? (
+          {message ? (
             <div>
               <dt className={META_LABEL}>Card message</dt>
-              <dd className="wrap-anywhere whitespace-pre-line">{cardMessage}</dd>
+              <dd className="wrap-anywhere whitespace-pre-line">{message}</dd>
             </div>
           ) : null}
         </dl>

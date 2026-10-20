@@ -4,12 +4,13 @@ import type { OrderNumber, PublicOrderView } from "@giftpop/contracts";
 import { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 
-import { browserSession, readHandoff, writeHandoff } from "./handoff";
+import { browserSession, readHandoffEntry, writeHandoff } from "./handoff";
 import { NOT_FOUND_MESSAGE, describeLookupError, lookupOrder } from "./lookup";
 import { LookupForm } from "./lookup-form";
 import { OrderView } from "./order-view";
 import { PageHeading } from "./page-heading";
 import { StatePanel } from "./state-panel";
+import { orderEyebrow } from "./thank-you";
 
 import { Button } from "@/components/ui";
 
@@ -23,11 +24,14 @@ type State =
 export function OrderScreen({ orderNumber }: { orderNumber: OrderNumber }): ReactElement {
   const [state, setState] = useState<State>({ phase: "loading" });
   const [attempt, setAttempt] = useState(0);
+  const [firstName, setFirstName] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     async function load(): Promise<void> {
-      const contact = readHandoff(orderNumber, browserSession());
+      const entry = readHandoffEntry(orderNumber, browserSession());
+      setFirstName(entry?.firstName ?? null);
+      const contact = entry?.contact ?? null;
       if (!contact) {
         setState({ phase: "form" });
         return;
@@ -52,7 +56,10 @@ export function OrderScreen({ orderNumber }: { orderNumber: OrderNumber }): Reac
 
   return (
     <section className="mx-auto w-full max-w-5xl space-y-6 sm:space-y-8">
-      <PageHeading title="Your order" eyebrow="Made by hand, just for you" />
+      <PageHeading
+        title="Your order"
+        eyebrow={orderEyebrow(state.phase === "ready" ? state.view.status : null, firstName)}
+      />
 
       {state.phase === "loading" ? (
         <StatePanel tone="loading">Loading your order…</StatePanel>

@@ -14,6 +14,22 @@ export type AmountsView = {
   dueOnDelivery: { label: string; minor: number } | null;
 };
 
+/**
+ * The line under "Amount to pay now". `money` formats minor units; the numbers are the quote's.
+ * Cash on delivery: the advance and what is left for the courier. Pay now: the full amount.
+ */
+export function dueNowNote(
+  quote: Pick<Quote, "dueOnDeliveryMinor" | "discountMinor">,
+  money: (minor: number) => string,
+): string {
+  if (quote.dueOnDeliveryMinor > 0) {
+    return `This is the advance. You pay the other ${money(quote.dueOnDeliveryMinor)} when it is delivered.`;
+  }
+  return quote.discountMinor > 0
+    ? `The full amount, with ${money(quote.discountMinor)} off for paying now.`
+    : "The full amount.";
+}
+
 /** Arranges the API's quote for display. No arithmetic: every number comes from the quote. */
 export function buildAmounts(quote: Quote, mode: PaymentMode): AmountsView {
   const rows: AmountRow[] = [{ label: "Gift", minor: quote.goodsMinor, kind: "plain" }];

@@ -15,8 +15,8 @@ export const CARD_TITLE = "font-display text-2xl leading-tight font-bold trackin
 /** The small label above a value. */
 export const META_LABEL = "text-sm font-medium text-muted";
 
-/** The warm well behind illustrations and highlighted amounts. */
-export const WELL = "bg-warm rounded-lg";
+/** The warm well behind illustrations and highlighted amounts (12px: it sits inside a 20px card). */
+export const WELL = "bg-warm rounded-md";
 
 /** Extra classes that make `<Button variant="ghost">` a secondary button on a white hairline. */
 export const SECONDARY = "bg-surface shadow-hairline hover:bg-warm";
