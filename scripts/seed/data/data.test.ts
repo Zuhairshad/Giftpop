@@ -112,6 +112,9 @@ describe("packagings", () => {
     const box = PACKAGINGS.find((p) => p.id === BOX_ID);
     expect(bouquet).toMatchObject({ layoutType: "bouquet-fan", minItems: 6, maxItems: 10 });
     expect(box).toMatchObject({ layoutType: "box-grid", minItems: 4, maxItems: 9 });
+    expect(PACKAGINGS.find((p) => p.slug === "round-hat-box")).toMatchObject({
+      layoutType: "round-box",
+    });
   });
 
   it("group every packaging by kind", () => {
