@@ -1,6 +1,7 @@
 import type { Item } from "@giftpop/contracts";
 import Link from "next/link";
 
+import { pickerStyleBadge, shapeLabel } from "../lib/item-labels";
 import { itemsQueryString, pageCount } from "../lib/items-query";
 import type { ItemsUrlState } from "../lib/items-query";
 
@@ -59,11 +60,12 @@ export function ItemsTable({ items, page, pageSize, total, filters }: ItemsTable
                 <TableCell>
                   <div className="flex items-center gap-3 font-medium">
                     <Thumb image={item.image} color={item.color} label={item.name} />
-                    {item.name}
+                    <span className="wrap-anywhere">{item.name}</span>
+                    <OfferBadge item={item} />
                   </div>
                 </TableCell>
                 <TableCell>{item.category}</TableCell>
-                <TableCell className="capitalize">{item.shape.replace("-", " ")}</TableCell>
+                <TableCell>{shapeLabel(item.shape)}</TableCell>
                 <TableCell>{item.sizeUnits}</TableCell>
                 <TableCell>
                   <Badge variant={item.active ? "default" : "secondary"}>
@@ -129,5 +131,16 @@ function PageLink({
     <Link href={href} className={className}>
       {children}
     </Link>
+  );
+}
+
+/** Marks items offered in the written list; picture-grid items, the default, get no badge. */
+function OfferBadge({ item }: { item: Item }) {
+  const label = pickerStyleBadge(item.pickerStyle);
+  if (!label) return null;
+  return (
+    <Badge variant="outline" className="font-normal">
+      {label}
+    </Badge>
   );
 }
