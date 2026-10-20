@@ -13,6 +13,13 @@ import {
   PaymentStatusSchema,
 } from "./payment";
 import { QuoteSchema } from "./pricing";
+import {
+  ORDER_PHONE_PATTERN,
+  addressLineText,
+  holdsOnly,
+  nameText,
+  postalCodeText,
+} from "./text-rules";
 
 /** Crockford base32: digits and letters without I, L, O, U. */
 export const ORDER_NUMBER_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
@@ -41,6 +48,35 @@ export const AddressSchema = z.object({
   postalCode: z.string().trim().max(20).optional(),
 });
 export type Address = z.infer<typeof AddressSchema>;
+
+const onlyHolding = (filter: (value: string) => string, what: string) =>
+  [(value: string) => holdsOnly(filter, value), `${what} has characters it cannot hold`] as const;
+
+/** What a new order accepts. Stored orders keep the looser schemas above, so old orders still read. */
+export const OrderContactSchema = ContactSchema.extend({
+  name: ContactSchema.shape.name.refine(...onlyHolding(nameText, "Name")),
+  phone: z
+    .string()
+    .trim()
+    .regex(ORDER_PHONE_PATTERN, "Phone can hold digits and spaces after the dial code only"),
+});
+
+export const OrderAddressSchema = AddressSchema.extend({
+  line1: AddressSchema.shape.line1.refine(...onlyHolding(addressLineText, "Address line 1")),
+  line2: AddressSchema.shape.line2.refine(
+    (value) => value === undefined || holdsOnly(addressLineText, value),
+    "Address line 2 has characters it cannot hold",
+  ),
+  city: AddressSchema.shape.city.refine(...onlyHolding(nameText, "City")),
+  region: AddressSchema.shape.region.refine(
+    (value) => value === undefined || holdsOnly(nameText, value),
+    "Region has characters it cannot hold",
+  ),
+  postalCode: AddressSchema.shape.postalCode.refine(
+    (value) => value === undefined || holdsOnly(postalCodeText, value),
+    "Postal code has characters it cannot hold",
+  ),
+});
 
 /** Frozen copy of an item as it was when ordered. Later catalog edits never touch it. */
 export const ItemSnapshotSchema = z.object({
@@ -122,8 +158,8 @@ export type Order = z.infer<typeof OrderSchema>;
 export const CreateOrderRequestSchema = z.object({
   country: CountryCodeSchema,
   design: DesignSchema,
-  contact: ContactSchema,
-  address: AddressSchema,
+  contact: OrderContactSchema,
+  address: OrderAddressSchema,
   paymentMode: PaymentModeSchema,
 });
 export type CreateOrderRequest = z.infer<typeof CreateOrderRequestSchema>;

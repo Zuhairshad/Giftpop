@@ -4,6 +4,7 @@ import {
   money,
   PAYMENT_POLICY,
   validateDesign,
+  validateOrderPersonalisation,
   type CountryCatalog,
   type CountryCode,
   type Design,
@@ -23,11 +24,13 @@ export interface DesignContext {
  * Loads a live country and what it sells, from the database, and checks the
  * design against it. 404 for an unknown country, 422 if it is not live,
  * 422 DESIGN_INVALID (with every problem) if the design cannot be made.
- * Shared by the quote and save routes so both enforce the same rules.
+ * Shared by the quote and save routes so both enforce the same rules; an order
+ * (`forOrder`) also needs the recipient, card message and item names filled in.
  */
 export async function loadValidatedDesign(
   code: CountryCode,
   design: Design,
+  options: { forOrder?: boolean } = {},
 ): Promise<DesignContext> {
   const country = await CountryModel.findOne({ code }).lean<CountryDoc>();
   if (!country) throw new AppError("NOT_FOUND", 404, `No country with code ${code}`);
@@ -57,7 +60,10 @@ export async function loadValidatedDesign(
       }
     }
   }
-  const problems = validateDesign(design, catalog);
+  const problems = [
+    ...validateDesign(design, catalog),
+    ...(options.forOrder ? validateOrderPersonalisation(design, catalog) : []),
+  ];
   if (problems.length > 0) {
     throw new AppError(
       "DESIGN_INVALID",

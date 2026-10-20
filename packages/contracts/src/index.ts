@@ -18,3 +18,4 @@ export * from "./partner";
 export * from "./payment";
 export * from "./pricing";
 export * from "./template";
+export * from "./text-rules";

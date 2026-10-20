@@ -7,6 +7,7 @@ import {
   RECIPIENT_NAME_MAX_LENGTH,
 } from "./design";
 import type { Design } from "./design";
+import { holdsOnly, nameText } from "./text-rules";
 
 export const DESIGN_PROBLEM_CODES = [
   "TOO_FEW_ITEMS",
@@ -15,6 +16,8 @@ export const DESIGN_PROBLEM_CODES = [
   "ITEM_UNAVAILABLE",
   "OUT_OF_STOCK",
   "TEXT_TOO_LONG",
+  "TEXT_REQUIRED",
+  "TEXT_INVALID",
   "PACKAGING_UNAVAILABLE",
 ] as const;
 export const DesignProblemCodeSchema = z.enum(DESIGN_PROBLEM_CODES);
@@ -134,5 +137,61 @@ export function validateDesign(design: Design, catalog: CountryCatalog): DesignP
     }
   }
 
+  return problems;
+}
+
+/**
+ * Extra rules for placing an order, on top of `validateDesign`: the recipient, the card
+ * message and a name on every personalizable item are required, and names hold letters only.
+ * Quotes and saved designs skip these, so drafts, share links and templates keep working.
+ */
+export function validateOrderPersonalisation(
+  design: Design,
+  catalog: CountryCatalog,
+): DesignProblem[] {
+  const problems: DesignProblem[] = [];
+  const { cardMessage, recipientName, itemNames } = design.personalisation;
+
+  if (!recipientName.trim()) {
+    problems.push({
+      code: "TEXT_REQUIRED",
+      field: "recipientName",
+      message: "Enter who the gift is for.",
+    });
+  } else if (!holdsOnly(nameText, recipientName)) {
+    problems.push({
+      code: "TEXT_INVALID",
+      field: "recipientName",
+      message: "The recipient name can hold letters only.",
+    });
+  }
+  if (!cardMessage.trim()) {
+    problems.push({
+      code: "TEXT_REQUIRED",
+      field: "cardMessage",
+      message: "Write a card message.",
+    });
+  }
+
+  for (const line of design.items) {
+    const entry = catalog.items.find((i) => i.item.id === line.itemId);
+    if (!entry?.item.personalizable) continue;
+    const name = itemNames[line.itemId] ?? "";
+    if (!name.trim()) {
+      problems.push({
+        code: "TEXT_REQUIRED",
+        itemId: line.itemId,
+        field: "itemNames",
+        message: `Add a name for ${entry.item.name}.`,
+      });
+    } else if (!holdsOnly(nameText, name)) {
+      problems.push({
+        code: "TEXT_INVALID",
+        itemId: line.itemId,
+        field: "itemNames",
+        message: `The name on ${entry.item.name} can hold letters only.`,
+      });
+    }
+  }
   return problems;
 }

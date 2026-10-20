@@ -118,7 +118,9 @@ function assertCanOrder(country: CountryDoc, request: CreateOrderRequest): void 
  * come only from the database. A duplicate order number retries the transaction.
  */
 export async function createOrder(request: CreateOrderRequest): Promise<CreateOrderResponse> {
-  const context = await loadValidatedDesign(request.country, request.design);
+  const context = await loadValidatedDesign(request.country, request.design, {
+    forOrder: true,
+  });
   const { country } = context;
   assertCanOrder(country, request);
 

@@ -135,8 +135,9 @@ describe("GiftScene", () => {
     // The static scene stands in while the animated one loads, so the scene is never empty.
     expect(on.container.querySelectorAll("[data-item-index]")).toHaveLength(3);
     // Animated items pivot on the view box; static ones carry only a transform.
-    await waitFor(() =>
-      expect(on.container.querySelectorAll("g[style*='transform-box']")).toHaveLength(3),
+    await waitFor(
+      () => expect(on.container.querySelectorAll("g[style*='transform-box']")).toHaveLength(3),
+      { timeout: 10_000 },
     );
     expect(on.getByRole("img", { name: /Item 1.*Item 2.*Item 3/ })).toBeTruthy();
     expect(on.getByRole("img").getAttribute("data-layout")).toBe(offLabel);

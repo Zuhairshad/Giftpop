@@ -27,13 +27,15 @@ describe("validateDesign: a valid design", () => {
     expect(validateDesign(makeDesign(), makeCatalog())).toEqual([]);
   });
 
-  it("knows the seven problem codes", () => {
+  it("knows the nine problem codes", () => {
     expect([...DESIGN_PROBLEM_CODES].sort()).toEqual(
       [
         "ITEM_UNAVAILABLE",
         "OUT_OF_STOCK",
         "OVER_CAPACITY",
         "PACKAGING_UNAVAILABLE",
+        "TEXT_INVALID",
+        "TEXT_REQUIRED",
         "TEXT_TOO_LONG",
         "TOO_FEW_ITEMS",
         "TOO_MANY_ITEMS",

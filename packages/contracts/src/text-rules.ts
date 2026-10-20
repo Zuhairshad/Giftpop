@@ -1,0 +1,28 @@
+/** What each kind of text field may hold. The web filters typing with these; the API rejects the rest. */
+
+/** Letters (any script), marks, spaces and . ' - (names, cities, regions). */
+export function nameText(value: string): string {
+  return value.replace(/[^\p{L}\p{M} .'’-]/gu, "");
+}
+
+export function digitsOnly(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+/** Letters, digits, space and hyphen (UK and CA postcodes mix letters and digits). */
+export function postalCodeText(value: string): string {
+  return value.replace(/[^\p{L}\p{N} -]/gu, "");
+}
+
+/** Letters, digits, space and , . # / - ' & for street lines. */
+export function addressLineText(value: string): string {
+  return value.replace(/[^\p{L}\p{M}\p{N} ,.#/'’&-]/gu, "");
+}
+
+/** True when the filter would leave `value` unchanged. */
+export function holdsOnly(filter: (value: string) => string, value: string): boolean {
+  return filter(value) === value;
+}
+
+/** Optional `+`, then digits and spaces: the dial code, a space, the number. */
+export const ORDER_PHONE_PATTERN = /^\+?[0-9 ]{6,20}$/;
