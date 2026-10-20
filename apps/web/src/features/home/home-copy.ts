@@ -1,14 +1,10 @@
 import type { CountryCode, PublicCountry } from "@giftpop/contracts";
 
-/** The h1, split so the country name can wear the lavender marker. `highlight` is null on the generic home. */
-export type HomeHeadline = { before: string; highlight: string | null };
-
 /*
  * Eyebrow, h1, lede and ticks each say something different: a feeling, what we sell (and where),
  * how it works, and the facts. "Handmade" lives in the h1 and "Made by hand" only as a tick.
  */
-const GENERIC_HEADLINE = "Handmade gift boxes & bouquets, delivered";
-const HEADLINE_LEAD = "Handmade gift boxes & bouquets in ";
+export const HOME_HEADLINE = "Handmade gift boxes & bouquets, delivered";
 
 export const HOME_EYEBROW = "a little joy in a box";
 export const HOME_LEDE =
@@ -20,13 +16,6 @@ export function countryDisplayName(
   country: Pick<PublicCountry, "name"> | null,
 ): string {
   return country?.name ?? code;
-}
-
-/** `/` has no country yet (`name` is undefined); `/<cc>` names the country from its document. */
-export function homeHeadline(name?: string): HomeHeadline {
-  return name
-    ? { before: HEADLINE_LEAD, highlight: name }
-    : { before: GENERIC_HEADLINE, highlight: null };
 }
 
 /** How we work, true in every country. */
@@ -61,14 +50,14 @@ export type HomeMeta = { title: string; description: string; path: string };
 export function homeMeta(input: { code?: CountryCode; name?: string }): HomeMeta {
   if (!input.code || !input.name) {
     return {
-      title: GENERIC_HEADLINE,
+      title: HOME_HEADLINE,
       description:
         "Pick the box, fill it with things they love, add a name. Every gift is made and packed by hand. Choose your country to start.",
       path: "/",
     };
   }
   return {
-    title: `${HEADLINE_LEAD}${input.name}`,
+    title: `Handmade gift boxes & bouquets in ${input.name}`,
     description: `Build a handmade gift box or bouquet to send in ${input.name}. Pick the box, choose what goes inside, add a name. We make it by hand and send it.`,
     path: `/${input.code.toLowerCase()}`,
   };

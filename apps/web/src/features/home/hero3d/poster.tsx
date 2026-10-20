@@ -14,7 +14,7 @@ const FOREGROUND_CLASS = {
 
 /**
  * The resting state of the hero as one SVG: lid lifted with its bow, ribbon tails, gifts in the
- * box, gifts floating out, the sticker topper, the "For Sara" tag and sparkles. It is the still
+ * box, gifts floating out, the sticker topper, the "For you" tag and sparkles. It is the still
  * shown for reduced motion, no WebGL or an error. The pink backdrop and the soft pool of shadow
  * on the floor are always drawn (they are the empty stage the 3D box lands on); `foreground`
  * shows or hides everything else.

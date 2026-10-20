@@ -138,7 +138,7 @@ export const GIFT_TAG = {
   y: 548,
   rotDeg: -6,
   scale: 0.8,
-  text: "For Sara",
+  text: "For you",
   width: 150,
 } as const;
 

@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import {
   HomeScreen,
   countryDisplayName,
-  homeHeadline,
   homeMetadata,
   homeTicks,
 } from "@/features/home";
@@ -30,7 +29,6 @@ export default async function CountryHome({ params }: CountryHomeProps) {
   const country = await fetchCountry(code);
   return (
     <HomeScreen
-      headline={homeHeadline(countryDisplayName(code, country))}
       ticks={homeTicks(country)}
       buildHref={`${countryPath(code)}/build`}
     />

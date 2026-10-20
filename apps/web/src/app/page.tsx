@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { HomeScreen, homeHeadline, homeMetadata, homeTicks } from "@/features/home";
+import { HomeScreen, homeMetadata, homeTicks } from "@/features/home";
 
 export const metadata: Metadata = homeMetadata();
 
@@ -8,7 +8,6 @@ export const metadata: Metadata = homeMetadata();
 export default function Home() {
   return (
     <HomeScreen
-      headline={homeHeadline()}
       ticks={homeTicks(null)}
       buildHref="/countries"
       chooseCountryHref="/countries"

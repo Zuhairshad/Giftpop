@@ -1,12 +1,11 @@
 import Link from "next/link";
 
 import { HeroStage } from "./hero3d";
-import { HOME_EYEBROW, HOME_LEDE, type HomeHeadline } from "./home-copy";
+import { HOME_EYEBROW, HOME_HEADLINE, HOME_LEDE } from "./home-copy";
 
 import { ButtonLink } from "@/components/ui";
 
 type HomeScreenProps = {
-  headline: HomeHeadline;
   ticks: string[];
   /** `/<cc>/build`, or `/countries` when no country is chosen yet. */
   buildHref: string;
@@ -18,12 +17,6 @@ type HomeScreenProps = {
 const HIDE_EYEBROW = "[@media(max-height:700px)]:hidden";
 const HIDE_LEDE = "[@media(max-height:620px)]:hidden";
 const HIDE_TICKS = "[@media(max-height:600px)]:hidden";
-
-/** Ink on a lavender highlighter stripe (a touch deeper than the chip, so it reads on cream). */
-const MARKER = "color-mix(in srgb, var(--gp-lavender-deep) 28%, var(--gp-lavender))";
-const MARKER_STYLE = {
-  backgroundImage: `linear-gradient(transparent 62%, ${MARKER} 62%, ${MARKER} 92%, transparent 92%)`,
-};
 
 function CheckIcon() {
   return (
@@ -66,7 +59,7 @@ function ArrowIcon() {
  * Desktop (768px and up): copy 5fr and scene 7fr, the copy block vertically centred.
  * Server-rendered; the scene is `HeroStage`, which loads its own client code.
  */
-export function HomeScreen({ headline, ticks, buildHref, chooseCountryHref }: HomeScreenProps) {
+export function HomeScreen({ ticks, buildHref, chooseCountryHref }: HomeScreenProps) {
   return (
     <div data-viewport-fit="home" className="relative isolate h-full min-h-0 overflow-hidden">
       {/* Feathered pink and lavender light pools (globals.css), centred on the scene. */}
@@ -83,15 +76,7 @@ export function HomeScreen({ headline, ticks, buildHref, chooseCountryHref }: Ho
             {HOME_EYEBROW}
           </p>
           <h1 className="font-display mt-3.5 mb-3 text-[clamp(34px,9.6vw,44px)] leading-[1.02] font-bold tracking-[-1.6px] text-balance wrap-anywhere md:text-[clamp(44px,4.2vw,62px)] md:tracking-[-2.6px] [@media(max-height:700px)]:mt-0">
-            {headline.before}
-            {headline.highlight ? (
-              <span
-                style={MARKER_STYLE}
-                className="rounded-xs px-[0.06em] [box-decoration-break:clone]"
-              >
-                {headline.highlight}
-              </span>
-            ) : null}
+            {HOME_HEADLINE}
           </h1>
           <p
             className={`text-muted max-w-[30ch] text-[17px] leading-[1.45] md:max-w-[34ch] md:text-xl md:tracking-[-0.125px] ${HIDE_LEDE}`}

@@ -6,7 +6,7 @@ import {
   deliveryTick,
   HOME_EYEBROW,
   HOME_LEDE,
-  homeHeadline,
+  HOME_HEADLINE,
   homeMeta,
   homeTicks,
 } from "./home-copy";
@@ -23,22 +23,12 @@ function country(over: { min?: number; max?: number; modes?: ("prepaid" | "cod")
 }
 
 describe("homeHeadline", () => {
-  it("names the country and marks it for the highlight", () => {
-    expect(homeHeadline("Pakistan")).toEqual({
-      before: "Handmade gift boxes & bouquets in ",
-      highlight: "Pakistan",
-    });
-  });
-
-  it("is the generic line, with nothing highlighted, when no country is chosen", () => {
-    expect(homeHeadline()).toEqual({
-      before: "Handmade gift boxes & bouquets, delivered",
-      highlight: null,
-    });
+  it("is the same in every country and names none", () => {
+    expect(HOME_HEADLINE).not.toMatch(/ in /);
   });
 
   it("never says the same thing twice across eyebrow, headline, lede and ticks", () => {
-    const lines = [HOME_EYEBROW, homeHeadline().before, HOME_LEDE, ...homeTicks(country())];
+    const lines = [HOME_EYEBROW, HOME_HEADLINE, HOME_LEDE, ...homeTicks(country())];
     const handmade = lines.filter((line) => /hand\s*made|made by hand/i.test(line));
     expect(handmade).toHaveLength(2); // the h1 ("Handmade ...") and one factual tick
     expect(HOME_EYEBROW).not.toMatch(/hand/i);
@@ -103,7 +93,7 @@ describe("homeMeta and homeMetadata", () => {
   });
 
   it("is generic on `/`", () => {
-    expect(homeMeta({})).toMatchObject({ path: "/", title: homeHeadline().before });
+    expect(homeMeta({})).toMatchObject({ path: "/", title: HOME_HEADLINE });
     expect(homeMetadata().alternates?.canonical).toBe("/");
   });
 
