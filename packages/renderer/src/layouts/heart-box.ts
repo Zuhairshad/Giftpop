@@ -37,6 +37,14 @@ const FRONT_MAX_STEP = 120;
 const FRONT_Y = { edge: 548, centre: 575 };
 const ARC_Y = { edge: 545, centre: 558 };
 const DIP_GAP = 45;
+const ARC_MAX_STEP = 110;
+const ARC_TOTAL_SPAN = 240;
+const BACK_SCALE = 0.94;
+const MAX_LEAN = 8;
+const X_JITTER = 8;
+const Y_JITTER = 6;
+const TURN_JITTER = 4;
+const FRONT_Z = 100;
 
 function inside(x: number, y: number): boolean {
   if (y > HEART_BOX_OPENING.bottomY - EDGE_MARGIN) return false;
@@ -115,34 +123,34 @@ export const heartBox: LayoutFn = ({ design }) => {
     let x: number;
     let y: number;
     if (isBack) {
-      x = awayFromDip(spread(backRank++, back.size, BACK_SPAN.min, BACK_SPAN.max)) + jitter(rng, 8);
-      y = Math.min(lobeTop(x) + BACK_DEPTH, BACK_MAX_Y) + jitter(rng, 6);
+      x = awayFromDip(spread(backRank++, back.size, BACK_SPAN.min, BACK_SPAN.max)) + jitter(rng, X_JITTER);
+      y = Math.min(lobeTop(x) + BACK_DEPTH, BACK_MAX_Y) + jitter(rng, Y_JITTER);
     } else {
       const rank = frontRank++;
       const mid = (frontSize - 1) / 2;
       if (back.size === 0) {
         // Up to three items: one slight arc, ends higher than the middle.
-        const step = frontSize === 1 ? 0 : Math.min(110, 240 / (frontSize - 1));
-        x = HEART_BOX_OPENING.cx + (rank - mid) * step + jitter(rng, 8);
+        const step = frontSize === 1 ? 0 : Math.min(ARC_MAX_STEP, ARC_TOTAL_SPAN / (frontSize - 1));
+        x = HEART_BOX_OPENING.cx + (rank - mid) * step + jitter(rng, X_JITTER);
         const t = frontSize === 1 ? 1 : 1 - Math.abs(rank - mid) / mid;
-        y = ARC_Y.edge + (ARC_Y.centre - ARC_Y.edge) * t + jitter(rng, 6);
+        y = ARC_Y.edge + (ARC_Y.centre - ARC_Y.edge) * t + jitter(rng, Y_JITTER);
       } else {
         const step = Math.min(FRONT_MAX_STEP, (2 * FRONT_HALF_SPAN) / Math.max(1, frontSize - 1));
         const offset = (rank - mid) * step;
-        x = HEART_BOX_OPENING.cx + offset + jitter(rng, 8);
+        x = HEART_BOX_OPENING.cx + offset + jitter(rng, X_JITTER);
         const t = 1 - Math.min(1, Math.abs(offset) / FRONT_HALF_SPAN);
-        y = FRONT_Y.edge + (FRONT_Y.centre - FRONT_Y.edge) * t + jitter(rng, 6);
+        y = FRONT_Y.edge + (FRONT_Y.centre - FRONT_Y.edge) * t + jitter(rng, Y_JITTER);
       }
     }
     const safe = pullInside(x, y);
-    const lean = ((safe.x - HEART_BOX_OPENING.cx) / HEART_BOX_OPENING.halfWidth) * 8;
+    const lean = ((safe.x - HEART_BOX_OPENING.cx) / HEART_BOX_OPENING.halfWidth) * MAX_LEAN;
     return {
       itemIndex: index,
       x: round2(clampToScene(safe.x)),
       y: round2(clampToScene(safe.y)),
-      rotation: round2(lean + jitter(rng, 4)),
-      scale: round2(isBack ? scale * 0.94 : scale),
-      z: (isBack ? 0 : 100) + index,
+      rotation: round2(lean + jitter(rng, TURN_JITTER)),
+      scale: round2(isBack ? scale * BACK_SCALE : scale),
+      z: (isBack ? 0 : FRONT_Z) + index,
     };
   });
 };

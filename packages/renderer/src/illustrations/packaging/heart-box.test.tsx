@@ -55,6 +55,28 @@ describe("heart box art", () => {
     }
   });
 
+  it("has no NaN or undefined for dark and light colours", () => {
+    for (const c of ["#101010", "#ffffff"]) {
+      for (const C of [Back, Front]) {
+        expect(renderToStaticMarkup(<C wrapper={c} ribbon={c} />)).not.toMatch(/NaN|undefined/);
+      }
+    }
+  });
+
+  it("keeps back and front ids unique across two separate copies", () => {
+    for (const C of [Back, Front]) {
+      const out = renderToStaticMarkup(
+        <svg>
+          <C wrapper={WRAP} ribbon={RIBBON} />
+          <C wrapper={WRAP} ribbon={RIBBON} />
+        </svg>,
+      );
+      const all = ids(out);
+      expect(all.length).toBeGreaterThan(0);
+      expect(new Set(all).size).toBe(all.length);
+    }
+  });
+
   it("follows the wrapper and ribbon colours", () => {
     const a = renderToStaticMarkup(<Front wrapper={WRAP} ribbon={RIBBON} />);
     const b = renderToStaticMarkup(<Front wrapper="#334455" ribbon="#aa2200" />);
