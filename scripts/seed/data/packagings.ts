@@ -1,6 +1,10 @@
 import type { Packaging } from "@giftpop/contracts";
 
-/** Fixed ids so re-running the seed updates the same documents. */
+/**
+ * DEMO DATA, replaced by the owner in the admin app. Fixed ids so re-running the seed updates the
+ * same documents. Capacities are checked in data.test.ts against the largest item size (3 units):
+ * any `minItems` items always fit, and `maxItems` small items fit in every live country.
+ */
 export const BOUQUET_ID = "65a000000000000000000001";
 export const BOX_ID = "65a000000000000000000002";
 export const HAT_BOX_ID = "65a000000000000000000003";
@@ -17,8 +21,8 @@ export const PACKAGINGS: Packaging[] = [
     layoutType: "bouquet-fan",
     minItems: 6,
     maxItems: 10,
-    // The 10 smallest items take 11 units; any 6 items take at most 14.
-    capacityUnits: 16,
+    // Ten 1-unit items take 10 units; six of the largest (3-unit) items take 18.
+    capacityUnits: 18,
     wrapperColors: [
       { name: "Blush pink", hex: "#f9c6d3" },
       { name: "Kraft", hex: "#c8a27a" },
@@ -45,7 +49,7 @@ export const PACKAGINGS: Packaging[] = [
     layoutType: "box-grid",
     minItems: 4,
     maxItems: 9,
-    // The 9 smallest items take 9 units; any 4 items take at most 11.
+    // Nine 1-unit items take 9 units; four 3-unit items take 12.
     capacityUnits: 18,
     wrapperColors: [
       { name: "Blush pink", hex: "#f9c6d3" },
@@ -70,8 +74,8 @@ export const PACKAGINGS: Packaging[] = [
     layoutType: "round-box",
     minItems: 5,
     maxItems: 8,
-    // The 8 smallest items take 8 units; any 5 items take at most 12.
-    capacityUnits: 14,
+    // Eight 1-unit items take 8 units; five 3-unit items take 15.
+    capacityUnits: 15,
     wrapperColors: [
       { name: "Blush pink", hex: "#f9c6d3" },
       { name: "Noir", hex: "#2b1e33" },
@@ -95,7 +99,7 @@ export const PACKAGINGS: Packaging[] = [
     layoutType: "basket",
     minItems: 6,
     maxItems: 9,
-    // The 9 smallest items take 9 units; any 6 items take at most 14.
+    // Nine 1-unit items take 9 units; six 3-unit items take 18.
     capacityUnits: 20,
     wrapperColors: [
       { name: "Blush pink", hex: "#f9c6d3" },
@@ -120,7 +124,7 @@ export const PACKAGINGS: Packaging[] = [
     layoutType: "mug-bouquet",
     minItems: 3,
     maxItems: 5,
-    // The 5 smallest items take 5 units; any 3 items take at most 8.
+    // Five 1-unit items take 5 units; three 3-unit items take 9.
     capacityUnits: 9,
     wrapperColors: [
       { name: "Blush pink", hex: "#f9c6d3" },
