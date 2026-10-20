@@ -10,6 +10,11 @@ export const BOX_ID = "65a000000000000000000002";
 export const HAT_BOX_ID = "65a000000000000000000003";
 export const BASKET_ID = "65a000000000000000000004";
 export const MUG_ID = "65a000000000000000000005";
+export const HEART_BOX_ID = "65a000000000000000000006";
+export const FRAMED_GIFT_ID = "65a000000000000000000007";
+export const SNACK_HAMPER_ID = "65a000000000000000000008";
+export const PHOTO_BOUQUET_ID = "65a000000000000000000009";
+export const GIFT_TRAY_ID = "65a00000000000000000000a";
 
 export const PACKAGINGS: Packaging[] = [
   {
@@ -137,5 +142,130 @@ export const PACKAGINGS: Packaging[] = [
     layers: {},
     active: true,
     sortOrder: 5,
+  },
+  {
+    id: HEART_BOX_ID,
+    slug: "heart-box",
+    name: "Heart box",
+    description: "A heart-shaped box with the gifts nestled inside. Pick 5 to 8 items.",
+    kind: "box",
+    layoutType: "round-box",
+    minItems: 5,
+    maxItems: 8,
+    // Eight 1-unit items take 8 units; five 3-unit items take 15.
+    capacityUnits: 15,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Ruby red", hex: "#b3203f" },
+      { name: "Cream", hex: "#f3ead8" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "White", hex: "#ffffff" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 6,
+  },
+  {
+    id: FRAMED_GIFT_ID,
+    slug: "framed-gift",
+    name: "Framed gift",
+    description: "A framed keepsake with small gifts set around it. Pick 3 to 6 items.",
+    kind: "box",
+    layoutType: "box-grid",
+    minItems: 3,
+    maxItems: 6,
+    // Six 1-unit items take 6 units; three 3-unit items take 9.
+    capacityUnits: 10,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Cream", hex: "#f3ead8" },
+      { name: "Charcoal", hex: "#3b3b3f" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "White", hex: "#ffffff" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 7,
+  },
+  {
+    id: SNACK_HAMPER_ID,
+    slug: "snack-hamper",
+    name: "Snack hamper",
+    description: "A tray-style hamper packed with snacks and treats. Pick 6 to 10 items.",
+    kind: "box",
+    layoutType: "box-grid",
+    minItems: 6,
+    maxItems: 10,
+    // Ten 1-unit items take 10 units; six 3-unit items take 18.
+    capacityUnits: 20,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Kraft", hex: "#c8a27a" },
+      { name: "Sage", hex: "#b7c9b0" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "Forest", hex: "#2f5d46" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 8,
+  },
+  {
+    id: PHOTO_BOUQUET_ID,
+    slug: "photo-bouquet",
+    name: "Photo bouquet",
+    description: "A bouquet with a photo card tucked in the middle. Pick 5 to 8 items.",
+    kind: "bouquet",
+    layoutType: "bouquet-fan",
+    minItems: 5,
+    maxItems: 8,
+    // Eight 1-unit items take 8 units; five 3-unit items take 15.
+    capacityUnits: 16,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Ivory", hex: "#f7f1e5" },
+      { name: "Lavender", hex: "#c9b2f2" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "White", hex: "#ffffff" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 9,
+  },
+  {
+    id: GIFT_TRAY_ID,
+    slug: "gift-tray",
+    name: "Gift tray",
+    description: "A serving tray laid out with gifts, wrapped in clear film. Pick 4 to 7 items.",
+    kind: "basket",
+    layoutType: "basket",
+    minItems: 4,
+    maxItems: 7,
+    // Seven 1-unit items take 7 units; four 3-unit items take 12.
+    capacityUnits: 14,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Kraft", hex: "#c8a27a" },
+      { name: "Cream", hex: "#f3ead8" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "White", hex: "#ffffff" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 10,
   },
 ];

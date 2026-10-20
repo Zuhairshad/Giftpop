@@ -99,6 +99,12 @@ describe("packagings", () => {
       layoutType: "round-box",
     });
     expect(PACKAGINGS.find((p) => p.kind === "basket")).toMatchObject({ layoutType: "basket" });
+    const layoutOf = (slug: string) => PACKAGINGS.find((p) => p.slug === slug)?.layoutType;
+    expect(layoutOf("heart-box")).toBe("round-box");
+    expect(layoutOf("framed-gift")).toBe("box-grid");
+    expect(layoutOf("snack-hamper")).toBe("box-grid");
+    expect(layoutOf("photo-bouquet")).toBe("bouquet-fan");
+    expect(layoutOf("gift-tray")).toBe("basket");
     expect(PACKAGINGS.find((p) => p.kind === "mug")).toMatchObject({ layoutType: "mug-bouquet" });
   });
 
@@ -110,6 +116,11 @@ describe("packagings", () => {
       "round-hat-box": "box",
       "gift-basket": "basket",
       "mug-bouquet": "mug",
+      "heart-box": "box",
+      "framed-gift": "box",
+      "snack-hamper": "box",
+      "photo-bouquet": "bouquet",
+      "gift-tray": "basket",
     });
   });
 
