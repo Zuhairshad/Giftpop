@@ -27,6 +27,8 @@ export const ITEM_SHAPES = [
   "perfume",
   "candle",
   "jewellery",
+  "necklace",
+  "bracelet",
   "cosmetic",
   "cupcake",
   "frame",

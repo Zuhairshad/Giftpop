@@ -15,6 +15,8 @@ const SHAPE_LABELS: Record<ItemShape, string> = {
   perfume: "Perfume",
   candle: "Candle",
   jewellery: "Jewellery",
+  necklace: "Necklace",
+  bracelet: "Bracelet",
   cosmetic: "Cosmetic",
   cupcake: "Cupcake",
   frame: "Photo frame",

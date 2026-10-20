@@ -119,6 +119,7 @@ describe("registry", () => {
       "basket",
       "bouquet-fan",
       "box-grid",
+      "heart-box",
       "mug-bouquet",
       "round-box",
     ]);

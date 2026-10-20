@@ -53,7 +53,7 @@ Exactly one screen (`100dvh`, no scroll at any size): an `h1` that names what we
 
 ## Assets
 
-Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders one illustration chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, perfume, candle, jewellery, cosmetic, cupcake, frame, other), tinted by its `color`; a packaging with no layer images renders one illustration per `layoutType`, tinted by the chosen wrapper and ribbon colours. A real uploaded image always wins over the illustration.
+Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders one illustration chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, perfume, candle, jewellery, necklace, bracelet, cosmetic, cupcake, frame, other), tinted by its `color`; a packaging with no layer images renders one illustration per `layoutType`, tinted by the chosen wrapper and ribbon colours. A real uploaded image always wins over the illustration.
 
 ## Orders
 
