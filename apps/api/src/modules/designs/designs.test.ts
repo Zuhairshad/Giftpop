@@ -184,7 +184,7 @@ describe("GET /v1/designs/:shareId", () => {
   it("keeps the design personalisation, including empty item names", async () => {
     const { packaging, bar } = await seedWorld();
     const design = makeDesign(packaging, [[bar, 2]], {
-      personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+      personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
     });
     const { body } = await save({ country: "PK", design });
 
@@ -193,8 +193,29 @@ describe("GET /v1/designs/:shareId", () => {
     expect(view.design.personalisation).toEqual({
       cardMessage: "",
       recipientName: "",
+      customRequest: "",
       itemNames: {},
     });
+  });
+
+  it("never gives the custom request to a visitor with the share link", async () => {
+    const { packaging, bar } = await seedWorld();
+    const design = makeDesign(packaging, [[bar, 2]], {
+      personalisation: {
+        cardMessage: "Happy birthday",
+        recipientName: "Sara",
+        customRequest: "Please add her name in gold",
+        itemNames: {},
+      },
+    });
+    const { body } = await save({ country: "PK", design });
+
+    const res = await fetchShared(body.shareId);
+
+    expect(JSON.stringify(res.body)).not.toContain("gold");
+    const view = SharedDesignViewSchema.parse(res.body);
+    expect(view.design.personalisation.customRequest).toBe("");
+    expect(view.design.personalisation.cardMessage).toBe("Happy birthday");
   });
 
   it("still answers when an item loses its price, listing it as unavailable", async () => {

@@ -88,7 +88,8 @@ export async function getSharedDesign(
     shareId: saved.shareId,
     country: catalog.country,
     currency: catalog.currency,
-    design,
+    // The request is private to the customer and staff, so a share link never carries it.
+    design: { ...design, personalisation: { ...design.personalisation, customRequest: "" } },
     packaging: toPackaging(packagingDoc),
     packagingAvailable: catalog.packagings.some((p) => p.packaging.id === design.packagingId),
     // Design line order, so the response is stable.

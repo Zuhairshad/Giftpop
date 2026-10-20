@@ -103,15 +103,15 @@ describe("POST /v1/orders: creation", () => {
     });
   });
 
-  it("prices prepaid as 20% off goods only", async () => {
+  it("prices prepaid in full with no early-payment discount", async () => {
     const world = await seedWorld();
     const res = await place(body(world, {}, "prepaid"));
     expect(res.status).toBe(201);
     expect(res.body.quote).toMatchObject({
       mode: "prepaid",
-      discountMinor: 38_400,
-      totalMinor: 178_600,
-      dueNowMinor: 178_600,
+      discountMinor: 0,
+      totalMinor: 217_000,
+      dueNowMinor: 217_000,
       dueOnDeliveryMinor: 0,
     });
   });

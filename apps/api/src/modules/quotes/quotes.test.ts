@@ -49,14 +49,14 @@ describe("POST /v1/quotes: pricing", () => {
     expect(body.currency).toBe("PKR");
     expect(body.quotes).toEqual([
       {
-        // prepaid: 20% off goods only: 38_400 off, shipping untouched
+        // prepaid: no early-payment discount, the full total now
         currency: "PKR",
         mode: "prepaid",
         goodsMinor: 192_000,
-        discountMinor: 38_400,
+        discountMinor: 0,
         shippingMinor: 25_000,
-        totalMinor: 178_600,
-        dueNowMinor: 178_600,
+        totalMinor: 217_000,
+        dueNowMinor: 217_000,
         dueOnDeliveryMinor: 0,
       },
       {
@@ -105,14 +105,14 @@ describe("POST /v1/quotes: pricing", () => {
         dueOnDeliveryMinor: 2_877,
       },
       {
-        // prepaid: 20% of 2_997 = 599.4 -> 599 off
+        // prepaid: no early-payment discount, the full total now
         currency: "USD",
         mode: "prepaid",
         goodsMinor: 2_997,
-        discountMinor: 599,
+        discountMinor: 0,
         shippingMinor: 599,
-        totalMinor: 2_997,
-        dueNowMinor: 2_997,
+        totalMinor: 3_596,
+        dueNowMinor: 3_596,
         dueOnDeliveryMinor: 0,
       },
     ]);
@@ -138,7 +138,7 @@ describe("POST /v1/quotes: pricing", () => {
 
     const atThreshold = await post({ country: "PK", design });
     expect(atThreshold.body.quotes).toMatchObject([
-      { mode: "prepaid", shippingMinor: 0, discountMinor: 54_000, totalMinor: 216_000 },
+      { mode: "prepaid", shippingMinor: 0, discountMinor: 0, totalMinor: 270_000 },
       {
         mode: "cod",
         shippingMinor: 0,
@@ -155,7 +155,7 @@ describe("POST /v1/quotes: pricing", () => {
     );
     const justBelow = await post({ country: "PK", design });
     expect(justBelow.body.quotes).toMatchObject([
-      { mode: "prepaid", shippingMinor: 25_000, discountMinor: 54_000, totalMinor: 241_000 },
+      { mode: "prepaid", shippingMinor: 25_000, discountMinor: 0, totalMinor: 295_000 },
       {
         mode: "cod",
         shippingMinor: 25_000,
@@ -195,7 +195,7 @@ describe("POST /v1/quotes: pricing", () => {
 
     expect(tampered.status).toBe(200);
     expect(tampered.body).toEqual(clean.body);
-    expect(tampered.body.quotes[0].totalMinor).toBe(178_600);
+    expect(tampered.body.quotes[0].totalMinor).toBe(217_000);
   });
 
   it("uses the price at quote time, so a catalog price change moves the quote", async () => {

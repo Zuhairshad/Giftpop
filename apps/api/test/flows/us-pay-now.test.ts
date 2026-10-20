@@ -32,8 +32,7 @@ const US_ADDRESS = { line1: "1 Main St", city: "Austin", region: "TX", postalCod
 
 async function usOrder() {
   // goods = 1_999 box + 2 x 499 bars + 700 soap = 3_697
-  // 20% off goods only = 739.4 -> 739; shipping 599 is not discounted
-  // total = 3_697 - 739 + 599 = 3_557, paid in full now
+  // no early-payment discount (owner decision), so total = 3_697 + 599 = 4_296, paid in full now
   const { packaging, bar, soap } = await seedWorld({
     country: US_COUNTRY,
     packagingPriceMinor: 1_999,
@@ -53,7 +52,7 @@ async function usOrder() {
 }
 
 describe("US pay now (prepaid)", () => {
-  it("discounts goods only and asks for the full total now", async () => {
+  it("asks for the full total now with no discount", async () => {
     const { created } = await usOrder();
 
     expect(created.paymentMode).toBe("prepaid");
@@ -61,10 +60,10 @@ describe("US pay now (prepaid)", () => {
       currency: "USD",
       mode: "prepaid",
       goodsMinor: 3_697,
-      discountMinor: 739,
+      discountMinor: 0,
       shippingMinor: 599,
-      totalMinor: 3_557,
-      dueNowMinor: 3_557,
+      totalMinor: 4_296,
+      dueNowMinor: 4_296,
       dueOnDeliveryMinor: 0,
     });
     const stored = await storedOrder(created.number);
@@ -75,7 +74,7 @@ describe("US pay now (prepaid)", () => {
   it("is paid and confirmed once the full total is recorded", async () => {
     const { created, id } = await usOrder();
 
-    const order = await recordPayment(id, money(3_557, "USD"), "manual_transfer", newStaffId());
+    const order = await recordPayment(id, money(4_296, "USD"), "manual_transfer", newStaffId());
 
     expect(order.paymentStatus).toBe("paid");
     expect(order.status).toBe("confirmed");
@@ -87,7 +86,7 @@ describe("US pay now (prepaid)", () => {
   it("stays awaiting payment after a partial payment", async () => {
     const { created, id } = await usOrder();
 
-    const order = await recordPayment(id, money(3_556, "USD"), "manual_transfer", newStaffId());
+    const order = await recordPayment(id, money(4_295, "USD"), "manual_transfer", newStaffId());
 
     expect(order.status).toBe("awaiting_payment");
     expect(order.paymentStatus).not.toBe("paid");

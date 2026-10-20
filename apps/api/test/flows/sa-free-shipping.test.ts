@@ -66,9 +66,9 @@ describe("SA free-shipping threshold", () => {
     expect(await quoteFor("prepaid", design)).toMatchObject({
       goodsMinor: 22_000,
       shippingMinor: 0,
-      discountMinor: 4_400,
-      totalMinor: 17_600,
-      dueNowMinor: 17_600,
+      discountMinor: 0,
+      totalMinor: 22_000,
+      dueNowMinor: 22_000,
     });
   });
 
@@ -83,9 +83,9 @@ describe("SA free-shipping threshold", () => {
     });
     expect(await quoteFor("prepaid", design)).toMatchObject({
       shippingMinor: 2_500,
-      discountMinor: 4_400,
-      totalMinor: 20_100,
-      dueNowMinor: 20_100,
+      discountMinor: 0,
+      totalMinor: 24_500,
+      dueNowMinor: 24_500,
     });
   });
 
