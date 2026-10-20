@@ -20,9 +20,9 @@ export const GIFT_TRAY = Object.freeze({
 const INNER_LEFT = 160;
 const INNER_RIGHT = 840;
 /** Centre line of a lone row, and of the back and front rows of a pair. */
-const SINGLE_Y = 505;
-const BACK_Y = 440;
-const FRONT_Y = 525;
+const SINGLE_Y = 530;
+const BACK_Y = 465;
+const FRONT_Y = 548;
 /** Neighbours sit this fraction of an item width apart, so they overlap only a little. */
 const STEP_RATIO = 0.86;
 const MAX_SCALE = 1.25;

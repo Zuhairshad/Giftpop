@@ -66,7 +66,7 @@ export function GiftTrayFront({ wrapper, ribbon }: PackagingIllustrationProps) {
       <path d={CLOTH_PATH} fill={box.tissue} stroke={box.crease} strokeWidth="4" {...ROUND} />
       <path d={RIM_LINE} stroke={t.lit} strokeWidth="12" {...ROUND} />
       <path d={RIM_LINE} stroke={box.edge} strokeWidth="4" {...ROUND} />
-      <g transform={`translate(${BOW_X} ${BAND_Y + BAND_HEIGHT / 2 + 8}) rotate(-6)`}>
+      <g transform={`translate(${BOW_X} ${BAND_Y + BAND_HEIGHT / 2 - 2}) rotate(-6)`}>
         <Bow ribbon={ribbon} scale={0.55} />
       </g>
     </g>
