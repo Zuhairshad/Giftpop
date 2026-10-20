@@ -24,6 +24,10 @@ export const FULL_SCENE: SceneBounds = Object.freeze({
  */
 const CROPS: Readonly<Record<string, SceneBounds>> = {
   "bouquet-fan": Object.freeze({ x: 30, y: 230, width: 940, height: 740 }),
+  // Mug: items fan up to about y 150, the handle reaches x 820, the shadow ends at 865.
+  "mug-bouquet": Object.freeze({ x: 110, y: 120, width: 740, height: 760 }),
+  // Basket: the handle's arch peaks near y 225, the rim and shadow span x 150 to 850.
+  basket: Object.freeze({ x: 100, y: 180, width: 800, height: 710 }),
 };
 
 /**
