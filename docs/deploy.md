@@ -181,6 +181,8 @@ What was and was not verified is in `docs/audit/deploy.md`: Docker itself was no
 
 ## MongoDB Atlas
 
+**Status:** an M0 free cluster ("giftpop" project, cluster "giftpop", AWS `us-east-1`) is live and seeded with the full catalog, for early development only. It has no continuous backup and is not sized for production load. Before launch, upgrade it to M10+ (Atlas lets you scale a cluster up in place, no new connection string) and turn on Cloud Backup as below.
+
 - Cluster M10 or larger (M0 and M2 have no continuous backup), MongoDB 8, same region as the API. It is a replica set by default, which order creation needs.
 - Turn on Cloud Backup with point-in-time recovery. Test a restore into a scratch cluster once before launch.
 - Database user: `readWrite` on the `giftpop` database only. Put the database name in `MONGODB_URI` (`.../giftpop`).
