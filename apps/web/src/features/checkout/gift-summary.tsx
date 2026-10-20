@@ -29,6 +29,7 @@ export function GiftSummary({ builder }: { builder: BuilderApi }): ReactElement 
   const lines = buildReviewLines(builder.lines, catalog, builder.itemNames);
   const rows = buildPersonalisationRows({
     cardMessage: builder.cardMessage,
+    customRequest: builder.customRequest,
     recipientName: builder.recipientName,
     lines,
   });

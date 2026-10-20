@@ -25,7 +25,7 @@ const design: Design = {
   wrapperColor: "#cc0000",
   ribbonColor: "#00aa00",
   arrangementSeed: 99,
-  personalisation: { cardMessage: "Hi", recipientName: "Sana", itemNames: { [CHOC_ID]: "Amna" } },
+  personalisation: { cardMessage: "Hi", customRequest: "", recipientName: "Sana", itemNames: { [CHOC_ID]: "Amna" } },
 };
 
 const throwing: StorageLike = {
@@ -60,6 +60,19 @@ describe("readStoredDesign and writeStoredDesign", () => {
     writeStoredDesign(storage, "PK", design);
     expect(readStoredDesign(storage, "PK", makeCatalog())).toEqual(design);
     expect(readStoredDesign(storage, "US", makeCatalog())).toBeNull();
+  });
+
+  it("still loads a design saved before custom requests existed", () => {
+    const storage = fakeStorage();
+    const oldPersonalisation: Record<string, unknown> = { ...design.personalisation };
+    delete oldPersonalisation.customRequest;
+    storage.setItem(
+      storageKey("PK"),
+      JSON.stringify({ ...design, personalisation: oldPersonalisation }),
+    );
+    const read = readStoredDesign(storage, "PK", makeCatalog());
+    expect(read?.personalisation.customRequest).toBe("");
+    expect(read?.personalisation.cardMessage).toBe("Hi");
   });
 
   it("clears the key when written with no design", () => {
@@ -126,6 +139,8 @@ describe("persistence through the store", () => {
     expect(read().items).toEqual([{ itemId: CARD_ID, qty: 1, slot: 0 }]);
     api().setCardMessage("Hello");
     expect(read().personalisation.cardMessage).toBe("Hello");
+    api().setCustomRequest("A gold bow");
+    expect(read().personalisation.customRequest).toBe("A gold bow");
     api().shuffle();
     expect(read().arrangementSeed).toBe(api().arrangementSeed);
   });

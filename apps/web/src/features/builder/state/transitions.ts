@@ -1,4 +1,8 @@
-import { CARD_MESSAGE_MAX_LENGTH, RECIPIENT_NAME_MAX_LENGTH } from "@giftpop/contracts";
+import {
+  CARD_MESSAGE_MAX_LENGTH,
+  CUSTOM_REQUEST_MAX_LENGTH,
+  RECIPIENT_NAME_MAX_LENGTH,
+} from "@giftpop/contracts";
 import type { CatalogResponse, ColourOption, DesignItem, HexColor } from "@giftpop/contracts";
 
 import { findPackaging, findPricedItem } from "./catalog-lookup";
@@ -179,6 +183,11 @@ export function setRibbonColor(
 export function setCardMessage(data: BuilderData, text: string): BuilderData {
   const cardMessage = truncateText(text, CARD_MESSAGE_MAX_LENGTH);
   return cardMessage === data.cardMessage ? data : { ...data, cardMessage };
+}
+
+export function setCustomRequest(data: BuilderData, text: string): BuilderData {
+  const customRequest = truncateText(text, CUSTOM_REQUEST_MAX_LENGTH);
+  return customRequest === data.customRequest ? data : { ...data, customRequest };
 }
 
 export function setRecipientName(data: BuilderData, text: string): BuilderData {

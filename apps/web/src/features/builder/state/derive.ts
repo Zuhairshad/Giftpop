@@ -58,6 +58,7 @@ export function deriveView(data: BuilderData, catalog: CatalogResponse): Builder
     arrangementSeed: data.arrangementSeed,
     personalisation: {
       cardMessage: data.cardMessage,
+      customRequest: data.customRequest,
       recipientName: data.recipientName,
       itemNames: { ...data.itemNames },
     },

@@ -155,7 +155,7 @@ describe("question persistence", () => {
       wrapperColor: "#cc0000",
       ribbonColor: "#00aa00",
       arrangementSeed: 99,
-      personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+      personalisation: { cardMessage: "", customRequest: "", recipientName: "", itemNames: {} },
     };
     const storage = fakeStorage({ "gp-builder:PK": JSON.stringify(design), [KEY]: "arrange" });
     const { api } = newTestStore({ getStorage: () => storage });

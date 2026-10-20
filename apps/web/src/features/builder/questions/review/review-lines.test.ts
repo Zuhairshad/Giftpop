@@ -56,4 +56,15 @@ describe("buildPersonalisationRows", () => {
     const rows = buildPersonalisationRows({ cardMessage: "", recipientName: " ", lines: [] });
     expect(rows.map((r) => r.value)).toEqual(["None", "None", "None"]);
   });
+
+  it("adds a Your request row only when one was written", () => {
+    const base = { cardMessage: "", recipientName: "", lines: [] };
+    const labels = (customRequest: string) =>
+      buildPersonalisationRows({ ...base, customRequest }).map((r) => r.label);
+    expect(labels("")).not.toContain("Your request");
+    expect(labels("  ")).not.toContain("Your request");
+    expect(
+      buildPersonalisationRows({ ...base, customRequest: " Gold foil " }).at(-1),
+    ).toEqual({ label: "Your request", value: "Gold foil" });
+  });
 });

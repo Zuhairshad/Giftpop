@@ -12,7 +12,7 @@ function design(qty = 2, seed = 5): Design {
     wrapperColor: "#fff8e7",
     ribbonColor: "#d4af37",
     arrangementSeed: seed,
-    personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+    personalisation: { cardMessage: "", customRequest: "", recipientName: "", itemNames: {} },
   };
 }
 

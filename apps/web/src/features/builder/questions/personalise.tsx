@@ -1,6 +1,10 @@
 "use client";
 
-import { CARD_MESSAGE_MAX_LENGTH, RECIPIENT_NAME_MAX_LENGTH } from "@giftpop/contracts";
+import {
+  CARD_MESSAGE_MAX_LENGTH,
+  CUSTOM_REQUEST_MAX_LENGTH,
+  RECIPIENT_NAME_MAX_LENGTH,
+} from "@giftpop/contracts";
 import { useMemo } from "react";
 import type { ReactElement } from "react";
 
@@ -38,6 +42,14 @@ export function PersonaliseBody(): ReactElement {
         limit={CARD_MESSAGE_MAX_LENGTH}
         onChange={builder.setCardMessage}
         placeholder="Write something kind"
+        multiline
+      />
+      <LimitedField
+        label="Anything else you'd like?"
+        hint="Tell us about any special wish that is not listed. We will read it and get in touch if it costs extra. This does not change your price."
+        value={builder.customRequest}
+        limit={CUSTOM_REQUEST_MAX_LENGTH}
+        onChange={builder.setCustomRequest}
         multiline
       />
       {nameable.length > 0 ? (

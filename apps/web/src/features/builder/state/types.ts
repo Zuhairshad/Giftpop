@@ -37,6 +37,8 @@ export interface BuilderApi {
   ribbonColor: HexColor | null;
   arrangementSeed: number;
   cardMessage: string;
+  /** Optional free-text wish. Never affects the price. */
+  customRequest: string;
   recipientName: string;
   /** Names on personalizable items, keyed by item id. */
   itemNames: Readonly<Record<string, string>>;
@@ -67,6 +69,7 @@ export interface BuilderApi {
   setWrapperColor(color: HexColor): void;
   setRibbonColor(color: HexColor): void;
   setCardMessage(text: string): void;
+  setCustomRequest(text: string): void;
   setRecipientName(text: string): void;
   setItemName(itemId: string, text: string): void;
   /** Replaces everything with a saved design (share link, template). */

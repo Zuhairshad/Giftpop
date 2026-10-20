@@ -13,6 +13,8 @@ interface LimitedFieldProps {
   onChange: (text: string) => void;
   multiline?: boolean;
   placeholder?: string;
+  /** Extra help shown under the label and read with the field. */
+  hint?: string;
   autoComplete?: string;
 }
 
@@ -31,10 +33,12 @@ export function LimitedField({
   onChange,
   multiline = false,
   placeholder,
+  hint,
   autoComplete,
 }: LimitedFieldProps): ReactElement {
   const id = useId();
   const messageId = `${id}-message`;
+  const hintId = `${id}-hint`;
   const [trimmed, setTrimmed] = useState(false);
 
   const state = countState(value.length, limit);
@@ -51,7 +55,7 @@ export function LimitedField({
     id,
     value,
     placeholder,
-    "aria-describedby": messageId,
+    "aria-describedby": hint ? `${hintId} ${messageId}` : messageId,
     onBlur: () => setTrimmed(false),
   };
 
@@ -68,6 +72,11 @@ export function LimitedField({
           {formatCount(value.length, limit)}
         </span>
       </div>
+      {hint ? (
+        <p id={hintId} className="text-muted mb-1.5 text-xs wrap-anywhere">
+          {hint}
+        </p>
+      ) : null}
       {multiline ? (
         <textarea
           {...shared}

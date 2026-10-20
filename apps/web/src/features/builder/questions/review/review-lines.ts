@@ -33,10 +33,12 @@ export interface PersonalisationSummaryRow {
 /** Card, recipient and item names as label/value rows. Empty fields say "None" so nothing looks missing. */
 export function buildPersonalisationRows(input: {
   cardMessage: string;
+  customRequest?: string;
   recipientName: string;
   lines: readonly ReviewLine[];
 }): PersonalisationSummaryRow[] {
   const named = input.lines.filter((line) => line.customName !== null);
+  const request = input.customRequest?.trim() ?? "";
   return [
     { label: "Card message", value: input.cardMessage.trim() || "None" },
     { label: "Recipient", value: input.recipientName.trim() || "None" },
@@ -47,5 +49,6 @@ export function buildPersonalisationRows(input: {
           ? named.map((line) => `${line.name}: ${line.customName}`).join(", ")
           : "None",
     },
+    ...(request === "" ? [] : [{ label: "Your request", value: request }]),
   ];
 }
