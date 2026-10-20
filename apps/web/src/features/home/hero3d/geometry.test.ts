@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { bentTail, bowLoop, tissueSheet } from "./geometry";
+import { bentTail, bowLoop, RIBBON_THICKNESS, tissueSheet } from "./geometry";
 
 type Geometry = ReturnType<typeof bentTail>;
 
@@ -30,12 +30,26 @@ describe("geometry builders", () => {
 
   it("cuts a V notch into the end of the tail: the centre of the last row sits higher than its edges", () => {
     const p = bentTail(0.4, 2, 1, 0, 0.3).getAttribute("position");
-    const lastRow: { x: number; y: number }[] = [];
-    // Vertices are ordered row by row from the top; the last row has 9 vertices.
-    for (let i = p.count - 9; i < p.count; i += 1) lastRow.push({ x: p.getX(i), y: p.getY(i) });
-    const centre = lastRow.reduce((a, b) => (Math.abs(a.x) < Math.abs(b.x) ? a : b));
-    const edge = lastRow.reduce((a, b) => (Math.abs(a.x) > Math.abs(b.x) ? a : b));
-    expect(centre.y).toBeGreaterThan(edge.y + 0.2);
+    let centre = Infinity;
+    let edge = Infinity;
+    for (let i = 0; i < p.count; i += 1) {
+      const x = Math.abs(p.getX(i));
+      if (x < 0.01) centre = Math.min(centre, p.getY(i));
+      if (x > 0.15) edge = Math.min(edge, p.getY(i));
+    }
+    expect(centre).toBeGreaterThan(edge + 0.2);
+  });
+
+  it("gives ribbon tails a real thickness", () => {
+    const p = bentTail(0.4, 2, 1, 0, 0).getAttribute("position");
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    for (let i = 0; i < p.count; i += 1) {
+      if (Math.abs(p.getY(i)) > 1e-6) continue; // the top edge, before any curl
+      minZ = Math.min(minZ, p.getZ(i));
+      maxZ = Math.max(maxZ, p.getZ(i));
+    }
+    expect(maxZ - minZ).toBeCloseTo(RIBBON_THICKNESS, 3);
   });
 
   it("makes finite bow loops and tissue", () => {

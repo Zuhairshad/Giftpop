@@ -1,14 +1,20 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from "three";
 
-import { cameraDistance, placeCamera } from "./camera";
-import { CAMERA, IDLE_RENDER } from "./constants";
+import { artPixelsPerPosterPixel, MAX_PIXEL_RATIO } from "./art-resolution";
+import { cameraDistance, placeCamera, visibleTop } from "./camera";
+import { BOX, BOX_Z, CAMERA, IDLE_RENDER } from "./constants";
+import { dropEntryTime } from "./drop-physics";
+import { degToRad } from "./layout";
 import { buildRig } from "./rig";
 import { loadSpriteArt } from "./sprite-art";
 import { heroStateAt } from "./timeline";
 
-/** Largest time step one frame may advance, so a stall or a resume never skips the animation. */
+/**
+ * Largest time step one frame may advance. A late frame (up to two missed vsyncs) keeps real
+ * time so speeds stay true; a longer stall or a resume slows the clock instead of skipping ahead,
+ * so nothing ever jumps across the screen.
+ */
 const MAX_STEP = 1 / 20;
-const MAX_PIXEL_RATIO = 2;
 
 export interface HeroHooks {
   /** The first frame has been drawn (the box is still above the top of the frame). */
@@ -33,7 +39,10 @@ export async function startHero(
   hooks: HeroHooks,
   isCancelled: () => boolean,
 ): Promise<HeroController | null> {
-  const art = await loadSpriteArt();
+  const dpr = window.devicePixelRatio || 1;
+  const art = await loadSpriteArt(
+    artPixelsPerPosterPixel(host.clientWidth, host.clientHeight, dpr),
+  );
   if (isCancelled()) {
     art.dispose();
     return null;
@@ -44,12 +53,14 @@ export async function startHero(
       antialias: true,
       alpha: true,
       powerPreference: "high-performance",
+      // A software rasteriser cannot keep 60 fps; the stage shows the static composition instead.
+      failIfMajorPerformanceCaveat: true,
     });
   } catch (error) {
     art.dispose();
     throw error;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO));
+  renderer.setPixelRatio(Math.min(dpr, MAX_PIXEL_RATIO));
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
   canvas.style.cssText = "display:block;width:100%;height:100%";
@@ -76,7 +87,23 @@ export async function startHero(
   const observer = new ResizeObserver(resize);
   observer.observe(host);
 
-  let elapsed = 0;
+  // Compile every shader without blocking the main thread where the browser can, then start the
+  // clock just before the box reaches the top of the frame (a taller stage shows more sky).
+  const distance0 = cameraDistance(aspect);
+  rig.apply(heroStateAt(0), distance0);
+  placeCamera(camera, degToRad(CAMERA.azimuthDeg), degToRad(CAMERA.elevationDeg), distance0);
+  await renderer.compileAsync(scene, camera);
+  if (isCancelled()) {
+    observer.disconnect();
+    rig.dispose();
+    art.dispose();
+    renderer.dispose();
+    canvas.remove();
+    return null;
+  }
+  let elapsed = dropEntryTime(
+    visibleTop(distance0, degToRad(CAMERA.elevationDeg), BOX_Z - BOX.depth / 2),
+  );
   let last: number | null = null;
   let frame = 0;
   let firstFrameSent = false;

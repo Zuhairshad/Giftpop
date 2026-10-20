@@ -1,7 +1,7 @@
 /** Browser checks that decide whether the 3D scene may start. Pure of React; injectable for tests. */
 
 interface CanvasLike {
-  getContext(id: string): unknown;
+  getContext(id: string, options?: { failIfMajorPerformanceCaveat?: boolean }): unknown;
 }
 
 interface DocumentLike {
@@ -16,11 +16,15 @@ function isGl(value: unknown): value is { getExtension(name: string): unknown } 
   return typeof value === "object" && value !== null && "getExtension" in value;
 }
 
-/** True when a throwaway canvas gives a WebGL context. The context is released straight away. */
+/**
+ * True when a throwaway canvas gives a hardware WebGL context (a software rasteriser counts as
+ * none: it cannot keep the animation smooth). The context is released straight away.
+ */
 export function hasWebGL(doc: DocumentLike): boolean {
   try {
     const canvas = doc.createElement("canvas");
-    const gl = canvas.getContext("webgl2") ?? canvas.getContext("webgl");
+    const options = { failIfMajorPerformanceCaveat: true };
+    const gl = canvas.getContext("webgl2", options) ?? canvas.getContext("webgl", options);
     if (!isGl(gl)) return false;
     const lose = gl.getExtension("WEBGL_lose_context") as LoseContext | null;
     lose?.loseContext();
@@ -54,15 +58,20 @@ interface LoadHost extends IdleHost {
 }
 
 /**
- * Runs `cb` once the page has loaded, `delayMs` later, when the browser is idle. Returns a cancel
- * function that stops whichever stage is still pending.
+ * Runs `cb` once the page has loaded, `delayMs` later, when the browser is idle (or after
+ * `idleTimeoutMs` at the latest). Returns a cancel function that stops whichever stage is pending.
  */
-export function whenLoadedThenIdle(host: LoadHost, delayMs: number, cb: () => void): () => void {
+export function whenLoadedThenIdle(
+  host: LoadHost,
+  delayMs: number,
+  cb: () => void,
+  idleTimeoutMs?: number,
+): () => void {
   let timer: number | undefined;
   let cancelIdle: () => void = () => undefined;
   const start = () => {
     timer = host.setTimeout(() => {
-      cancelIdle = whenIdle(host, cb);
+      cancelIdle = whenIdle(host, cb, idleTimeoutMs);
     }, delayMs);
   };
   if (host.document.readyState === "complete") start();

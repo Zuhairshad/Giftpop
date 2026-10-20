@@ -9,7 +9,15 @@ import {
   RIBBON,
 } from "./constants";
 import { boxMotionAt, CONTACTS, LAST_CONTACT, WOBBLE_END } from "./drop-physics";
-import { clamp01, easeInOutCubic, easeOutBack, easeOutCubic, lerp, smoothstep } from "./easing";
+import {
+  clamp01,
+  easeInOutCubic,
+  easeOutCubic,
+  lerp,
+  smootherstep01,
+  smoothstep,
+  softOvershoot,
+} from "./easing";
 import { degToRad } from "./layout";
 import { SPARKLES_DONE_AT, SPRITES_LANDED_AT, sparkleAt, spriteAt } from "./sprite-timeline";
 import type { SparkleState, SpriteState } from "./sprite-timeline";
@@ -39,8 +47,11 @@ export interface HeroState {
   time: number;
   box: BoxState;
   lid: LidState;
-  /** `tail` 0 = rolled up behind the band, 1 = unrolled down the front. `sway` is a sideways wobble. */
-  ribbon: { tail: number; sway: number };
+  /**
+   * `tail` 0 = rolled up behind the band, 1 = unrolled down the front. `sway` is a sideways slip
+   * of the band. `tag` 0..1 fades and grows the gift tag in as the tail unrolls.
+   */
+  ribbon: { tail: number; sway: number; tag: number };
   /** Multipliers for the floor shadow and the dust ring (opacity is relative to the scene's base). */
   shadow: { scale: number; opacity: number };
   ring: { scale: number; opacity: number };
@@ -81,7 +92,8 @@ function lidAt(t: number, box: ReturnType<typeof boxMotionAt>, idle: number): Li
     x: lerp(LID_CLOSED.x, LID_REST.x, e),
     y:
       lerp(LID_CLOSED.y, LID_REST.y, e) +
-      LID.arcHeight * Math.sin(Math.PI * p) +
+      // The arc follows the eased progress, so the lid leaves and lands with zero vertical speed.
+      LID.arcHeight * Math.sin(Math.PI * e) +
       lidChatter.hop * air +
       idle * IDLE.floatAmplitude * 0.8 * wave,
     z: lerp(LID_CLOSED.z, LID_REST.z, e),
@@ -130,8 +142,10 @@ export function heroStateAt(time: number, options: HeroStateOptions = {}): HeroS
     },
     lid: lidAt(t, m, idle),
     ribbon: {
-      tail: easeOutBack(ribbonP, 1),
-      sway: RIBBON.swayAmount * Math.sin(2 * Math.PI * ribbonP) * (1 - ribbonP),
+      tail: softOvershoot(ribbonP, 0.06),
+      // Slides to one side and eases back; zero speed at both ends.
+      sway: RIBBON.swayAmount * Math.pow(Math.sin(Math.PI * ribbonP), 2) * (1 - ribbonP) * 1.6,
+      tag: smootherstep01((ribbonP - 0.35) / 0.65),
     },
     shadow: { scale: (1 + squashAmount * 0.8) / (1 + m.y * 0.12), opacity: 1 / (1 + m.y * 0.9) },
     ring: ringAt(t),
