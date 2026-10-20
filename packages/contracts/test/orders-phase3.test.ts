@@ -25,7 +25,7 @@ const design = {
   wrapperColor: "#ffc0cb",
   ribbonColor: "#e6397a",
   arrangementSeed: 5,
-  personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+  personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
 };
 const packaging = {
   packagingId: id(1),

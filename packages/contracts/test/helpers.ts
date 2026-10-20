@@ -110,7 +110,7 @@ export function makeDesign(
     wrapperColor: "#ffffff",
     ribbonColor: "#ff0000",
     arrangementSeed: 1,
-    personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+    personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
     ...overrides,
   };
 }

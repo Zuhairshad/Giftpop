@@ -25,7 +25,12 @@ function lines(count: number) {
 describe("DesignSchema", () => {
   it("accepts a valid design and fills in empty personalisation", () => {
     const parsed = DesignSchema.parse(designInput());
-    expect(parsed.personalisation).toEqual({ cardMessage: "", recipientName: "", itemNames: {} });
+    expect(parsed.personalisation).toEqual({
+      cardMessage: "",
+      recipientName: "",
+      customRequest: "",
+      itemNames: {},
+    });
   });
 
   it("rejects duplicate slots", () => {
@@ -83,9 +88,20 @@ describe("DesignSchema", () => {
     expect(DesignSchema.safeParse(designInput({ items })).success).toBe(false);
   });
 
+  it("enforces the custom request limit (500)", () => {
+    const withRequest = (customRequest: string) =>
+      designInput({
+        personalisation: { cardMessage: "", recipientName: "", customRequest, itemNames: {} },
+      });
+    expect(DesignSchema.safeParse(withRequest("r".repeat(500))).success).toBe(true);
+    expect(DesignSchema.safeParse(withRequest("r".repeat(501))).success).toBe(false);
+  });
+
   it("enforces the personalisation limits (200, 40, 40)", () => {
     const personalisation = (p: Record<string, unknown>) =>
-      designInput({ personalisation: { cardMessage: "", recipientName: "", itemNames: {}, ...p } });
+      designInput({
+        personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {}, ...p },
+      });
     expect(DesignSchema.safeParse(personalisation({ cardMessage: "a".repeat(200) })).success).toBe(
       true,
     );

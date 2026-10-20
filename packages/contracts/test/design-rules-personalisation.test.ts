@@ -13,10 +13,17 @@ describe("validateDesign: personalisation limits", () => {
   const personalise = (personalisation: {
     cardMessage?: string;
     recipientName?: string;
+    customRequest?: string;
     itemNames?: Record<string, string>;
   }) =>
     makeDesign(undefined, {
-      personalisation: { cardMessage: "", recipientName: "", itemNames: {}, ...personalisation },
+      personalisation: {
+        cardMessage: "",
+        recipientName: "",
+        customRequest: "",
+        itemNames: {},
+        ...personalisation,
+      },
     });
 
   it("allows a card message of exactly 200 characters and flags 201", () => {
@@ -35,6 +42,15 @@ describe("validateDesign: personalisation limits", () => {
     const problems = validateDesign(personalise({ recipientName: "n".repeat(41) }), makeCatalog());
     expect(codes(problems)).toEqual(["TEXT_TOO_LONG"]);
     expect(problems[0]?.field).toBe("recipientName");
+  });
+
+  it("allows a custom request of exactly 500 characters and flags 501", () => {
+    expect(validateDesign(personalise({ customRequest: "r".repeat(500) }), makeCatalog())).toEqual(
+      [],
+    );
+    const problems = validateDesign(personalise({ customRequest: "r".repeat(501) }), makeCatalog());
+    expect(codes(problems)).toEqual(["TEXT_TOO_LONG"]);
+    expect(problems[0]?.field).toBe("customRequest");
   });
 
   describe("names on items", () => {

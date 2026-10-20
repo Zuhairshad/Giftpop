@@ -186,6 +186,7 @@ describe("validateDesign: several problems at once", () => {
       personalisation: {
         cardMessage: "a".repeat(201),
         recipientName: "n".repeat(41),
+        customRequest: "",
         itemNames: {},
       },
     });
@@ -205,7 +206,7 @@ describe("validateDesign: several problems at once", () => {
 
   it("every problem matches DesignProblemSchema", () => {
     const design = makeDesign([{ n: 99 }], {
-      personalisation: { cardMessage: "a".repeat(201), recipientName: "", itemNames: {} },
+      personalisation: { cardMessage: "a".repeat(201), recipientName: "", customRequest: "", itemNames: {} },
     });
     const problems = validateDesign(design, makeCatalog());
     expect(problems.length).toBeGreaterThan(1);

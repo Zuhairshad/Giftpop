@@ -4,6 +4,7 @@ import { CountryCodeSchema, HexColorSchema, IsoDateTimeSchema, ObjectIdSchema } 
 
 export const CARD_MESSAGE_MAX_LENGTH = 200;
 export const RECIPIENT_NAME_MAX_LENGTH = 40;
+export const CUSTOM_REQUEST_MAX_LENGTH = 500;
 /** Hard ceiling for a name on one item; each item sets its own lower limit. */
 export const ITEM_NAME_MAX_LENGTH = 40;
 export const MAX_QTY_PER_LINE = 20;
@@ -20,6 +21,8 @@ export type DesignItem = z.infer<typeof DesignItemSchema>;
 export const PersonalisationSchema = z.object({
   cardMessage: z.string().max(CARD_MESSAGE_MAX_LENGTH).default(""),
   recipientName: z.string().max(RECIPIENT_NAME_MAX_LENGTH).default(""),
+  /** Free-text wish for staff. Never changes the price; staff get in touch if it costs extra. */
+  customRequest: z.string().max(CUSTOM_REQUEST_MAX_LENGTH).default(""),
   /** Name on a personalizable item, keyed by item id. */
   itemNames: z.record(ObjectIdSchema, z.string().max(ITEM_NAME_MAX_LENGTH)).default({}),
 });
@@ -36,6 +39,7 @@ export const DesignSchema = z
     personalisation: PersonalisationSchema.default({
       cardMessage: "",
       recipientName: "",
+      customRequest: "",
       itemNames: {},
     }),
   })

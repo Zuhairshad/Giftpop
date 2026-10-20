@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 import type { CountryCatalog } from "./catalog";
-import { CARD_MESSAGE_MAX_LENGTH, RECIPIENT_NAME_MAX_LENGTH } from "./design";
+import {
+  CARD_MESSAGE_MAX_LENGTH,
+  CUSTOM_REQUEST_MAX_LENGTH,
+  RECIPIENT_NAME_MAX_LENGTH,
+} from "./design";
 import type { Design } from "./design";
 
 export const DESIGN_PROBLEM_CODES = [
@@ -20,7 +24,7 @@ export const DesignProblemSchema = z.object({
   code: DesignProblemCodeSchema,
   /** Item the problem is about, when it is about one item. */
   itemId: z.string().optional(),
-  /** Text field the problem is about: `cardMessage`, `recipientName` or `itemNames`. */
+  /** Text field the problem is about: `cardMessage`, `recipientName`, `customRequest` or `itemNames`. */
   field: z.string().optional(),
   message: z.string(),
 });
@@ -92,7 +96,7 @@ export function validateDesign(design: Design, catalog: CountryCatalog): DesignP
     });
   }
 
-  const { cardMessage, recipientName, itemNames } = design.personalisation;
+  const { cardMessage, recipientName, customRequest, itemNames } = design.personalisation;
   if (cardMessage.length > CARD_MESSAGE_MAX_LENGTH) {
     problems.push({
       code: "TEXT_TOO_LONG",
@@ -105,6 +109,13 @@ export function validateDesign(design: Design, catalog: CountryCatalog): DesignP
       code: "TEXT_TOO_LONG",
       field: "recipientName",
       message: `The recipient name can be up to ${RECIPIENT_NAME_MAX_LENGTH} characters.`,
+    });
+  }
+  if (customRequest.length > CUSTOM_REQUEST_MAX_LENGTH) {
+    problems.push({
+      code: "TEXT_TOO_LONG",
+      field: "customRequest",
+      message: `The request can be up to ${CUSTOM_REQUEST_MAX_LENGTH} characters.`,
     });
   }
   for (const [itemId, name] of Object.entries(itemNames)) {
