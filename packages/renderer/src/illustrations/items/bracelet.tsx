@@ -4,9 +4,9 @@ import type { ItemIllustrationProps } from "../types";
 
 const CX = 100;
 const CY = 102;
-const RX = 78;
-const RY = 36;
-const TILT = -14;
+const RX = 68;
+const RY = 46;
+const TILT = -24;
 const TILT_RAD = (TILT * Math.PI) / 180;
 
 const deg = (d: number) => (d * Math.PI) / 180;
@@ -79,7 +79,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
   const clasp = onLoop(deg(262));
   const colors = { fill: p.fill, dark: p.dark, shine: p.shine };
   return (
-    <ItemFrame shape="bracelet" fit={[1.08, 0, 4]}>
+    <ItemFrame shape="bracelet" fit={[1.2, 0, -8]}>
       <g transform={`rotate(${TILT} ${CX} ${CY})`}>
         <ellipse
           cx={CX}
@@ -93,16 +93,16 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         />
       </g>
       {back.map((b, i) => (
-        <Clover key={i} x={b.x} y={b.y} size={0.78} {...colors} />
+        <Clover key={i} x={b.x} y={b.y} size={0.72} {...colors} />
       ))}
       <g transform={`rotate(${TILT} ${CX} ${CY})`}>
-        <path d={LOOP} fill="none" stroke={GOLD_DARK} strokeWidth="7" {...ROUND} />
+        <path d={LOOP} fill="none" stroke={GOLD_DARK} strokeWidth="10" {...ROUND} />
         <path
           d={LOOP}
           fill="none"
           stroke={GOLD}
-          strokeWidth="4.6"
-          strokeDasharray="6 2.6"
+          strokeWidth="7"
+          strokeDasharray="7 3"
           {...ROUND}
         />
         <path
@@ -116,7 +116,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         />
       </g>
       <g
-        transform={`translate(${clasp.x.toFixed(2)} ${clasp.y.toFixed(2)}) rotate(${TILT})`}
+        transform={`translate(${clasp.x.toFixed(2)} ${clasp.y.toFixed(2)}) rotate(${TILT}) scale(1.35)`}
         data-clasp="lobster"
       >
         <path d={CLASP} fill="none" stroke={GOLD_DARK} strokeWidth="4.6" {...ROUND} />
@@ -124,7 +124,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         <circle cx="-9" cy="3" r="1.8" fill={GOLD_LIGHT} stroke={GOLD_DARK} strokeWidth="1" />
       </g>
       {front.map((f, i) => (
-        <Clover key={i} x={f.x} y={f.y} size={i === 1 ? 1.35 : 1.15} {...colors} />
+        <Clover key={i} x={f.x} y={f.y} size={i === 1 ? 1.2 : 1.0} {...colors} />
       ))}
     </ItemFrame>
   );
