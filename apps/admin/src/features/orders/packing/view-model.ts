@@ -116,7 +116,15 @@ export function addressLines(
 /** Whether the personalisation block has anything to show. */
 export function hasPersonalisation(order: Pick<AdminOrderDetail, "design">): boolean {
   const p = order.design.personalisation;
-  return p.recipientName.trim() !== "" || p.cardMessage.trim() !== "";
+  return (
+    p.recipientName.trim() !== "" || p.cardMessage.trim() !== "" || p.customRequest.trim() !== ""
+  );
+}
+
+/** The customer's free-text request, or null when there is none. Kept whole, line breaks included. */
+export function customRequestText(order: Pick<AdminOrderDetail, "design">): string | null {
+  const text = order.design.personalisation.customRequest;
+  return text.trim() === "" ? null : text;
 }
 
 /** Notes for the packer, oldest first, with blanks removed. */

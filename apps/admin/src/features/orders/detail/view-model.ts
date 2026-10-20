@@ -139,10 +139,12 @@ export interface PersonalisationText {
   value: string;
 }
 
-/** The texts staff must copy onto the gift: card message, recipient name, then item names. */
+/** The texts staff must copy onto the gift: customer request first so it is not missed, then card message, recipient name, item names. */
 export function personalisationTexts(order: AdminOrderDetail): PersonalisationText[] {
-  const { cardMessage, recipientName } = order.design.personalisation;
+  const { cardMessage, recipientName, customRequest } = order.design.personalisation;
   const out: PersonalisationText[] = [];
+  if (customRequest.trim() !== "")
+    out.push({ key: "custom-request", label: "Customer request", value: customRequest });
   if (cardMessage.trim() !== "")
     out.push({ key: "card", label: "Card message", value: cardMessage });
   if (recipientName.trim() !== "")
