@@ -40,6 +40,9 @@ describe("heart shape", () => {
     expect(pts.some(([x, y]) => x === 500 && y === 420)).toBe(true);
     expect(pts.some(([x, y]) => x === 500 && y === 650)).toBe(true);
     expect(frontEdgeY(500)).toBeCloseTo(650, 0);
+    expect(frontEdgeY(205)).toBeLessThan(frontEdgeY(400));
+    expect(frontEdgeY(400)).toBeLessThan(frontEdgeY(500));
+    expect(frontEdgeY(300)).toBeCloseTo(frontEdgeY(700), 0);
   });
 });
 

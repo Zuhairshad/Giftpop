@@ -30,9 +30,7 @@ const mirrorCubic = (c: Cubic): Cubic => [mirror(c[0]), mirror(c[1]), mirror(c[2
 /** Left half, from the point up to the dip: the mirror of RIGHT, traced backwards. */
 const LEFT: readonly Cubic[] = [...RIGHT].reverse().map((c) => reverse(mirrorCubic(c)));
 /** The front (lower) rim, left side through the point to the right side. */
-const FRONT: readonly Cubic[] = [reverse(mirrorCubic(RIGHT_LOWER)), RIGHT_LOWER].map((c, i) =>
-  i === 0 ? c : reverse(c),
-);
+const FRONT: readonly Cubic[] = [mirrorCubic(RIGHT_LOWER), reverse(RIGHT_LOWER)];
 
 export interface HeartPlace {
   /** Scale about (500, 520). */
