@@ -4,6 +4,8 @@ import {
   countryDisplayName,
   countryTicks,
   deliveryTick,
+  HOME_EYEBROW,
+  HOME_LEDE,
   homeHeadline,
   homeMeta,
   homeTicks,
@@ -30,9 +32,16 @@ describe("homeHeadline", () => {
 
   it("is the generic line, with nothing highlighted, when no country is chosen", () => {
     expect(homeHeadline()).toEqual({
-      before: "Handmade gift boxes & bouquets, made by hand",
+      before: "Handmade gift boxes & bouquets, delivered",
       highlight: null,
     });
+  });
+
+  it("never says the same thing twice across eyebrow, headline, lede and ticks", () => {
+    const lines = [HOME_EYEBROW, homeHeadline().before, HOME_LEDE, ...homeTicks(country())];
+    const handmade = lines.filter((line) => /hand\s*made|made by hand/i.test(line));
+    expect(handmade).toHaveLength(2); // the h1 ("Handmade ...") and one factual tick
+    expect(HOME_EYEBROW).not.toMatch(/hand/i);
   });
 });
 

@@ -3,10 +3,14 @@ import type { CountryCode, PublicCountry } from "@giftpop/contracts";
 /** The h1, split so the country name can wear the lavender marker. `highlight` is null on the generic home. */
 export type HomeHeadline = { before: string; highlight: string | null };
 
-const GENERIC_HEADLINE = "Handmade gift boxes & bouquets, made by hand";
+/*
+ * Eyebrow, h1, lede and ticks each say something different: a feeling, what we sell (and where),
+ * how it works, and the facts. "Handmade" lives in the h1 and "Made by hand" only as a tick.
+ */
+const GENERIC_HEADLINE = "Handmade gift boxes & bouquets, delivered";
 const HEADLINE_LEAD = "Handmade gift boxes & bouquets in ";
 
-export const HOME_EYEBROW = "made by hand, with love";
+export const HOME_EYEBROW = "a little joy in a box";
 export const HOME_LEDE =
   "Pick the box, fill it with things they love, add a name. We make it and send it.";
 

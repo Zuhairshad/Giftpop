@@ -38,6 +38,8 @@ const PAIRS: [string, string, string][] = [
   ["pink-strong", "surface", "step numbers and pick copy on cards"],
   ["ink", "surface", "card headings"],
   ["ink", "pink-soft", "outlined button on pink band"],
+  ["ink-soft", "surface-deep", "disabled primary button label on warm-2"],
+  ["ink-soft", "surface-soft", "country suggestion bar text on warm"],
 ];
 
 describe.each([
