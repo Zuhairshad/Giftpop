@@ -55,9 +55,11 @@ export function ItemsBody(): ReactElement {
 
   return (
     <div className="space-y-3">
-      {/* Tabs and counter stay at the top of the surface's scroll area while the grid scrolls
-          under them (desktop: the grid is several rows tall). Bleeds over the body's padding. */}
-      <div className="bg-surface sticky top-0 z-10 -mx-4 space-y-3 px-4 min-[900px]:-mx-6 min-[900px]:border-b min-[900px]:border-border min-[900px]:px-6 min-[900px]:pb-3">
+      {/* Tabs and counter stay at the top of the surface's scroll area while the grid and the
+          written list scroll under them. Bleeds over the body's padding. On a short phone the
+          half-height sheet leaves less room than the header itself (84px at 320x568), so there it
+          scrolls away with the items instead of hiding them. */}
+      <div className="bg-surface z-10 [@media(min-height:740px)]:sticky [@media(min-height:740px)]:top-0 min-[900px]:sticky min-[900px]:top-0 -mx-4 space-y-3 px-4 min-[900px]:-mx-6 min-[900px]:border-b min-[900px]:border-border min-[900px]:px-6 min-[900px]:pb-3">
         <CategoryTabs tabs={tabs} selected={selected} onSelect={setRequested} idPrefix={idPrefix} />
         <Counter
           count={builder.itemCount}
