@@ -31,9 +31,9 @@ describe("items", () => {
     for (let n = 101; n <= 115; n += 1) expect(ids.has(`65b000000000000000000${n}`)).toBe(true);
   });
 
-  it("is a demo catalogue of 40 to 60 items over 8 to 10 categories", () => {
-    expect(ITEMS.length).toBeGreaterThanOrEqual(40);
-    expect(ITEMS.length).toBeLessThanOrEqual(60);
+  it("is a demo catalogue of 60 to 80 items over 8 to 10 categories", () => {
+    expect(ITEMS.length).toBeGreaterThanOrEqual(60);
+    expect(ITEMS.length).toBeLessThanOrEqual(80);
     const perCategory = countBy(ITEMS, (i) => i.category);
     expect(Object.keys(perCategory).length).toBeGreaterThanOrEqual(8);
     expect(Object.keys(perCategory).length).toBeLessThanOrEqual(10);
@@ -56,13 +56,13 @@ describe("items", () => {
     }
   });
 
-  it("sets a picker style on every item: 25 to 30 tiles and 20 to 25 list items", () => {
+  it("sets a picker style on every item: 30 to 36 tiles and 30 to 40 list items", () => {
     const perStyle = countBy(ITEMS, (i) => i.pickerStyle ?? "missing");
     expect(perStyle.missing).toBeUndefined();
-    expect(perStyle.tile).toBeGreaterThanOrEqual(25);
-    expect(perStyle.tile).toBeLessThanOrEqual(30);
-    expect(perStyle.list).toBeGreaterThanOrEqual(20);
-    expect(perStyle.list).toBeLessThanOrEqual(25);
+    expect(perStyle.tile).toBeGreaterThanOrEqual(30);
+    expect(perStyle.tile).toBeLessThanOrEqual(36);
+    expect(perStyle.list).toBeGreaterThanOrEqual(30);
+    expect(perStyle.list).toBeLessThanOrEqual(40);
   });
 
   it("gives every category at least one tile, listed before its list items", () => {
@@ -93,6 +93,11 @@ describe("items", () => {
     for (const item of ITEMS.filter((i) => !i.personalizable)) {
       expect(item.personalizationMaxLength).toBeUndefined();
     }
+  });
+
+  it("keeps the ids of the first 54 items, and numbers later additions after them", () => {
+    const ids = new Set(ITEMS.map((i) => i.id));
+    for (let n = 101; n <= 171; n += 1) expect(ids.has(`65b000000000000000000${n}`)).toBe(true);
   });
 
   it("uses generic names, not brand names", () => {
