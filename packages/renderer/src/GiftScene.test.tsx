@@ -169,3 +169,28 @@ describe("shade", () => {
     expect(shade("not-a-colour", 0)).toBe("#808080");
   });
 });
+
+describe("gift tag", () => {
+  const packaging = makePackaging();
+  const items = makeItems(2);
+
+  it("hangs a tag with the typed recipient name", () => {
+    const base = makeDesign(2);
+    const design = {
+      ...base,
+      personalisation: { ...base.personalisation, recipientName: " Sara " },
+    };
+    const html = renderToStaticMarkup(
+      <GiftScene design={design} packaging={packaging} items={items} />,
+    );
+    expect(html).toContain("data-gift-tag");
+    expect(html).toContain("For Sara");
+  });
+
+  it("draws no tag before a name is typed", () => {
+    const html = renderToStaticMarkup(
+      <GiftScene design={makeDesign(2)} packaging={packaging} items={items} />,
+    );
+    expect(html).not.toContain("data-gift-tag");
+  });
+});

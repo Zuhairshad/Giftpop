@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { FIXTURE_PACKAGINGS } from "../_dev/fixtures";
 
-import { groupPackagings } from "./groups";
+import { groupPackagings, groupSpan } from "./groups";
 
 function withKind(priced: PricedPackaging, kind: string, n: number): PricedPackaging {
   return {
@@ -47,6 +47,14 @@ describe("groupPackagings", () => {
     expect(groups).toHaveLength(1);
     expect(groups[0]?.kind).toBe("other");
     expect(groups[0]?.packagings).toHaveLength(2);
+  });
+
+  it("spans one column per tile, capped at the row", () => {
+    expect(groupSpan(1, 3)).toBe(1);
+    expect(groupSpan(2, 3)).toBe(2);
+    expect(groupSpan(5, 3)).toBe(3);
+    expect(groupSpan(3, 2)).toBe(2);
+    expect(groupSpan(0, 2)).toBe(1);
   });
 
   it("is empty for an empty list", () => {

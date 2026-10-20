@@ -13,7 +13,7 @@ import type { Country } from "@giftpop/contracts";
  * but the account number is all zeros: it is not a real account.
  */
 const DEV_PAYMENT_INSTRUCTIONS =
-  "Bank transfer to The Giftpop, account 0000 0000 0000, reference: your order number";
+  "Pay by bank transfer.\nBank: Demo Bank\nAccount title: The Giftpop\nAccount number: 0000 0000 0000";
 
 export const COUNTRIES: Country[] = [
   {

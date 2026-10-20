@@ -11,7 +11,6 @@ import { ItemTile } from "./items/item-tile";
 import {
   ALL_CATEGORY,
   categoryTabs,
-  continueState,
   filterItemsByCategory,
   pickedInCategory,
   quantityOf,
@@ -47,19 +46,18 @@ export function ItemsBody(): ReactElement {
 
   const selected = names.includes(requested) ? requested : ALL_CATEGORY;
   const shown = filterItemsByCategory(catalog.items, selected);
-  const blocking = continueState(builder.problems).message;
 
   return (
     <div className="space-y-3">
-      <CategoryTabs tabs={tabs} selected={selected} onSelect={setRequested} idPrefix={idPrefix} />
-
-      <div>
+      {/* Tabs and counter stay at the top of the surface's scroll area while the grid scrolls
+          under them (desktop: the grid is several rows tall). Bleeds over the body's padding. */}
+      <div className="bg-surface sticky top-0 z-10 -mx-4 space-y-3 px-4 min-[900px]:-mx-6 min-[900px]:border-b min-[900px]:border-border min-[900px]:px-6 min-[900px]:pb-3">
+        <CategoryTabs tabs={tabs} selected={selected} onSelect={setRequested} idPrefix={idPrefix} />
         <Counter
           count={builder.itemCount}
           minItems={packaging.minItems}
           maxItems={packaging.maxItems}
         />
-        {blocking ? <p className="text-muted mt-1 text-xs wrap-anywhere">{blocking}</p> : null}
       </div>
 
       <div

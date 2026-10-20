@@ -1,5 +1,6 @@
 import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
+import { roundBox } from "./round-box";
 import type { LayoutFn, LayoutInput, Placement } from "./types";
 
 export { FULL_SCENE, packagingSceneBounds, sceneBounds } from "./bounds";
@@ -11,6 +12,7 @@ export type { LayoutFn, LayoutInput, Placement } from "./types";
 export const LAYOUTS = {
   "bouquet-fan": bouquetFan,
   "box-grid": boxGrid,
+  "round-box": roundBox,
 } as const satisfies Record<string, LayoutFn>;
 
 export type KnownLayoutType = keyof typeof LAYOUTS;

@@ -11,7 +11,7 @@ import { ButtonLink } from "@/components/ui";
 function ItemList({ rows }: { rows: readonly SharedItemRow[] }): ReactElement {
   return (
     <section aria-labelledby="shared-items-heading">
-      <h2 id="shared-items-heading" className="text-muted text-sm font-semibold">
+      <h2 id="shared-items-heading" className="text-ink-2 text-sm font-semibold">
         In this gift
       </h2>
       <ul className="mt-2 space-y-1.5">
@@ -48,10 +48,10 @@ export function SharedGiftDetails({ view }: { view: SharedDesignView }): ReactEl
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <p className="font-script text-pink-strong text-2xl leading-none font-bold">
+        <p className="font-script text-lavender-deep text-2xl leading-none font-bold">
           Someone made this for you
         </p>
-        <h1 className="display-lg mt-2 wrap-anywhere">
+        <h1 className="display-lg text-ink mt-2 wrap-anywhere">
           {recipient ? `A gift for ${recipient}` : "A Giftpop gift"}
         </h1>
       </div>

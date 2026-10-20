@@ -1,6 +1,7 @@
 import type { Design, Item, Packaging } from "@giftpop/contracts";
 
 import { SceneSvg, StaticItemArt, StaticLayer } from "./scene/art";
+import { SceneGiftTag } from "./scene/gift-tag";
 import { withImageUrls, type ImageUrlFn } from "./scene/image-urls";
 import { buildSceneModel } from "./scene/model";
 import { MotionScene } from "./scene/MotionScene";
@@ -91,6 +92,11 @@ function StaticScene({
       <g data-layer="front">
         <StaticLayer side="front" asset={model.layers.front} model={model} />
       </g>
+      {model.tagName ? (
+        <g data-layer="tag" aria-hidden="true">
+          <SceneGiftTag name={model.tagName} bounds={model.bounds} />
+        </g>
+      ) : null}
     </SceneSvg>
   );
 }

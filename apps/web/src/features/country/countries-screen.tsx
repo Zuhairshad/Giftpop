@@ -41,7 +41,7 @@ export async function CountriesScreen() {
       <header className="max-w-3xl space-y-2">
         <p
           aria-hidden="true"
-          className="font-script text-pink-strong text-2xl leading-none font-bold"
+          className="font-script text-lavender-deep text-2xl leading-none font-bold"
         >
           Pick your country
         </p>

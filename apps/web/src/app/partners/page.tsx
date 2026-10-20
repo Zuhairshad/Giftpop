@@ -24,7 +24,7 @@ const ROUTES = [
 export default function PartnersPage() {
   return (
     <section className="mx-auto w-full max-w-3xl min-w-0">
-      <p className="font-script text-pink-strong text-2xl leading-none font-bold">Partnerships</p>
+      <p className="font-script text-lavender-deep text-2xl leading-none font-bold">Partnerships</p>
       <h1 className="font-display mt-2 text-4xl leading-tight font-bold tracking-tight sm:text-5xl">
         Partner with The Giftpop
       </h1>

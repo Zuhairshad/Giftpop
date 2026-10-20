@@ -34,7 +34,7 @@ function Success({ email }: { email: string }): ReactElement {
       </span>
       <p
         aria-hidden="true"
-        className="font-script text-pink-strong text-3xl leading-none font-bold"
+        className="font-script text-lavender-deep text-3xl leading-none font-bold"
       >
         Thank you
       </p>
@@ -75,7 +75,7 @@ export function FormFrame({
         <Success email={controller.values.email?.trim() ?? ""} />
       ) : (
         <>
-          <p className="font-script text-pink-strong text-2xl leading-none font-bold">{eyebrow}</p>
+          <p className="font-script text-lavender-deep text-2xl leading-none font-bold">{eyebrow}</p>
           <h1 className="font-display mt-2 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
             {title}
           </h1>

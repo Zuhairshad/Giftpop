@@ -5,6 +5,7 @@ import { AnimatePresence, LazyMotion, domAnimation, useReducedMotion } from "mot
 
 import { AnimatedItem } from "./scene/AnimatedItem";
 import { LayerPlaceholder, SceneSvg } from "./scene/art";
+import { SceneGiftTag } from "./scene/gift-tag";
 import { useHasMounted, useSceneObservers } from "./scene/hooks";
 import { LAYER_BOX } from "./scene/images";
 import { LoadableImage } from "./scene/LoadableImage";
@@ -103,6 +104,11 @@ export function AnimatedGiftScene({
             nearViewport={nearViewport}
           />
         </g>
+        {model.tagName ? (
+          <g data-layer="tag" aria-hidden="true">
+            <SceneGiftTag name={model.tagName} bounds={model.bounds} />
+          </g>
+        ) : null}
       </SceneSvg>
     </LazyMotion>
   );

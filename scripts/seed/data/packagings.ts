@@ -65,9 +65,9 @@ export const PACKAGINGS: Packaging[] = [
     id: HAT_BOX_ID,
     slug: "round-hat-box",
     name: "Round hat box",
-    description: "A round box with the gifts fanned out on top. Pick 5 to 8 items.",
+    description: "A round box with the gifts standing in tissue. Pick 5 to 8 items.",
     kind: "box",
-    layoutType: "bouquet-fan",
+    layoutType: "round-box",
     minItems: 5,
     maxItems: 8,
     // The 8 smallest items take 8 units; any 5 items take at most 12.

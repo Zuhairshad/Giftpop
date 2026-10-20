@@ -57,12 +57,16 @@ export function ReorderList({ rows, onMove }: ReorderListProps): ReactElement {
           key={item.id}
           className="bg-surface rounded-md shadow-hairline flex items-center gap-2.5 py-1 pr-1.5 pl-3"
         >
-          <span aria-hidden="true" className="text-pink-strong w-5 shrink-0 text-sm font-bold">
+          <span
+            aria-hidden="true"
+            className="text-ink-2 w-5 shrink-0 text-sm font-bold tabular-nums"
+          >
             {index + 1}
           </span>
           <span
             aria-hidden="true"
-            className="size-5 shrink-0 rounded-full shadow-hairline"
+            // A ring that shows on white, so a near-white item (mug, card) still has a visible dot.
+            className="border-border-strong size-5 shrink-0 rounded-full border"
             style={{ backgroundColor: item.color }}
           />
           <span className="min-w-0 flex-1">

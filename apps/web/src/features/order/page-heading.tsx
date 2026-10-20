@@ -12,7 +12,8 @@ export function PageHeading({ title, eyebrow, children }: PageHeadingProps): Rea
   return (
     <header className="space-y-2">
       {eyebrow ? (
-        <p aria-hidden="true" className="font-script text-lavender-deep text-2xl leading-none">
+        // Read aloud: it can carry the customer's name ("Thank you, Sara!"), which they typed.
+        <p className="font-script text-lavender-deep text-2xl leading-none wrap-anywhere">
           {eyebrow}
         </p>
       ) : null}

@@ -6,13 +6,15 @@ import type { QuoteStatus } from "../../state";
 import { buildPriceColumns } from "./price-columns";
 import type { PriceColumn, PriceRow } from "./price-columns";
 
+import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/format-money";
 
+/** Label left, amount right; the amount never wraps and the label gives way first. */
 function Row({
   label,
   children,
   strong = false,
-  className = "",
+  className,
 }: {
   label: string;
   children: string;
@@ -20,44 +22,62 @@ function Row({
   className?: string;
 }): ReactElement {
   return (
-    <div className={`flex flex-wrap items-baseline justify-between gap-x-2 ${className}`}>
-      <dt className={strong ? "font-bold" : "text-muted"}>{label}</dt>
-      <dd className={`ml-auto tabular-nums ${strong ? "font-bold" : ""}`}>{children}</dd>
+    <div className={cn("flex items-baseline justify-between gap-3", className)}>
+      <dt className={cn("min-w-0", strong ? "text-foreground font-semibold" : "text-muted")}>
+        {label}
+      </dt>
+      <dd
+        className={cn(
+          "shrink-0 whitespace-nowrap tabular-nums",
+          strong ? "text-foreground font-semibold" : "text-foreground",
+        )}
+      >
+        {children}
+      </dd>
     </div>
   );
 }
 
 function rowValue(row: PriceRow, currency: string): string {
   if (row.kind === "free") return "Free";
-  if (row.kind === "discount") return `-${formatMoney(row.minor, currency)}`;
+  if (row.kind === "discount") return `−${formatMoney(row.minor, currency)}`;
   return formatMoney(row.minor, currency);
 }
 
-function Column({ column }: { column: PriceColumn }): ReactElement {
+/**
+ * One payment option as a compact list: its name and what is due now on top (the number to
+ * compare), a plain sentence, then the lines that make up the total.
+ */
+function Option({ column }: { column: PriceColumn }): ReactElement {
   const money = (minor: number): string => formatMoney(minor, column.currency);
   const headingId = `price-${column.mode}`;
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-surface border-border rounded-card flex flex-col border p-3 sm:p-5"
+      className="bg-surface border-border rounded-card border px-3.5 py-3 min-[900px]:px-4"
     >
-      <h4 id={headingId} className="text-foreground text-sm font-semibold sm:text-base">
-        {column.title}
-      </h4>
-      <p className="text-muted mt-1 text-xs sm:text-sm">{column.summary}</p>
-      <dl className="mt-3 space-y-1.5 text-sm sm:text-base">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h4 id={headingId} className="text-foreground text-[15px] leading-snug font-semibold">
+            {column.title}
+          </h4>
+          <p className="text-muted mt-0.5 text-xs leading-snug">{column.summary}</p>
+        </div>
+        <p className="shrink-0 text-end">
+          <span className="text-muted block text-xs leading-snug">{column.dueNow.label}</span>
+          <span className="font-display text-foreground block text-lg leading-tight font-bold whitespace-nowrap tabular-nums">
+            {money(column.dueNow.minor)}
+          </span>
+        </p>
+      </div>
+      <dl className="border-border mt-2.5 space-y-1 border-t pt-2.5 text-[13px] leading-snug min-[900px]:text-sm">
         {column.rows.map((row) => (
           <Row key={row.label} label={row.label}>
             {rowValue(row, column.currency)}
           </Row>
         ))}
-        <Row label={column.total.label} strong className="border-border border-t pt-1.5">
+        <Row label={column.total.label} strong>
           {money(column.total.minor)}
-        </Row>
-      </dl>
-      <dl className="bg-surface-soft rounded-soft mt-3 space-y-1.5 p-2.5 text-sm sm:p-3 sm:text-base">
-        <Row label={column.dueNow.label} strong>
-          {money(column.dueNow.minor)}
         </Row>
         {column.dueOnDelivery ? (
           <Row label={column.dueOnDelivery.label}>{money(column.dueOnDelivery.minor)}</Row>
@@ -69,9 +89,9 @@ function Column({ column }: { column: PriceColumn }): ReactElement {
 
 function Skeleton(): ReactElement {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4" aria-hidden="true">
+    <div className="space-y-2.5" aria-hidden="true">
       {[0, 1].map((n) => (
-        <div key={n} className="bg-surface border-border rounded-card h-56 animate-pulse border" />
+        <div key={n} className="bg-surface border-border rounded-card h-36 animate-pulse border" />
       ))}
     </div>
   );
@@ -79,7 +99,10 @@ function Skeleton(): ReactElement {
 
 type PriceSectionProps = { quote: QuoteResponse | null; status: QuoteStatus };
 
-/** Both payment modes side by side, from the API quote only. */
+/**
+ * Both payment modes, one above the other on every screen size (side by side they wrapped their
+ * amounts in a 460px card), from the API quote only.
+ */
 export function PriceSection({ quote, status }: PriceSectionProps): ReactElement {
   const failed = status === "error" || (status === "ready" && quote === null);
   const columns = status === "ready" && quote ? buildPriceColumns(quote.quotes) : [];
@@ -89,7 +112,7 @@ export function PriceSection({ quote, status }: PriceSectionProps): ReactElement
       <h3 id="prices-heading" className="text-foreground text-base font-semibold">
         What it costs
       </h3>
-      <div className="mt-3">
+      <div className="mt-2.5">
         {failed ? (
           <p
             role="alert"
@@ -105,11 +128,9 @@ export function PriceSection({ quote, status }: PriceSectionProps): ReactElement
             </p>
           </>
         ) : (
-          <div
-            className={`grid gap-3 sm:gap-4 ${columns.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
-          >
+          <div className="space-y-2.5">
             {columns.map((column) => (
-              <Column key={column.mode} column={column} />
+              <Option key={column.mode} column={column} />
             ))}
           </div>
         )}

@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import type { ContinueCheck } from "./continue-reason";
 import { QUESTION_IDS } from "./ids";
 import type { QuestionId } from "./ids";
 import { LAZY_BODIES } from "./lazy-bodies";
@@ -25,13 +26,14 @@ export interface QuestionDef {
   continueLabel: string;
   /**
    * The question's own primary action, drawn in the footer in place of the continue button
-   * (review: the link to checkout). It takes the footer's sizing classes.
+   * (review: the link to checkout). It takes the footer's sizing classes and, while blocked,
+   * the id of the footer's reason line for its `aria-describedby`.
    */
-  Action?: ComponentType<{ className?: string }>;
+  Action?: ComponentType<{ className?: string; reasonId?: string }>;
   /** The answer controls. Rendered inside the shell's surface; reads and writes the builder store. */
   body: QuestionBody;
-  /** A hook the shell calls to enable the primary action for this question. */
-  useCanContinue: () => boolean;
+  /** A hook the shell calls to enable the primary action for this question and say why it is off. */
+  useCanContinue: () => ContinueCheck;
 }
 
 /** The one place the shell and the question contents meet. Order here is the order of the flow. */

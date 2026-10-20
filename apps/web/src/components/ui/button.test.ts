@@ -43,11 +43,29 @@ describe("buttonClass", () => {
     expect(classes(buttonClass())).not.toContain("w-full");
   });
 
-  it("keeps disabled and aria-disabled looking disabled", () => {
-    const result = buttonClass();
-    expect(result).toContain("disabled:opacity-50");
-    expect(result).toContain("aria-disabled:opacity-50");
-    expect(result).toContain("disabled:cursor-not-allowed");
+  it("gives a disabled primary a neutral fill and label, no lift and a not-allowed cursor", () => {
+    const result = classes(buttonClass());
+    for (const state of ["disabled", "aria-disabled"]) {
+      expect(result).toContain(`${state}:bg-warm-2`);
+      expect(result).toContain(`${state}:text-ink-2`);
+      expect(result).toContain(`${state}:shadow-none`);
+      expect(result).toContain(`${state}:cursor-not-allowed`);
+      // Not a washed-out pink: the primary is never faded.
+      expect(result).not.toContain(`${state}:opacity-50`);
+    }
+  });
+
+  it("keeps pointer events on disabled buttons so the cursor shows", () => {
+    expect(buttonClass()).not.toContain("pointer-events-none");
+  });
+
+  it("fades the tint and ghost variants when disabled", () => {
+    for (const variant of ["tint", "ghost"] as const) {
+      const result = classes(buttonClass({ variant }));
+      expect(result).toContain("disabled:opacity-50");
+      expect(result).toContain("aria-disabled:opacity-50");
+      expect(result).toContain("disabled:cursor-not-allowed");
+    }
   });
 
   it("appends a caller class last", () => {

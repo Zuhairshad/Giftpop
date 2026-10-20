@@ -64,7 +64,7 @@ export function StatePanel({
       {script ? (
         <p
           aria-hidden="true"
-          className="font-script text-pink-strong mt-6 text-2xl leading-none font-bold"
+          className="font-script text-lavender-deep mt-6 text-2xl leading-none font-bold"
         >
           {script}
         </p>
@@ -101,7 +101,7 @@ export function PlaceholderPage({ eyebrow, title, children, status }: Placeholde
   return (
     <section className="bg-surface shadow-hairline relative overflow-hidden rounded-lg p-6 sm:p-10">
       <div className="max-w-xl">
-        <p className="font-script text-pink-strong text-2xl font-bold">{eyebrow}</p>
+        <p className="font-script text-lavender-deep text-2xl font-bold">{eyebrow}</p>
         <h1 className="font-display mt-1 text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
         <div className="text-muted mt-4 space-y-3 text-base">{children}</div>
         <p className="bg-lavender text-lavender-deep mt-6 inline-block rounded-full px-4 py-1.5 text-sm font-semibold">

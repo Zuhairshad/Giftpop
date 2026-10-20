@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { ReactElement, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 
 import { Button } from "@/components/ui";
 
 /*
  * Every rule sits inside `no-preference`, so a visitor who asks for less motion gets no animation
- * at all. `backwards` fill only hides things before they start, so nothing can stay invisible.
+ * at all. `backwards` fill only hides things before they start, and both keyframes end at opacity 1
+ * with no transform, so once the reveal is over (about 1s) the text is at full ink.
  */
 const REVEAL_CSS = `
 @keyframes gp-reveal-pop {
@@ -21,7 +22,7 @@ const REVEAL_CSS = `
 }
 @media (prefers-reduced-motion: no-preference) {
   .gp-reveal-scene { animation: gp-reveal-pop 0.95s cubic-bezier(0.2, 0.9, 0.3, 1.1) backwards; }
-  .gp-reveal-details { animation: gp-reveal-rise 0.7s ease-out 0.75s backwards; }
+  .gp-reveal-details { animation: gp-reveal-rise 0.5s ease-out 0.45s backwards; }
 }
 `;
 
@@ -64,9 +65,16 @@ export function GiftReveal({ scene, details }: GiftRevealProps): ReactElement {
           key={`scene-${run}`}
           className="gp-reveal-scene relative isolate mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]"
         >
+          {/* The design's soft light pool, larger than the scene box so no edge shows. */}
           <span
             aria-hidden="true"
-            className="bg-pink-soft absolute inset-[4%] -z-10 rounded-full"
+            className="gp-light-pools absolute -inset-[18%] -z-10"
+            style={
+              {
+                "--gp-pool-a-shape": "closest-side at 50% 52%",
+                "--gp-pool-b-shape": "40% 40% at 30% 75%",
+              } as CSSProperties
+            }
           />
           {scene}
         </div>

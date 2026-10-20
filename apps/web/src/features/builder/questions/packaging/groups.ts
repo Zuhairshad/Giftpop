@@ -16,6 +16,15 @@ export interface PackagingGroup {
   packagings: PricedPackaging[];
 }
 
+/**
+ * How many columns of the shared tile grid a group takes: one per tile, up to the whole row.
+ * Small groups then sit side by side ("Bouquets" and "Baskets" in one row) instead of each
+ * leaving a row mostly empty.
+ */
+export function groupSpan(tileCount: number, columns: number): number {
+  return Math.max(1, Math.min(tileCount, columns));
+}
+
 function isKind(value: string): value is PackagingKind {
   return (PACKAGING_KINDS as readonly string[]).includes(value);
 }

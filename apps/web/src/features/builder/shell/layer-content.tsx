@@ -10,6 +10,9 @@ import { getQuestion } from "../questions/registry";
 
 import { BodySkeleton } from "./body-skeleton";
 import { questionProgress } from "./progress-model";
+import { BOTTOM_FADE_CLASS, useBottomFade } from "./use-bottom-fade";
+
+import { cn } from "@/lib/cn";
 
 interface LayerContentProps {
   question: QuestionId;
@@ -38,6 +41,7 @@ export function LayerContent({
   const titleRef = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const shouldFocus = useRef(focusOnMount);
+  const { ref: scroller, fade, onScroll } = useBottomFade<HTMLDivElement>(body);
   // Always the latest callback, without restarting the observer when it changes.
   const report = useEffectEvent(onNaturalHeight);
 
@@ -66,19 +70,26 @@ export function LayerContent({
       >
         <p
           aria-hidden="true"
-          className="font-script text-foreground order-2 shrink-0 text-xl leading-none min-[900px]:order-none min-[900px]:text-[22px]"
+          className="font-script text-foreground order-2 shrink-0 pe-1 text-xl leading-none whitespace-nowrap min-[900px]:order-none min-[900px]:text-[22px]"
         >
           {questionProgress(question).label}
         </p>
         <h2
           ref={titleRef}
           tabIndex={-1}
-          className="font-display text-foreground text-[22px] leading-tight font-bold tracking-[-0.035em] wrap-anywhere min-[900px]:mt-1.5 min-[900px]:text-[30px]"
+          className="font-display text-foreground text-[22px] leading-tight font-bold tracking-[-0.035em] text-balance wrap-anywhere min-[900px]:mt-1.5 min-[900px]:text-[30px]"
         >
           {title}
         </h2>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 min-[900px]:px-6">
+      <div
+        ref={scroller}
+        onScroll={onScroll}
+        className={cn(
+          "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 min-[900px]:px-6",
+          fade && BOTTOM_FADE_CLASS,
+        )}
+      >
         <div ref={body} className="pb-2">
           <QuestionBody question={question} />
         </div>
