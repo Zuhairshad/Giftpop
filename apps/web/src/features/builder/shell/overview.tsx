@@ -2,12 +2,12 @@
 
 import { FULL_SCENE, packagingSceneBounds } from "@giftpop/renderer";
 import { useMemo } from "react";
-import type { ReactElement } from "react";
+import type { CSSProperties, ReactElement } from "react";
 
 import { SafeScene } from "../questions/safe-scene";
 import { useBuilder } from "../state";
 
-import { colourName, overviewCaption, priceView } from "./overview-copy";
+import { PRICE_PILL_NOTE, colourName, overviewCaption, priceView } from "./overview-copy";
 
 import { GiftIllustration } from "@/components/gift-illustration";
 
@@ -29,6 +29,12 @@ function PricePill(): ReactElement {
             ? "Price unavailable"
             : "Not priced yet"}
       </span>
+      {price.kind === "amount" ? (
+        // The pill shows the goods subtotal; the review question adds shipping and the discount.
+        <span className="text-muted text-xs leading-tight min-[900px]:text-[13px]">
+          {PRICE_PILL_NOTE}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -69,15 +75,19 @@ function Scene(): ReactElement {
   const { design, packaging, catalog } = useBuilder();
   const items = useMemo(() => catalog.items.map((entry) => entry.item), [catalog.items]);
   // The box has the scene's own shape (a bouquet is wider than tall), as big as the free area
-  // allows, so the scene never sits behind the sheet, scrolls, or leaves an empty band.
+  // allows, so the scene never sits behind the sheet, scrolls, or leaves an empty band. On desktop
+  // the stage is much bigger than the gift needs: cap it at 560px wide and 70% of the stage height,
+  // so the gift reads as an object with room around it.
   const { width, height } = packaging ? packagingSceneBounds(packaging) : FULL_SCENE;
+  const style: CSSProperties & Record<"--scene-ratio", number> = {
+    "--scene-ratio": width / height,
+    aspectRatio: `${width} / ${height}`,
+  };
   return (
     <div className="grid min-h-0 flex-1 [container-type:size] place-items-center">
       <div
-        style={{
-          width: `min(100cqw, calc(100cqh * ${width / height}))`,
-          aspectRatio: `${width} / ${height}`,
-        }}
+        style={style}
+        className="w-[min(100cqw,calc(100cqh*var(--scene-ratio)))] min-[900px]:w-[min(100cqw,560px,calc(70cqh*var(--scene-ratio)))]"
       >
         {design && packaging ? (
           <SafeScene

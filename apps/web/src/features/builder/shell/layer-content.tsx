@@ -10,6 +10,9 @@ import { getQuestion } from "../questions/registry";
 
 import { BodySkeleton } from "./body-skeleton";
 import { questionProgress } from "./progress-model";
+import { BOTTOM_FADE_CLASS, useBottomFade } from "./use-bottom-fade";
+
+import { cn } from "@/lib/cn";
 
 interface LayerContentProps {
   question: QuestionId;
@@ -38,6 +41,7 @@ export function LayerContent({
   const titleRef = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const shouldFocus = useRef(focusOnMount);
+  const { ref: scroller, fade, onScroll } = useBottomFade<HTMLDivElement>(body);
   // Always the latest callback, without restarting the observer when it changes.
   const report = useEffectEvent(onNaturalHeight);
 
@@ -78,7 +82,14 @@ export function LayerContent({
           {title}
         </h2>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 min-[900px]:px-6">
+      <div
+        ref={scroller}
+        onScroll={onScroll}
+        className={cn(
+          "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 min-[900px]:px-6",
+          fade && BOTTOM_FADE_CLASS,
+        )}
+      >
         <div ref={body} className="pb-2">
           <QuestionBody question={question} />
         </div>

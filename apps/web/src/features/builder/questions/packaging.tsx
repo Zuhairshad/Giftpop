@@ -8,9 +8,17 @@ import { useBuilder } from "../state";
 
 import { useQuestionData } from "./data-context";
 import { droppedItemNames, droppedItemsNotice, visiblePackagings } from "./packaging/format-copy";
-import { groupPackagings } from "./packaging/groups";
+import { groupPackagings, groupSpan } from "./packaging/groups";
 import { PackagingTile } from "./packaging/packaging-tile";
 import { TemplatesSection } from "./packaging/templates-section";
+
+// Whole class names, so Tailwind sees them: a group's span at 2 and at 3 columns.
+const PHONE_SPAN: Record<number, string> = { 1: "col-span-1", 2: "col-span-2" };
+const WIDE_SPAN: Record<number, string> = {
+  1: "min-[560px]:col-span-1",
+  2: "min-[560px]:col-span-2",
+  3: "min-[560px]:col-span-3",
+};
 
 /** Question 1 body: what the gift comes in, grouped by kind, then ready-made gifts to start from. */
 export function PackagingBody(): ReactElement {
@@ -41,16 +49,22 @@ export function PackagingBody(): ReactElement {
           We have no gift formats for this country right now. Please check back soon.
         </p>
       ) : (
-        <div className="space-y-5">
+        // One shared grid (2 columns on phones, 3 from 560px) so tiles always fill the width;
+        // each group takes as many columns as it has tiles and lines up on the same tracks.
+        <div className="grid grid-cols-2 gap-x-2.5 gap-y-5 min-[560px]:grid-cols-3">
           {groups.map((group) => (
-            <section key={group.kind} aria-labelledby={`packaging-group-${group.kind}`}>
+            <section
+              key={group.kind}
+              aria-labelledby={`packaging-group-${group.kind}`}
+              className={`grid grid-cols-subgrid content-start ${PHONE_SPAN[groupSpan(group.packagings.length, 2)]} ${WIDE_SPAN[groupSpan(group.packagings.length, 3)]}`}
+            >
               <h3
                 id={`packaging-group-${group.kind}`}
-                className="text-muted text-xs font-semibold tracking-wide uppercase"
+                className="text-muted col-span-full text-xs font-semibold tracking-wide uppercase"
               >
                 {group.heading}
               </h3>
-              <ul className="mt-2 grid grid-cols-2 gap-2.5 min-[560px]:grid-cols-3">
+              <ul className="col-span-full mt-2 grid grid-cols-subgrid gap-y-2.5">
                 {group.packagings.map((priced) => (
                   <PackagingTile
                     key={priced.packaging.id}

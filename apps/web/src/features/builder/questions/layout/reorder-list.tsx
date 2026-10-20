@@ -62,7 +62,8 @@ export function ReorderList({ rows, onMove }: ReorderListProps): ReactElement {
           </span>
           <span
             aria-hidden="true"
-            className="size-5 shrink-0 rounded-full shadow-hairline"
+            // A ring that shows on white, so a near-white item (mug, card) still has a visible dot.
+            className="border-border-strong size-5 shrink-0 rounded-full border"
             style={{ backgroundColor: item.color }}
           />
           <span className="min-w-0 flex-1">

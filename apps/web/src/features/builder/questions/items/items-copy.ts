@@ -39,18 +39,25 @@ export function quantityOf(lines: readonly DesignItem[], itemId: string): number
 export interface AddControlState {
   /** The "add" press does something. */
   canAdd: boolean;
-  /** Why it does not, shown on the card, or null. */
+  /** Why it does not, or null. Always given to assistive tech. */
   reason: string | null;
   /** A card for an item that is not picked and cannot be picked is fully disabled. */
   cardDisabled: boolean;
+  /**
+   * The reason is printed on the card. Only on an unpicked card: a picked one already shows its
+   * count, and its greyed "+" says enough ("Bouquet is full" on every picked tile is noise).
+   */
+  reasonShown: boolean;
 }
 
 /** Turns the store's `addBlockedReason` into what a card shows. */
 export function addControlState(blockedReason: string | null, qty: number): AddControlState {
+  const blockedUnpicked = blockedReason !== null && qty === 0;
   return {
     canAdd: blockedReason === null,
     reason: blockedReason,
-    cardDisabled: blockedReason !== null && qty === 0,
+    cardDisabled: blockedUnpicked,
+    reasonShown: blockedUnpicked,
   };
 }
 

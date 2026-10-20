@@ -33,7 +33,8 @@ const STEP_BUTTON =
 /**
  * One item. Pressing the tile adds one. Once picked it has a 2px primary ring, a count badge and
  * a minus / plus pair. An item that cannot be added stays visible: only its art and name dim,
- * and a one-line reason ("Out of stock", "Box is full") stays at full strength.
+ * and a one-line reason ("Out of stock", "Box is full") stays at full strength. A picked item
+ * that cannot take one more prints no reason; its "+" just looks (and is) off.
  */
 export function ItemTile({
   entry,
@@ -60,7 +61,8 @@ export function ItemTile({
   };
 
   return (
-    <li className="flex snap-start">
+    // Keyboard focus scrolls a tile clear of the sticky tabs and counter (desktop grid).
+    <li className="flex snap-start min-[900px]:scroll-mt-28">
       <div
         className={cn(
           "bg-surface rounded-md relative flex w-full min-w-0 flex-col items-center gap-0.5 p-1.5 shadow-hairline",
@@ -96,7 +98,7 @@ export function ItemTile({
           >
             {item.name}
           </span>
-          {control.reason ? null : (
+          {control.reasonShown ? null : (
             <span aria-hidden="true" className="text-muted text-xs leading-tight">
               {price}
             </span>
@@ -104,9 +106,14 @@ export function ItemTile({
         </button>
 
         {control.reason ? (
+          // Printed only on an unpicked card; a picked card keeps it for screen readers only.
           <p
             id={reasonId}
-            className="text-warning w-full text-xs leading-tight font-semibold wrap-anywhere"
+            className={
+              control.reasonShown
+                ? "text-warning w-full text-xs leading-tight font-semibold wrap-anywhere"
+                : "sr-only"
+            }
           >
             {control.reason}
           </p>
@@ -127,20 +134,22 @@ export function ItemTile({
               type="button"
               aria-label={stepperRemoveLabel(item.name)}
               onClick={remove}
-              className={`${STEP_BUTTON} bg-warm text-foreground hover:bg-warm-deep`}
+              className={`${STEP_BUTTON} bg-warm text-foreground hover:bg-warm-deep shadow-hairline`}
             >
               <span aria-hidden="true">&minus;</span>
             </button>
             <button
               type="button"
               aria-disabled={!control.canAdd}
+              aria-describedby={control.reason ? reasonId : undefined}
               aria-label={stepperAddLabel(item.name)}
               onClick={add}
               className={cn(
                 STEP_BUTTON,
                 control.canAdd
                   ? "bg-pink text-on-pink hover:bg-pink-strong"
-                  : "bg-warm text-muted cursor-not-allowed",
+                  : // Full: plainly off, a faint outline with no fill, while "−" stays solid.
+                    "text-muted/60 cursor-not-allowed border border-dashed border-border-strong bg-transparent",
               )}
             >
               <span aria-hidden="true">+</span>

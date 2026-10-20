@@ -100,7 +100,13 @@ describe("quantityOf", () => {
 
 describe("addControlState", () => {
   it("lets an item be added when nothing blocks it", () => {
-    expect(addControlState(null, 0)).toEqual({ canAdd: true, reason: null, cardDisabled: false });
+    expect(addControlState(null, 0)).toEqual({
+      canAdd: true,
+      reason: null,
+      cardDisabled: false,
+      reasonShown: false,
+    });
+    expect(addControlState(null, 3).reasonShown).toBe(false);
   });
 
   it("disables the whole card for an unpicked item that is blocked, and shows the reason", () => {
@@ -108,17 +114,19 @@ describe("addControlState", () => {
       canAdd: false,
       reason: "Out of stock",
       cardDisabled: true,
+      reasonShown: true,
     });
     expect(addControlState("Not available in Pakistan", 0).reason).toBe(
       "Not available in Pakistan",
     );
   });
 
-  it("keeps a picked item's card active when only adding more is blocked", () => {
+  it("keeps a picked item's card active when only adding more is blocked, and does not print the reason", () => {
     expect(addControlState("Box is full", 2)).toEqual({
       canAdd: false,
       reason: "Box is full",
       cardDisabled: false,
+      reasonShown: false,
     });
   });
 });
