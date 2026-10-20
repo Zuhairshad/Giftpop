@@ -165,8 +165,8 @@ export function CheckoutFormView({
 
       <div className="space-y-3">
         <p className="text-sm text-muted">
-          By placing this order you agree to our terms of sale and delivery. Your gift is made by
-          hand once your payment is recorded.
+          The next page shows your order number and how to pay. Your gift is made by hand once your
+          payment is recorded, and you can track it with the number and your phone or email.
         </p>
       </div>
 

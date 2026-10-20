@@ -14,9 +14,9 @@ describe("firstNameOf", () => {
     expect(firstNameOf(null)).toBeNull();
     expect(firstNameOf(undefined)).toBeNull();
   });
-  it("caps at 40 code points without splitting an emoji", () => {
-    const name = `${"a".repeat(39)}😀😀`;
-    expect(firstNameOf(name)).toBe(`${"a".repeat(39)}😀`);
+  it("fits the handoff's 40 UTF-16 unit limit without splitting an emoji", () => {
+    expect(firstNameOf(`${"a".repeat(38)}😀😀`)).toBe(`${"a".repeat(38)}😀`);
+    expect(firstNameOf(`${"a".repeat(39)}😀`)).toBe("a".repeat(39));
   });
 });
 

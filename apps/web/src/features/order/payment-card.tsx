@@ -4,6 +4,7 @@ import type { PublicOrderView } from "@giftpop/contracts";
 import { useRef } from "react";
 import type { ReactElement } from "react";
 
+import { dueNowNote } from "./amounts";
 import { CopyButton } from "./copy-button";
 import { parsePaymentInstructions } from "./payment-instructions";
 import type { InstructionBlock } from "./payment-instructions";
@@ -57,7 +58,6 @@ export function PaymentCard({ view }: PaymentCardProps): ReactElement {
   const { quote } = view;
   const money = (minor: number): string => formatMoney(minor, quote.currency, "en");
   const blocks = parsePaymentInstructions(view.paymentInstructions);
-  const later = quote.dueOnDeliveryMinor > 0;
 
   return (
     <section aria-labelledby="pay-heading" className={`${CARD} space-y-5`}>
@@ -70,11 +70,7 @@ export function PaymentCard({ view }: PaymentCardProps): ReactElement {
         <p className="font-display mt-1 text-4xl leading-none font-bold tracking-[-0.9px] tabular-nums wrap-anywhere">
           {money(quote.dueNowMinor)}
         </p>
-        <p className="text-ink-2 mt-2 text-sm">
-          {later
-            ? `The advance. And ${money(quote.dueOnDeliveryMinor)} when it is delivered.`
-            : "The full amount, with your pay-now discount."}
-        </p>
+        <p className="text-ink-2 mt-2 text-sm">{dueNowNote(quote, money)}</p>
       </div>
 
       {blocks.length > 0 ? <Instructions blocks={blocks} /> : null}

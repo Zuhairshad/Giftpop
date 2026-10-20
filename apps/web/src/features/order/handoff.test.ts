@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  parseHandoff,
-  parseHandoffEntry,
-  readHandoff,
-  readHandoffEntry,
-  writeHandoff,
-} from "./handoff";
+import { parseHandoffEntry, readHandoffEntry, writeHandoff } from "./handoff";
 
 const NUMBER = "GP-PK-7K2M9Q";
+
+const parseHandoff = (raw: string | null | undefined, number: string) =>
+  parseHandoffEntry(raw, number)?.contact ?? null;
+const readHandoff = (number: string, storage: Parameters<typeof readHandoffEntry>[1]) =>
+  readHandoffEntry(number, storage)?.contact ?? null;
 
 describe("parseHandoff", () => {
   it("returns the contact for a valid entry", () => {

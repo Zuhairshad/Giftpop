@@ -23,7 +23,6 @@ export const DRUM_FACE =
   `V${OPEN.cy}A${OPEN.rx} ${OPEN.ry} 0 0 1 ${LEFT} ${OPEN.cy}Z`;
 
 export const FRONT_RIM = `M${LEFT} ${OPEN.cy}A${OPEN.rx} ${OPEN.ry} 0 0 0 ${RIGHT} ${OPEN.cy}`;
-export const BACK_RIM = `M${LEFT} ${OPEN.cy}A${OPEN.rx} ${OPEN.ry} 0 0 1 ${RIGHT} ${OPEN.cy}`;
 
 /** A band around the drum between heights `top` and `bottom` (centre heights of its ellipses). */
 export function drumBand(top: number, bottom: number): string {

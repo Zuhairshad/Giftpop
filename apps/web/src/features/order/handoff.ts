@@ -32,11 +32,6 @@ export function parseHandoffEntry(
   return { contact: parsed.data.contact, firstName: parsed.data.firstName ?? null };
 }
 
-/** The contact checkout stored, or null. */
-export function parseHandoff(raw: string | null | undefined, number: string): string | null {
-  return parseHandoffEntry(raw, number)?.contact ?? null;
-}
-
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 
 /** Storage can be missing or throw (private windows), so this never throws. */
@@ -49,10 +44,6 @@ export function readHandoffEntry(
   } catch {
     return null;
   }
-}
-
-export function readHandoff(number: string, storage: StorageLike | undefined): string | null {
-  return readHandoffEntry(number, storage)?.contact ?? null;
 }
 
 export function writeHandoff(

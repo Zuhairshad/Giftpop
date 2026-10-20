@@ -4,8 +4,14 @@ import type { OrderStatus } from "@giftpop/contracts";
 export function firstNameOf(fullName: string | null | undefined): string | null {
   const first = (fullName ?? "").trim().split(/\s+/u)[0] ?? "";
   if (first === "") return null;
-  // Keep whole code points so a long name never ends in half an emoji.
-  return Array.from(first).slice(0, 40).join("");
+  // Whole code points, at most 40 UTF-16 units (the handoff schema's limit), so a long name never
+  // ends in half an emoji and is never dropped by the schema.
+  let name = "";
+  for (const char of first) {
+    if (name.length + char.length > 40) break;
+    name += char;
+  }
+  return name;
 }
 
 /** Orders that ended badly get no thank-you; the eyebrow stays neutral. */

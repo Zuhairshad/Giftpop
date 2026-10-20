@@ -16,9 +16,13 @@ mkdir -p "$logs"
 
 if [ "$cmd" = "stop" ]; then
   if [ -f "$pids" ]; then
-    while read -r pid; do kill "$pid" 2>/dev/null || true; done < "$pids"
+    while read -r pid; do kill "$pid" || true; done < "$pids"
     rm -f "$pids"
   fi
+  # The recorded pids are pnpm wrappers; next-server and tsx can outlive them. Free this slice's ports.
+  for port in "$api" "$web" "$adm"; do
+    for pid in $(lsof -tiTCP:"$port" -sTCP:LISTEN || true); do kill "$pid" || true; done
+  done
   echo "slice $n stopped"
   exit 0
 fi

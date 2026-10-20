@@ -4,7 +4,7 @@ import { continueState } from "./items/items-copy";
 
 /**
  * The rule behind each question's continue button, as pure functions of what the builder holds.
- * Each body's `use<Name>CanContinue` hook is `useBuilder()` passed through one of these.
+ * The `use<Name>CanContinue` hooks in `use-can-continue.ts` pass `useBuilder()` through these.
  */
 
 /** A packaging is chosen. */
