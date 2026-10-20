@@ -36,7 +36,7 @@ The builder is one page, `/<country>/build`. A live **overview** of the gift (`<
 
 1. **"What should your gift come in?"** Packagings from the database, grouped by their `kind` (box, bouquet, basket, mug, other). Each has `kind` (one of those five; a packaging stored without one reads as `box`; orders do not snapshot it), `layoutType`, `minItems`, `maxItems` (for example "Pick 6 to 10"), `capacityUnits`, colour options for wrapper and ribbon, and layer images. Above the groups, **"Start from a ready-made gift"**: the featured templates for the country; "Start from this" opens the builder pre-filled on the review question.
 2. **"Pick your colours"**: wrapper and ribbon from the packaging's colour options; the overview recolours live.
-3. **"What goes inside?"**: category tabs, a live counter ("4 of 6-10 picked", "N spaces left"). Items that cannot be added stay visible but disabled with a reason ("Box is full", "Not available in Pakistan", "Out of stock"). Items animate into the overview.
+3. **"What goes inside?"**: category tabs, items with pictures in a grid and, under it, a written list of more items (name and price, no picture: "Want something not shown above?"), chosen per item by staff (`pickerStyle`: `tile` or `list`, absent means `tile`); both kinds count, price and draw in the overview the same way; a live counter ("4 of 6-10 picked", "N spaces left"). Items that cannot be added stay visible but disabled with a reason ("Box is full", "Not available in Pakistan", "Out of stock"). Items animate into the overview.
 4. **"Happy with the layout?"**: shuffle, and reorder with "Move up" / "Move down" buttons. Placement is slot-based from the layout function, never free drag.
 5. **"Who's it for?"**: recipient name (max 40), card message (max 200), and a name on any item marked `personalizable` (its own max length).
 6. **Review**: your card (recipient and message), the price breakdown from the API quote for both payment modes side by side, "Save and share" (creates a share link), "Continue to checkout".
@@ -53,7 +53,7 @@ Exactly one screen (`100dvh`, no scroll at any size): an `h1` that names what we
 
 ## Assets
 
-Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders one illustration chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, other), tinted by its `color`; a packaging with no layer images renders one illustration per `layoutType`, tinted by the chosen wrapper and ribbon colours. A real uploaded image always wins over the illustration.
+Every item and packaging layer is an image with a transparent background. The admin uploads it; the API converts it to WebP, records width, height and an anchor point (where the item sits in a slot). An item with no image yet renders one illustration chosen by its `shape` (bar, bottle, jar, box, mug, flower, card, soft-toy, balloon, perfume, candle, jewellery, cosmetic, cupcake, frame, other), tinted by its `color`; a packaging with no layer images renders one illustration per `layoutType`, tinted by the chosen wrapper and ribbon colours. A real uploaded image always wins over the illustration.
 
 ## Orders
 

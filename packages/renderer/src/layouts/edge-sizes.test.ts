@@ -13,7 +13,7 @@ const BOUQUET: Packaging = makePackaging({
   layoutType: "bouquet-fan",
   minItems: 6,
   maxItems: 10,
-  capacityUnits: 16,
+  capacityUnits: 18,
 });
 const GIFT_BOX: Packaging = makePackaging({
   slug: "gift-box",
