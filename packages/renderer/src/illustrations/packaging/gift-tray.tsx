@@ -1,4 +1,10 @@
-import { BasketIllustration } from "./basket";
+import type { PackagingIllustration } from "../types";
 
-/** Stub: reuses the basket art until this format gets its own. */
-export const GiftTrayIllustration = BasketIllustration;
+import { GiftTrayBack } from "./gift-tray-back";
+import { GiftTrayFront } from "./gift-tray-front";
+
+/** A wide, flat serving tray with two side handles, a low rim and a ribbon bow. */
+export const GiftTrayIllustration: PackagingIllustration = {
+  Back: GiftTrayBack,
+  Front: GiftTrayFront,
+};
