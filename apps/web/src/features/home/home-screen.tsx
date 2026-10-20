@@ -68,19 +68,14 @@ function ArrowIcon() {
  */
 export function HomeScreen({ headline, ticks, buildHref, chooseCountryHref }: HomeScreenProps) {
   return (
-    <div
-      data-viewport-fit="home"
-      className="relative isolate h-full min-h-0 overflow-hidden [--pool-a:var(--gp-pink-soft)] [--pool-b:var(--gp-lavender)] dark:[--pool-a:color-mix(in_srgb,var(--gp-pink)_14%,transparent)] dark:[--pool-b:color-mix(in_srgb,var(--gp-lavender-deep)_14%,transparent)]"
-    >
+    <div data-viewport-fit="home" className="relative isolate h-full min-h-0 overflow-hidden">
+      {/* Feathered pink and lavender light pools (globals.css), centred on the scene. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(60% 55% at 70% 52%, var(--pool-a) 0%, transparent 70%), radial-gradient(40% 40% at 12% 90%, var(--pool-b) 0%, transparent 70%)",
-        }}
+        className="gp-light-pools pointer-events-none absolute inset-0 -z-10 [--gp-pool-a-shape:70%_42%_at_50%_62%] [--gp-pool-b-shape:60%_36%_at_0%_100%] md:[--gp-pool-a-shape:42%_60%_at_72%_52%] md:[--gp-pool-b-shape:34%_44%_at_8%_96%]"
       />
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-[1600px] flex-col px-5 pt-3 pb-3 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:grid-rows-[1fr_auto_auto_auto_1fr] md:gap-x-2 md:px-10 md:pt-0 md:pb-0">
+      {/* Same gutter as the header bar (16px phones, 40px desktop), so the copy lines up with the logo. */}
+      <div className="flex h-full min-h-0 w-full flex-col px-[var(--gp-gutter)] pt-3 pb-3 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:grid-rows-[1fr_auto_auto_auto_1fr] md:gap-x-2 md:pt-0 md:pb-0">
         <div className="relative z-10 max-w-[560px] flex-none md:col-start-1 md:row-start-2">
           <p
             className={`bg-lavender text-lavender-deep font-script inline-flex rounded-full px-3.5 pt-1.5 pb-1 text-[22px] leading-[1.1] font-bold ${HIDE_EYEBROW}`}
@@ -109,9 +104,10 @@ export function HomeScreen({ headline, ticks, buildHref, chooseCountryHref }: Ho
           <HeroStage className="h-full w-full" />
         </div>
 
+        {/* Hidden on phones (DESIGN.md). From 768px a tidy two-column grid, so four never leave one orphan. */}
         <ul
           aria-label="Why people choose The Giftpop"
-          className={`text-muted flex flex-none flex-wrap justify-center gap-x-4 gap-y-1.5 pb-3 text-[13px] leading-tight font-medium md:col-start-1 md:row-start-4 md:justify-start md:gap-x-[18px] md:pt-[18px] md:pb-0 md:text-sm ${HIDE_TICKS}`}
+          className={`text-ink-2 hidden flex-none text-sm leading-tight font-medium md:col-start-1 md:row-start-4 md:grid md:w-fit md:grid-cols-[auto_auto] md:gap-x-6 md:gap-y-2 md:pt-[18px] ${HIDE_TICKS}`}
         >
           {ticks.map((tick) => (
             <li key={tick} className="inline-flex items-center gap-1.5">

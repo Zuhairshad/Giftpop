@@ -58,32 +58,52 @@ export function CountrySuggestion({ code, name }: { code: string; name: string }
       aria-label="Country suggestion"
       className="gp-suggestion bg-warm shadow-hairline flex-none"
     >
-      <div className="gp-shell flex flex-wrap items-center gap-x-4 gap-y-1 py-2">
-        <p className="min-w-0 text-sm font-medium wrap-anywhere">
+      {/* One line at every width: the question truncates before the actions ever wrap. */}
+      <div className="gp-bar flex min-h-[52px] items-center gap-2 py-1 sm:gap-3">
+        <p className="min-w-0 flex-1 truncate text-sm font-medium" title={`Shipping to ${name}?`}>
           <span aria-hidden="true">{flagEmoji(code)} </span>
           Shipping to {name}?
         </p>
-        <div className="flex flex-wrap items-center gap-1">
+        <div className="flex flex-none items-center gap-1">
           <ChooseCountryLink
             code={code}
             onChosen={dismiss}
+            aria-label={`Switch to ${name}`}
             className={buttonClass({ variant: "tint", size: "sm" })}
           >
-            Yes, use {name}
+            Switch
           </ChooseCountryLink>
           <Link
             href="/countries"
             onClick={dismiss}
-            className={buttonClass({ variant: "ghost", size: "sm" })}
+            className={buttonClass({
+              variant: "ghost",
+              size: "sm",
+              className: "hidden sm:inline-flex",
+            })}
           >
             Choose another
           </Link>
           <button
             type="button"
             onClick={dismissAndMoveFocus}
-            className={buttonClass({ variant: "ghost", size: "sm", className: "text-muted" })}
+            aria-label="Not now"
+            title="Not now"
+            className={buttonClass({
+              variant: "ghost",
+              size: "sm",
+              className: "text-ink-2 -mr-2 size-11 px-0",
+            })}
           >
-            Not now
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </button>
         </div>
       </div>

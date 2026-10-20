@@ -7,7 +7,8 @@ import { Button } from "@/components/ui";
 
 /*
  * Every rule sits inside `no-preference`, so a visitor who asks for less motion gets no animation
- * at all. `backwards` fill only hides things before they start, so nothing can stay invisible.
+ * at all. `backwards` fill only hides things before they start, and both keyframes end at opacity 1
+ * with no transform, so once the reveal is over (about 1s) the text is at full ink.
  */
 const REVEAL_CSS = `
 @keyframes gp-reveal-pop {
@@ -21,7 +22,7 @@ const REVEAL_CSS = `
 }
 @media (prefers-reduced-motion: no-preference) {
   .gp-reveal-scene { animation: gp-reveal-pop 0.95s cubic-bezier(0.2, 0.9, 0.3, 1.1) backwards; }
-  .gp-reveal-details { animation: gp-reveal-rise 0.7s ease-out 0.75s backwards; }
+  .gp-reveal-details { animation: gp-reveal-rise 0.5s ease-out 0.45s backwards; }
 }
 `;
 

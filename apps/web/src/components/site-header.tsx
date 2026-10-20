@@ -9,6 +9,7 @@ const NAV_LINKS = [
 ] as const;
 
 /**
+ * Full width with the page gutter on every page (.gp-bar), so the logo sits at the same x everywhere.
  * 64px tall (56px on phones): logo left, country picker right. On phones "Track an order" and
  * "Partner with us" live in the footer bar so the header never crowds; from 768px they show here too.
  */
@@ -18,7 +19,7 @@ export function SiteHeader() {
       {/* In flow above the sticky header: it pushes the page down and scrolls away with it. */}
       <HeaderCountrySuggestion />
       <header className="gp-header bg-canvas/90 sticky top-0 z-40 shadow-[0_1px_0_var(--gp-border)] backdrop-blur">
-        <div className="gp-shell relative flex h-14 items-center justify-between gap-3 md:h-16">
+        <div className="gp-bar relative flex h-14 items-center justify-between gap-3 md:h-16">
           <Logo />
 
           <div className="flex min-w-0 items-center gap-1">

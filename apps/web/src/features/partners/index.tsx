@@ -6,7 +6,8 @@ import { CountryForm } from "./country-form";
 import { loadCountries } from "./load-countries";
 
 import { StatePanel } from "@/components/placeholder-page";
-import { ButtonLink } from "@/components/ui";
+import { INSTAGRAM_URL } from "@/components/site-footer";
+import { ButtonLink, buttonClass } from "@/components/ui";
 import { RetryButton } from "@/features/country/retry-button";
 
 function Notice({
@@ -65,11 +66,34 @@ export async function CountryPartnerForm({
     );
   const available = notLiveCountries(result.countries);
   if (available.length === 0) {
+    // The request contract needs a country from our list, and every listed one is open, so the
+    // form could not be sent. Point to a real next step instead of a dead end.
     return (
-      <Notice title="Want The Giftpop in your country?">
-        The Giftpop is already open in every country we know of, so there is nothing to request
-        right now. Check back soon.
-      </Notice>
+      <StatePanel
+        headingId="partner-notice-heading"
+        title="Want The Giftpop in your country?"
+        role="status"
+        actions={
+          <>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Message us on Instagram, opens in a new tab"
+              className={buttonClass()}
+            >
+              Message us on Instagram
+            </a>
+            <ButtonLink href="/countries" variant="tint">
+              See where we deliver
+            </ButtonLink>
+          </>
+        }
+      >
+        Every country on our list is open already. If yours is not on it yet, tell us where you are
+        and what you could offer: we add a country as soon as we find someone local to make the
+        gifts.
+      </StatePanel>
     );
   }
   return <CountryForm countries={available} initialCountry={prefillCountry(country, available)} />;

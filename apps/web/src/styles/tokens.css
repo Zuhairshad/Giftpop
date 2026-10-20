@@ -49,6 +49,10 @@
   --gp-pool-pink: #ffe0ec;
   --gp-pool-lavender: #eee3fc;
   --gp-pool-opacity: 1;
+  /* The home and share pools: full-strength tones mixed down to --gp-light-pool (DESIGN.md: under 12%, 14% dark). */
+  --gp-pool-tone-pink: #e8527f;
+  --gp-pool-tone-lavender: #9b7be0;
+  --gp-light-pool: 11%;
 
   /* Shape: 4 / 8 / 12 / 20 / full */
   --gp-radius-xs: 4px;
@@ -124,6 +128,9 @@
     --gp-pool-pink: #4a2038;
     --gp-pool-lavender: #2f2347;
     --gp-pool-opacity: 0.14;
+    --gp-pool-tone-pink: #ff6b9d;
+    --gp-pool-tone-lavender: #8c74c9;
+    --gp-light-pool: 14%;
 
     --gp-shadow-2: 0 0 0 1px var(--gp-border);
     --gp-shadow-3: 0 0 0 1px var(--gp-border), 0 24px 60px rgb(0 0 0 / 0.5);
