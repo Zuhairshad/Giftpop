@@ -8,15 +8,16 @@ import { Bow } from "./Bow";
 import { ruffleEdge } from "./ruffle";
 import { wrapTones } from "./tones";
 
-// Panel tops lie on a circle of radius 300 about the stems' gather point (500, 860).
-const LEFT = "M500 940L277 660A300 300 0 0 1 427 569Z";
-const CENTER = "M500 944L427 569A300 300 0 0 1 573 569Z";
-const RIGHT = "M500 940L723 660A300 300 0 0 0 573 569Z";
+// Panel tops lie on a circle of radius 270 about the stems' gather point (500, 860), low enough
+// that the layout's front tier stands with its bases behind them.
+const LEFT = "M500 940L299 679A270 270 0 0 1 434 598Z";
+const CENTER = "M500 944L434 598A270 270 0 0 1 566 598Z";
+const RIGHT = "M500 940L701 679A270 270 0 0 0 566 598Z";
 
 /** A folded-over cuff of crinkled paper along the panel tops: scalloped outside, plain arc inside. */
 const CUFF = (() => {
-  const r = 306;
-  const half = 227;
+  const r = 276;
+  const half = 205;
   const edge = ruffleEdge(
     500 - half,
     500 + half,
@@ -24,8 +25,8 @@ const CUFF = (() => {
     8,
     10,
   );
-  const [x, y] = edge.points[0] ?? [273, 660];
-  return `M${x} ${y}${edge.d}L702 678A272 272 0 0 0 298 678Z`;
+  const [x, y] = edge.points[0] ?? [295, 676];
+  return `M${x} ${y}${edge.d}L681 697A244 244 0 0 0 319 697Z`;
 })();
 
 /** Over the items: three cellophane panels with sheen, fold lines and dots, the twine and the bow. */
@@ -50,7 +51,7 @@ export function BouquetFanFront({ wrapper, ribbon }: PackagingIllustrationProps)
       <path d={CUFF} fill={t.lit} {...stroke} strokeWidth="4" />
       <path d={CUFF} fill={`url(#${patternId})`} opacity="0.25" />
       <path
-        d="M338 690L420 820"
+        d="M352 708L425 825"
         fill="none"
         stroke="#fff"
         strokeWidth="14"
@@ -58,7 +59,7 @@ export function BouquetFanFront({ wrapper, ribbon }: PackagingIllustrationProps)
         {...ROUND}
       />
       <path
-        d="M664 700L590 810"
+        d="M648 716L588 815"
         fill="none"
         stroke="#fff"
         strokeWidth="8"
@@ -66,7 +67,7 @@ export function BouquetFanFront({ wrapper, ribbon }: PackagingIllustrationProps)
         {...ROUND}
       />
       <path
-        d="M500 930L330 680M500 930L452 600M500 930L548 600M500 930L670 680"
+        d="M500 930L350 700M500 930L458 626M500 930L542 626M500 930L650 700"
         fill="none"
         stroke={t.fold}
         strokeWidth="3"

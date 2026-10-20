@@ -12,6 +12,7 @@ import { OtherIllustration } from "./items/other";
 import { SoftToyIllustration } from "./items/soft-toy";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
 import { BoxGridIllustration } from "./packaging/box-grid";
+import { RoundBoxIllustration } from "./packaging/round-box";
 import type { ItemIllustration, PackagingIllustration } from "./types";
 
 /**
@@ -39,4 +40,5 @@ export const PACKAGING_ILLUSTRATIONS: Readonly<Record<string, PackagingIllustrat
   {
     "bouquet-fan": BouquetFanIllustration,
     "box-grid": BoxGridIllustration,
+    "round-box": RoundBoxIllustration,
   };
