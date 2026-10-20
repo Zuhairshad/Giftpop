@@ -1,4 +1,10 @@
-import { BoxGridIllustration } from "./box-grid";
+import type { PackagingIllustration } from "../types";
 
-/** Stub: reuses the box-grid art until this format gets its own. */
-export const FramedGiftIllustration = BoxGridIllustration;
+import { FramedGiftBack } from "./framed-gift-back";
+import { FramedGiftFront } from "./framed-gift-front";
+
+/** A flat picture-frame box seen front-on: thick frame, mat, a bow and a hanging cord. */
+export const FramedGiftIllustration: PackagingIllustration = {
+  Back: FramedGiftBack,
+  Front: FramedGiftFront,
+};
