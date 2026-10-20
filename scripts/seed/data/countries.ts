@@ -22,7 +22,7 @@ export const COUNTRIES: Country[] = [
     name: "United States",
     currency: "USD",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 599, deliveryDays: { min: 3, max: 6 } },
     addressFormat: {
@@ -37,7 +37,7 @@ export const COUNTRIES: Country[] = [
     name: "United Kingdom",
     currency: "GBP",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 499, deliveryDays: { min: 2, max: 5 } },
     addressFormat: {
@@ -52,7 +52,7 @@ export const COUNTRIES: Country[] = [
     name: "Saudi Arabia",
     currency: "SAR",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY: free shipping from SAR 200 of goods.
     shipping: { flatMinor: 2500, freeOverMinor: 20000, deliveryDays: { min: 4, max: 8 } },
     addressFormat: {
@@ -67,7 +67,7 @@ export const COUNTRIES: Country[] = [
     name: "India",
     currency: "INR",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 9900, deliveryDays: { min: 4, max: 9 } },
     addressFormat: {
@@ -82,7 +82,7 @@ export const COUNTRIES: Country[] = [
     name: "Pakistan",
     currency: "PKR",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY: no free-shipping threshold, so shipping is always the flat rate.
     shipping: { flatMinor: 25000, deliveryDays: { min: 3, max: 7 } },
     addressFormat: {
@@ -97,7 +97,7 @@ export const COUNTRIES: Country[] = [
     name: "China",
     currency: "CNY",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 3000, deliveryDays: { min: 5, max: 10 } },
     addressFormat: {
@@ -112,7 +112,7 @@ export const COUNTRIES: Country[] = [
     name: "Australia",
     currency: "AUD",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 899, deliveryDays: { min: 4, max: 8 } },
     addressFormat: {
@@ -127,7 +127,7 @@ export const COUNTRIES: Country[] = [
     name: "Turkey",
     currency: "TRY",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 14900, deliveryDays: { min: 3, max: 6 } },
     addressFormat: {
@@ -142,7 +142,7 @@ export const COUNTRIES: Country[] = [
     name: "Canada",
     currency: "CAD",
     status: "live",
-    paymentModes: ["prepaid", "cod"],
+    paymentModes: ["cod"],
     // DEV ONLY
     shipping: { flatMinor: 799, deliveryDays: { min: 3, max: 7 } },
     addressFormat: {

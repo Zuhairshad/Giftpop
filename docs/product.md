@@ -13,16 +13,16 @@ Each country document holds:
 - `addressFormat`: which fields are required (`region`, `postalCode`) and their labels ("State", "County", "Province", "ZIP", "Postcode").
 - `paymentInstructions`: text the admin writes (bank account, wallet number) shown after ordering.
 
-Prices are set per country in that country's currency. There is no currency conversion. **ASSUMPTION**: every launch country starts with both payment modes on; the admin can turn either off.
+Prices are set per country in that country's currency. There is no currency conversion. Every launch country starts with `cod` only (20% now, rest on delivery); the admin can turn on `prepaid`.
 
 A customer picks a country first. That choice sets the currency, which items are available, prices and shipping. A country that is `coming_soon` is listed with a "Bring The Giftpop here" link to the country partnership form.
 
 ## Payment
 
-**ASSUMPTION** (owner wrote "Advance payment 20% discount and cash on delivery 20% advance"):
-- `prepaid`: the customer pays the full total now and gets **20% off the goods** (packaging, items, personalisation; not shipping).
-- `cod`: no discount. The customer pays **20% of the total now** as an advance, and the rest on delivery.
-- Both percentages live in one config object read by `contracts/pricing`. They are admin-editable later.
+Owner decision: every order asks for **20% of the total now** and the rest **on delivery**. There is no discount for paying early.
+- `cod` is the mode every launch country offers: 20% of the total now as an advance, the balance on delivery.
+- `prepaid` (pay in full now) still exists in the data with a 0% discount. A country only offers it if the admin turns it on.
+- The percentage lives in one config object read by `contracts/pricing`. It is admin-editable later.
 
 **ASSUMPTION**: shipping is `shipping.flatMinor`, or free when the goods total **before any discount** reaches `shipping.freeOverMinor`. Using the pre-discount total means the payment mode never changes shipping. There is no personalisation fee yet; the pricing function takes one so the owner can add it later.
 

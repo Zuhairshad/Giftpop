@@ -27,12 +27,12 @@ export type PaymentPolicy = z.infer<typeof PaymentPolicySchema>;
 /**
  * The one place the payment percentages live. Admin-editable later.
  *
- * ASSUMPTION (docs/product.md, "Payment"): the owner wrote "Advance payment
- * 20% discount and cash on delivery 20% advance". Read as: prepaid gets 20%
- * off goods; cod pays a 20% advance of the total now.
+ * Owner decision (docs/product.md, "Payment"): the customer pays 20% of the
+ * total now and the rest on delivery. There is no prepaid discount; `prepaid`
+ * stays in the policy at 0% so a country can still offer paying in full.
  */
 export const PAYMENT_POLICY: PaymentPolicy = {
-  prepaid: { goodsDiscountPercent: 20 },
+  prepaid: { goodsDiscountPercent: 0 },
   cod: { advancePercent: 20 },
 };
 

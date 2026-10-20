@@ -1,3 +1,4 @@
+import { PAYMENT_POLICY } from "@giftpop/contracts";
 import type { PaymentMode, Quote } from "@giftpop/contracts";
 
 /** One line of a price column. Amounts are the quote's integer minor units, formatted by the view. */
@@ -25,7 +26,7 @@ export interface PriceColumn {
 const TITLES: Record<PaymentMode, string> = { prepaid: "Pay now", cod: "Cash on delivery" };
 const SUMMARIES: Record<PaymentMode, string> = {
   prepaid: "Pay the full amount now and get a discount on the gift.",
-  cod: "Pay a small advance now and the rest when it arrives.",
+  cod: `Pay ${PAYMENT_POLICY.cod.advancePercent}% now and the rest when it arrives.`,
 };
 
 function shippingRow(quote: Quote): PriceRow {

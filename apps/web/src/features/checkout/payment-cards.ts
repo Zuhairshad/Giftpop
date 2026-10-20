@@ -1,3 +1,4 @@
+import { PAYMENT_POLICY } from "@giftpop/contracts";
 import type { PaymentMode, Quote } from "@giftpop/contracts";
 
 export type CardRow =
@@ -21,7 +22,7 @@ export interface PaymentCard {
 const TITLES: Record<PaymentMode, string> = { prepaid: "Pay now", cod: "Cash on delivery" };
 const SUMMARIES: Record<PaymentMode, string> = {
   prepaid: "Pay the full amount now by bank transfer and get a discount on the gift.",
-  cod: "Pay a small advance now and the rest when your gift arrives.",
+  cod: `Pay ${PAYMENT_POLICY.cod.advancePercent}% now and the rest when your gift arrives.`,
 };
 
 function toCard(quote: Quote): PaymentCard {

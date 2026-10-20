@@ -13,13 +13,13 @@ describe("countries", () => {
     for (const country of COUNTRIES) expect(CountrySchema.safeParse(country).success).toBe(true);
   });
 
-  it("are exactly the nine launch countries, all live with both payment modes", () => {
+  it("are exactly the nine launch countries, all live and ask 20% now with cash on delivery", () => {
     expect(COUNTRIES.map((country) => country.code).sort()).toEqual(
       [...LAUNCH_COUNTRY_CODES].sort(),
     );
     for (const country of COUNTRIES) {
       expect(country.status).toBe("live");
-      expect([...country.paymentModes].sort()).toEqual(["cod", "prepaid"]);
+      expect(country.paymentModes).toEqual(["cod"]);
     }
   });
 

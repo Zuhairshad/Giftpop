@@ -10,13 +10,15 @@ import {
 } from "../src/index";
 import type { PaymentMode } from "../src/index";
 
-import { DOC_POLICY, quoteInput, usd } from "./helpers";
+import { quoteInput, usd } from "./helpers";
 
 const MODES: readonly PaymentMode[] = ["prepaid", "cod"];
 
+const OWNER_POLICY = { prepaid: { goodsDiscountPercent: 0 }, cod: { advancePercent: 20 } };
+
 describe("PAYMENT_POLICY", () => {
-  it("is 20% off goods for prepaid and a 20% advance for cod (docs/product.md)", () => {
-    expect(PAYMENT_POLICY).toEqual(DOC_POLICY);
+  it("asks for 20% now with no early-payment discount (docs/product.md)", () => {
+    expect(PAYMENT_POLICY).toEqual(OWNER_POLICY);
   });
 
   it("passes its own schema", () => {
@@ -50,10 +52,10 @@ describe("PAYMENT_POLICY", () => {
   it("the shipped policy produces the documented quotes", () => {
     const base = quoteInput();
     expect(computeQuote({ ...base, mode: "prepaid", policy: PAYMENT_POLICY })).toEqual(
-      computeQuote({ ...base, mode: "prepaid", policy: DOC_POLICY }),
+      computeQuote({ ...base, mode: "prepaid", policy: OWNER_POLICY }),
     );
     expect(computeQuote({ ...base, mode: "cod", policy: PAYMENT_POLICY })).toEqual(
-      computeQuote({ ...base, mode: "cod", policy: DOC_POLICY }),
+      computeQuote({ ...base, mode: "cod", policy: OWNER_POLICY }),
     );
   });
 

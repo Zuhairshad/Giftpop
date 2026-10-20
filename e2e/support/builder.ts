@@ -80,5 +80,5 @@ export async function buildGift(page: Page, formatName: string): Promise<void> {
   await advance(page, /Continue to review/i, "Your gift is ready");
 
   // 6. Review.
-  await expect(page.getByText(/Pay now/i).first()).toBeVisible();
+  await expect(page.getByText(/Advance due now/i).first()).toBeVisible();
 }
