@@ -10,7 +10,12 @@ import { z } from "zod";
 import { validateBody, validateParams, validateQuery } from "../../lib/validate";
 import { createIpLimiter } from "../quotes/rate-limit";
 
-import { defaultSaveStore, SAVES_PER_MINUTE } from "./rate-limit";
+import {
+  defaultSaveStore,
+  defaultViewStore,
+  SAVES_PER_MINUTE,
+  VIEWS_PER_MINUTE,
+} from "./rate-limit";
 import { getSharedDesign, saveDesign } from "./service";
 
 const ShareParamsSchema = z.object({ shareId: ShareIdSchema });
@@ -23,6 +28,8 @@ const PUBLIC_CACHE = "public, max-age=60, stale-while-revalidate=300";
 export interface DesignsRouterOptions {
   /** Replace the save limiter, for example with a tighter or fresh one in tests. */
   saveLimiter?: RequestHandler;
+  /** Replace the shared-design view limiter, for example with a tighter or fresh one in tests. */
+  viewLimiter?: RequestHandler;
 }
 
 export function createDesignsRouter({
@@ -30,6 +37,11 @@ export function createDesignsRouter({
     limit: SAVES_PER_MINUTE,
     store: defaultSaveStore,
     message: "Too many saves. Try again in a minute.",
+  }),
+  viewLimiter = createIpLimiter({
+    limit: VIEWS_PER_MINUTE,
+    store: defaultViewStore,
+    message: "Too many requests. Try again in a minute.",
   }),
 }: DesignsRouterOptions = {}): Router {
   const router = Router();
@@ -41,6 +53,7 @@ export function createDesignsRouter({
 
   router.get(
     "/:shareId",
+    viewLimiter,
     validateParams(ShareParamsSchema),
     validateQuery(ViewQuerySchema),
     async (req: Request<ShareParams>, res) => {

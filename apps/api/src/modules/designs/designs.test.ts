@@ -17,7 +17,7 @@ import { initCatalogModels, itemPrice, makeDesign, seedWorld } from "../quotes/f
 import { createIpLimiter } from "../quotes/rate-limit";
 
 import { DesignModel } from "./model";
-import { resetSaveRateLimit } from "./rate-limit";
+import { resetSaveRateLimit, resetViewRateLimit } from "./rate-limit";
 import { createDesignsRouter, designsRouter } from "./router";
 
 // Real ids by default; a test can queue fixed ones to force a collision.
@@ -35,6 +35,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await clearDatabase();
   resetSaveRateLimit();
+  resetViewRateLimit();
 });
 
 const app = createTestApp([{ path: "/designs", router: designsRouter }]);
@@ -295,6 +296,23 @@ describe("GET /v1/designs/:shareId", () => {
       expect(res.status, id).toBe(400);
       expect(res.body.error.code).toBe("VALIDATION_ERROR");
     }
+  });
+
+  it("returns 429 RATE_LIMITED once the limit is spent", async () => {
+    const { shareId } = await savedWorld();
+    const limited = createTestApp([
+      {
+        path: "/designs",
+        router: createDesignsRouter({ viewLimiter: createIpLimiter({ limit: 2 }) }),
+      },
+    ]);
+
+    expect((await request(limited).get(`/v1/designs/${shareId}`)).status).toBe(200);
+    expect((await request(limited).get(`/v1/designs/${shareId}`)).status).toBe(200);
+    const res = await request(limited).get(`/v1/designs/${shareId}`);
+
+    expect(res.status).toBe(429);
+    expect(res.body.error.code).toBe("RATE_LIMITED");
   });
 });
 
