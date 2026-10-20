@@ -149,7 +149,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Heart box",
     description: "A heart-shaped box with the gifts nestled inside. Pick 5 to 8 items.",
     kind: "box",
-    layoutType: "round-box",
+    layoutType: "heart-box",
     minItems: 5,
     maxItems: 8,
     // Eight 1-unit items take 8 units; five 3-unit items take 15.
