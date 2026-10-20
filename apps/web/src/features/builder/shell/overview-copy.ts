@@ -14,6 +14,9 @@ export function colourName(options: readonly ColourOption[], hex: string | null)
   return options.find((option) => option.hex.toLowerCase() === hex.toLowerCase())?.name ?? hex;
 }
 
+/** Under the pill's amount: it is the goods subtotal, so it differs from both review totals. */
+export const PRICE_PILL_NOTE = "before shipping and discounts";
+
 export type PriceView = { kind: "amount"; text: string } | { kind: "pending" } | { kind: "error" };
 
 /**

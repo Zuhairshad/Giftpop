@@ -16,7 +16,13 @@ export const REVIEW_BLOCKED_HINT_ID = "review-blocked-hint";
  * The review question's primary action, drawn in the shell footer so it is always on screen:
  * a link to checkout, or (while the gift has problems) a button that says why it is blocked.
  */
-export function ReviewCheckoutAction({ className }: { className?: string }): ReactElement {
+export function ReviewCheckoutAction({
+  className,
+  reasonId,
+}: {
+  className?: string;
+  reasonId?: string;
+}): ReactElement {
   const builder = useBuilder();
   if (reviewReady(builder)) {
     return (
@@ -25,12 +31,14 @@ export function ReviewCheckoutAction({ className }: { className?: string }): Rea
       </ButtonLink>
     );
   }
-  const explained = builder.design !== null;
+  const describedBy = [reasonId ?? ""];
+  if (builder.design !== null) describedBy.push(REVIEW_PROBLEMS_ID, REVIEW_BLOCKED_HINT_ID);
+  const describedByText = describedBy.filter((id) => id !== "").join(" ");
   return (
     <Button
       size="md"
       aria-disabled="true"
-      aria-describedby={explained ? `${REVIEW_PROBLEMS_ID} ${REVIEW_BLOCKED_HINT_ID}` : undefined}
+      aria-describedby={describedByText === "" ? undefined : describedByText}
       className={className}
     >
       Continue to checkout

@@ -3,43 +3,45 @@
 import { useBuilder } from "../state";
 
 import {
-  coloursReady,
-  itemsReady,
-  layoutReady,
-  packagingReady,
-  personaliseReady,
-  reviewReady,
-} from "./can-continue";
+  coloursCheck,
+  itemsCheck,
+  layoutCheck,
+  packagingCheck,
+  personaliseCheck,
+  reviewCheck,
+} from "./continue-reason";
+import type { ContinueCheck } from "./continue-reason";
 
 /**
- * The hooks the shell calls to enable each question's primary action. They live apart from the
- * question bodies so the bodies can load lazily while the footer is already on screen.
+ * The hooks the shell calls to enable each question's primary action and say why it is off.
+ * They live apart from the question bodies so the bodies can load lazily while the footer is
+ * already on screen.
  */
 
-export function usePackagingCanContinue(): boolean {
-  return packagingReady(useBuilder());
+export function usePackagingCanContinue(): ContinueCheck {
+  return packagingCheck(useBuilder());
 }
 
 /** Both colours are chosen (the store defaults each to the packaging's first colour). */
-export function useColoursCanContinue(): boolean {
-  return coloursReady(useBuilder());
+export function useColoursCanContinue(): ContinueCheck {
+  return coloursCheck(useBuilder());
 }
 
 /** Item count is within min and max and the gift fits (text limits are checked later). */
-export function useItemsCanContinue(): boolean {
-  return itemsReady(useBuilder());
+export function useItemsCanContinue(): ContinueCheck {
+  return itemsCheck(useBuilder());
 }
 
 /** Nothing to decide here: every arrangement is valid. */
-export function useLayoutCanContinue(): boolean {
-  return layoutReady();
+export function useLayoutCanContinue(): ContinueCheck {
+  return layoutCheck();
 }
 
-export function usePersonaliseCanContinue(): boolean {
-  return personaliseReady(useBuilder());
+export function usePersonaliseCanContinue(): ContinueCheck {
+  return personaliseCheck(useBuilder());
 }
 
 /** The gift can be ordered. */
-export function useReviewCanContinue(): boolean {
-  return reviewReady(useBuilder());
+export function useReviewCanContinue(): ContinueCheck {
+  return reviewCheck(useBuilder());
 }
