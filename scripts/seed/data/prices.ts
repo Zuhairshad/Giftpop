@@ -1,52 +1,92 @@
 import type { CountryPrice } from "@giftpop/contracts";
 
 import { COUNTRIES } from "./countries";
-import { ITEM_IDS, ITEMS } from "./items";
+import { ITEM_IDS, ITEMS, type ItemKey } from "./items";
 import { BASKET_ID, BOUQUET_ID, BOX_ID, HAT_BOX_ID, MUG_ID, PACKAGINGS } from "./packagings";
 
 /**
- * DEV ONLY prices. Each price is a whole number of "base units" times the
- * country's minor units per base unit. A base unit is roughly one US dollar and
- * the factors below are rough, made-up scales so magnitudes look right in each
- * currency (PKR in thousands, USD in single digits). Nothing converts at runtime:
- * every country stores its own price in its own currency.
+ * DEMO prices, replaced by the owner in the admin app. Each price is a whole number of "base
+ * units" times the country's minor units per base unit. A base unit is roughly half a US dollar
+ * of local shop price: the factors follow rough local price levels, not exchange rates, so a
+ * chocolate bar is about USD 4, GBP 3.20, PKR 560 or INR 200. Every currency here has 2 minor
+ * digits (`minorDigits`), and PKR, INR and TRY factors are whole major units so prices read
+ * like shop prices. Nothing converts at runtime: every country stores its own price.
  */
 const MINOR_PER_BASE_UNIT: Record<string, number> = {
-  US: 100, // USD cents
-  GB: 80, // GBP pence
-  SA: 375, // SAR halala
-  IN: 8300, // INR paise
-  PK: 28000, // PKR paisa
-  CN: 720, // CNY fen
-  AU: 150, // AUD cents
-  TR: 3400, // TRY kurus
-  CA: 135, // CAD cents
+  US: 50, // USD cents
+  GB: 40, // GBP pence
+  SA: 200, // SAR halala
+  IN: 2500, // INR paise
+  PK: 7000, // PKR paisa
+  CN: 300, // CNY fen
+  AU: 75, // AUD cents
+  TR: 1200, // TRY kurus
+  CA: 70, // CAD cents
 };
 
-const ITEM_BASE_PRICE: Record<string, number> = {
-  [ITEM_IDS.milkBar]: 4,
-  [ITEM_IDS.darkBar]: 5,
-  [ITEM_IDS.truffleBox]: 14,
-  [ITEM_IDS.pinkRose]: 3,
-  [ITEM_IDS.whiteLily]: 4,
-  [ITEM_IDS.sunflower]: 3,
-  [ITEM_IDS.tulip]: 3,
-  [ITEM_IDS.bodyLotion]: 12,
-  [ITEM_IDS.candle]: 15,
-  [ITEM_IDS.bathSalts]: 10,
-  [ITEM_IDS.mug]: 11,
-  [ITEM_IDS.teddy]: 16,
-  [ITEM_IDS.balloon]: 4,
-  [ITEM_IDS.greetingCard]: 3,
-  [ITEM_IDS.loveNote]: 2,
+const ITEM_BASE_PRICE: Record<ItemKey, number> = {
+  milkBar: 8,
+  darkBar: 10,
+  truffleBox: 28,
+  nameBar: 16,
+  waferFingers: 6,
+  caramelBar: 8,
+  whiteBar: 8,
+  chocAlmonds: 12,
+  pinkRose: 6,
+  whiteLily: 8,
+  sunflower: 6,
+  tulip: 6,
+  satinRose: 8,
+  babysBreath: 4,
+  lavenderBunch: 6,
+  roseParfum: 70,
+  oudParfum: 90,
+  bodyMist: 28,
+  miniSpray: 18,
+  deodorant: 12,
+  candle: 30,
+  roseCandle: 34,
+  travelCandle: 16,
+  teaLights: 6,
+  diffuser: 36,
+  barNecklace: 50,
+  cloverBracelet: 40,
+  pearlStuds: 30,
+  charmKeychain: 8,
+  bodyLotion: 24,
+  lipGloss: 18,
+  brushSet: 40,
+  bathSalts: 20,
+  scrunchies: 10,
+  clawClip: 10,
+  redVelvetCupcake: 8,
+  vanillaCupcake: 8,
+  cookieTin: 22,
+  popcorn: 6,
+  masalaCrisps: 4,
+  gummyBears: 5,
+  teddy: 32,
+  plushBunny: 26,
+  balloon: 8,
+  starBalloon: 8,
+  plushKeyring: 8,
+  mug: 24,
+  glassCup: 28,
+  tumbler: 40,
+  greetingCard: 6,
+  photoFrame: 32,
+  loveNote: 4,
+  openWhenLetters: 12,
+  giftWrap: 4,
 };
 
 const PACKAGING_BASE_PRICE: Record<string, number> = {
-  [BOUQUET_ID]: 6,
-  [BOX_ID]: 8,
-  [HAT_BOX_ID]: 9,
-  [BASKET_ID]: 10,
-  [MUG_ID]: 5,
+  [BOUQUET_ID]: 12,
+  [BOX_ID]: 16,
+  [HAT_BOX_ID]: 18,
+  [BASKET_ID]: 20,
+  [MUG_ID]: 10,
 };
 
 interface Gap {
@@ -54,14 +94,31 @@ interface Gap {
   itemId: string;
 }
 
-/** Deliberate gaps so the builder's disabled reasons ("Out of stock", "Not available in ...") can be tested. */
-export const OUT_OF_STOCK: readonly Gap[] = [{ country: "SA", itemId: ITEM_IDS.darkBar }];
-export const NO_PRICE: readonly Gap[] = [{ country: "PK", itemId: ITEM_IDS.candle }];
+/** Deliberate gaps so the builder's disabled reasons ("Out of stock", "Not available in ...") show. */
+export const OUT_OF_STOCK: readonly Gap[] = [
+  { country: "SA", itemId: ITEM_IDS.darkBar },
+  { country: "GB", itemId: ITEM_IDS.roseParfum },
+];
+export const NO_PRICE: readonly Gap[] = [
+  { country: "PK", itemId: ITEM_IDS.candle },
+  { country: "CN", itemId: ITEM_IDS.balloon },
+  { country: "AU", itemId: ITEM_IDS.masalaCrisps },
+];
 
-function lookup(table: Record<string, number>, key: string, what: string): number {
-  const value = table[key];
-  if (value === undefined) throw new Error(`No dev ${what} for ${key}`);
+const KEY_BY_ID = new Map<string, ItemKey>(
+  (Object.entries(ITEM_IDS) as [ItemKey, string][]).map(([key, id]) => [id, key]),
+);
+
+function lookup<K extends string>(table: Record<K, number>, key: K, what: string): number {
+  const value: number | undefined = table[key];
+  if (value === undefined) throw new Error(`No demo ${what} for ${key}`);
   return value;
+}
+
+function itemBasePrice(itemId: string): number {
+  const key = KEY_BY_ID.get(itemId);
+  if (key === undefined) throw new Error(`No item key for ${itemId}`);
+  return lookup(ITEM_BASE_PRICE, key, "base price");
 }
 
 export function buildPrices(): CountryPrice[] {
@@ -85,7 +142,7 @@ export function buildPrices(): CountryPrice[] {
         kind: "item",
         itemId: item.id,
         country: country.code,
-        priceMinor: lookup(ITEM_BASE_PRICE, item.id, "base price") * scale,
+        priceMinor: itemBasePrice(item.id) * scale,
         inStock: !OUT_OF_STOCK.some(isGap),
       });
     }
