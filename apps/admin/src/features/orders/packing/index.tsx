@@ -12,6 +12,7 @@ import {
   buildChecklist,
   checklistDensity,
   colourName,
+  customRequestText,
   hasPersonalisation,
   packerNotes,
   totalPieces,
@@ -81,6 +82,7 @@ function Checklist({ order }: { order: AdminOrderDetail }) {
 function Personalisation({ order }: { order: AdminOrderDetail }) {
   if (!hasPersonalisation(order)) return null;
   const { recipientName, cardMessage } = order.design.personalisation;
+  const request = customRequestText(order);
   return (
     <section
       aria-labelledby="packing-personal"
@@ -89,6 +91,16 @@ function Personalisation({ order }: { order: AdminOrderDetail }) {
       <h2 id="packing-personal" className="mb-1 text-sm font-semibold tracking-wide uppercase">
         Personalisation
       </h2>
+      {request !== null ? (
+        <div className="mb-2 rounded border-2 border-black bg-amber-50 p-2">
+          <h3 className="text-base font-bold tracking-wide uppercase">
+            Customer request: check before packing
+          </h3>
+          <p className="mt-1 text-xl leading-snug font-semibold whitespace-pre-wrap wrap-anywhere">
+            {request}
+          </p>
+        </div>
+      ) : null}
       {recipientName.trim() ? (
         <p className="text-2xl font-bold wrap-anywhere">For: {recipientName}</p>
       ) : null}

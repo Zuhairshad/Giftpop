@@ -33,6 +33,7 @@ function makeOrder(overrides: Partial<AdminOrderDetail> = {}): AdminOrderDetail 
       personalisation: {
         cardMessage: "Happy birthday",
         recipientName: "Sara",
+        customRequest: "",
         itemNames: { [id(21)]: "Sara" },
       },
     },
@@ -212,9 +213,36 @@ describe("items and personalisation", () => {
       "Name on Mug",
     ]);
   });
+  it("shows the customer request first, only when non-empty", () => {
+    const order = makeOrder();
+    order.design.personalisation.customRequest = "Please use gold ribbon\nand no plastic";
+    const texts = personalisationTexts(order);
+    expect(texts[0]).toEqual({
+      key: "custom-request",
+      label: "Customer request",
+      value: "Please use gold ribbon\nand no plastic",
+    });
+    expect(texts.map((t) => t.label)).toContain("Card message");
+  });
+  it("keeps a very long unbroken request whole", () => {
+    const order = makeOrder();
+    const long = "x".repeat(500);
+    order.design.personalisation.customRequest = long;
+    expect(personalisationTexts(order)[0]?.value).toBe(long);
+  });
+  it("shows only the request when it is the only text", () => {
+    const order = makeOrder();
+    order.design.personalisation = {
+      cardMessage: "",
+      recipientName: "",
+      customRequest: "Allergic to roses",
+      itemNames: {},
+    };
+    expect(personalisationTexts(order).map((t) => t.key)).toEqual(["custom-request"]);
+  });
   it("skips empty texts", () => {
     const order = makeOrder();
-    order.design.personalisation = { cardMessage: " ", recipientName: "", itemNames: {} };
+    order.design.personalisation = { cardMessage: " ", recipientName: "", customRequest: "  ", itemNames: {} };
     expect(personalisationTexts(order)).toEqual([]);
   });
 });
