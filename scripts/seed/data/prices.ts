@@ -91,6 +91,23 @@ const ITEM_BASE_PRICE: Record<ItemKey, number> = {
   loveNote: 4,
   openWhenLetters: 12,
   giftWrap: 4,
+  crunchyChips: 5,
+  photoBar: 16,
+  photoCard: 8,
+  nameMug: 26,
+  plushPuppy: 28,
+  cheesePuffs: 5,
+  chocPretzels: 8,
+  cakeTopper: 6,
+  waferRolls: 7,
+  chocCoins: 9,
+  satinScrunchie: 6,
+  hairBow: 6,
+  pillarCandle: 14,
+  waxMelts: 10,
+  polaroids: 10,
+  frostedCup: 22,
+  numberBalloon: 10,
 };
 
 const PACKAGING_BASE_PRICE: Record<string, number> = {
