@@ -153,8 +153,8 @@ const CATALOGUE: Record<string, Row[]> = {
     list("waxMelts", "Scented wax melts, tin of 6", "jar", "#c9b2f2", 1),
   ],
   Jewellery: [
-    tile("barNecklace", "Engraved bar necklace", "jewellery", "#d4a82f", 1, 12),
-    tile("cloverBracelet", "Four-leaf clover bracelet", "jewellery", "#f3e5ab", 1),
+    tile("barNecklace", "Engraved bar necklace", "necklace", "#d4a82f", 1, 12),
+    tile("cloverBracelet", "Four-leaf clover bracelet", "bracelet", "#f3e5ab", 1),
     tile("pearlStuds", "Pearl stud earrings", "jewellery", "#f5f0e6", 1),
     list("charmKeychain", "Heart charm keychain", "jewellery", "#e8467c", 1),
   ],

@@ -100,7 +100,7 @@ describe("packagings", () => {
     });
     expect(PACKAGINGS.find((p) => p.kind === "basket")).toMatchObject({ layoutType: "basket" });
     const layoutOf = (slug: string) => PACKAGINGS.find((p) => p.slug === slug)?.layoutType;
-    expect(layoutOf("heart-box")).toBe("round-box");
+    expect(layoutOf("heart-box")).toBe("heart-box");
     expect(layoutOf("framed-gift")).toBe("box-grid");
     expect(layoutOf("snack-hamper")).toBe("box-grid");
     expect(layoutOf("photo-bouquet")).toBe("bouquet-fan");

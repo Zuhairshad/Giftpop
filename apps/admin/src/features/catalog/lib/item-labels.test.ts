@@ -40,6 +40,8 @@ describe("shape labels", () => {
     expect(shapeLabel("perfume")).toBe("Perfume");
     expect(shapeLabel("candle")).toBe("Candle");
     expect(shapeLabel("jewellery")).toBe("Jewellery");
+    expect(shapeLabel("necklace")).toBe("Necklace");
+    expect(shapeLabel("bracelet")).toBe("Bracelet");
     expect(shapeLabel("cosmetic")).toBe("Cosmetic");
     expect(shapeLabel("cupcake")).toBe("Cupcake");
     expect(shapeLabel("frame")).toBe("Photo frame");

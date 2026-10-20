@@ -43,9 +43,15 @@ describe("items", () => {
   it("uses valid shapes, including every shape added for the fuller catalogue", () => {
     for (const item of ITEMS) expect(ITEM_SHAPES).toContain(item.shape);
     const shapes = new Set(ITEMS.map((i) => i.shape));
-    for (const shape of ["perfume", "candle", "jewellery", "cosmetic", "cupcake", "frame"]) {
+    for (const shape of ["perfume", "candle", "jewellery", "necklace", "bracelet", "cosmetic", "cupcake", "frame"]) {
       expect(shapes.has(shape as (typeof ITEM_SHAPES)[number])).toBe(true);
     }
+  });
+
+  it("draws the necklace and the bracelet with their own shapes, in the jewellery category", () => {
+    const byName = (name: string) => ITEMS.find((i) => i.name === name);
+    expect(byName("Engraved bar necklace")).toMatchObject({ shape: "necklace", category: "jewellery" });
+    expect(byName("Four-leaf clover bracelet")).toMatchObject({ shape: "bracelet", category: "jewellery" });
   });
 
   it("is all active, has no images and sizes from 1 to 3", () => {
