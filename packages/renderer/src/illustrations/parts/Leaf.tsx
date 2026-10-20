@@ -1,6 +1,6 @@
 import { GREEN, GREEN_DARK, ROUND } from "../palette";
 
-/** A green leaf with a lit upper edge, a midrib and two side veins. Never tinted. */
+/** A green leaf with its midrib. Never tinted. */
 export function Leaf({ d, vein }: { d: string; vein: string }) {
   return (
     <g>

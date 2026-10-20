@@ -9,9 +9,8 @@ export const GREEN_DARK = shade(GREEN, -0.35);
 export const HEART = "#E8467C";
 export const PAPER = "#FFFAF6";
 export const INK = "#2B1733";
-/** Clear glass: a cool near-white body and a grey-blue edge, shared by bottles, jars and flacons. */
+/** Clear glass: a cool near-white body, shared by bottles, jars, candles and flacons. */
 export const GLASS = "#EEF5F7";
-export const GLASS_EDGE = "#8FA6AE";
 /** Polished silver for caps and crowns. */
 export const SILVER = "#C9CED6";
 export const SILVER_DARK = "#7D8592";
@@ -21,6 +20,11 @@ export const CAKE = "#D49A5B";
 export const CHOCOLATE = "#6B3A26";
 export const CHOCOLATE_DARK = "#3F2016";
 export const CHOCOLATE_LIGHT = "#B07A5C";
+export const DIAMOND = "#E4F1F8";
+export const DIAMOND_EDGE = "#7E9BAA";
+export const CHERRY = "#C8243C";
+export const CHERRY_DARK = "#7A1222";
+export const SPRINKLE_BLUE = "#6EC1E4";
 export const WICK = "#3A2A22";
 export const FLAME = "#FFC94D";
 export const FLAME_CORE = "#FFF3C4";

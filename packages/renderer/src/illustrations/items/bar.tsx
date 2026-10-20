@@ -1,4 +1,14 @@
-import { CHOCOLATE, CHOCOLATE_DARK, CHOCOLATE_LIGHT, GOLD, GOLD_DARK, GOLD_LIGHT, itemPalette, PAPER, ROUND } from "../palette";
+import {
+  CHOCOLATE,
+  CHOCOLATE_DARK,
+  CHOCOLATE_LIGHT,
+  GOLD,
+  GOLD_DARK,
+  GOLD_LIGHT,
+  itemPalette,
+  PAPER,
+  ROUND,
+} from "../palette";
 import { Linear, metalStops, ref } from "../parts/gradients";
 import { useArtId } from "../parts/ids";
 import { ItemFrame } from "../parts/ItemFrame";
@@ -25,9 +35,21 @@ export function BarIllustration({ color }: ItemIllustrationProps) {
         <Linear id={foil} stops={metalStops(GOLD_LIGHT, GOLD, GOLD_DARK)} />
       </defs>
       <g transform="rotate(-10 100 100)">
-        <path d="M75 26h54v26H75Z" fill={CHOCOLATE} stroke={CHOCOLATE_DARK} strokeWidth="2.5" {...ROUND} />
+        <path
+          d="M75 26h54v26H75Z"
+          fill={CHOCOLATE}
+          stroke={CHOCOLATE_DARK}
+          strokeWidth="2.5"
+          {...ROUND}
+        />
         <path d="M102 26v26M75 39h54" stroke={CHOCOLATE_DARK} strokeWidth="2" opacity="0.7" />
-        <path d="M79 30h19M106 30h19" stroke={CHOCOLATE_LIGHT} strokeWidth="2" opacity="0.8" {...ROUND} />
+        <path
+          d="M79 30h19M106 30h19"
+          stroke={CHOCOLATE_LIGHT}
+          strokeWidth="2"
+          opacity="0.8"
+          {...ROUND}
+        />
         <path d={FOIL} fill={ref(foil)} stroke={GOLD_DARK} strokeWidth="2.5" {...ROUND} />
         <path
           d="M76 48l4 16M92 46l-3 20M114 48l5 16M128 46l-2 20"

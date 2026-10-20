@@ -1,5 +1,14 @@
 import { mix } from "../../placeholders/color";
-import { CHOCOLATE, CHOCOLATE_LIGHT, GOLD, GREEN, itemPalette, PAPER, ROUND, WOOD } from "../palette";
+import {
+  CHOCOLATE,
+  CHOCOLATE_LIGHT,
+  GOLD,
+  GREEN,
+  itemPalette,
+  PAPER,
+  ROUND,
+  WOOD,
+} from "../palette";
 import { cylinderStops, Linear, ref } from "../parts/gradients";
 import { useArtId } from "../parts/ids";
 import { ItemFrame } from "../parts/ItemFrame";

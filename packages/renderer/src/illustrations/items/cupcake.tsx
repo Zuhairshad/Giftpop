@@ -1,5 +1,5 @@
 import { mix } from "../../placeholders/color";
-import { CAKE, GREEN, itemPalette, PAPER, ROUND } from "../palette";
+import { CAKE, GREEN, itemPalette, PAPER, ROUND, CHERRY, CHERRY_DARK } from "../palette";
 import { ItemFrame } from "../parts/ItemFrame";
 import { ShadedPath } from "../parts/ShadedPath";
 import { Sprinkles } from "../parts/Sprinkles";
@@ -40,7 +40,7 @@ export function CupcakeIllustration({ color }: ItemIllustrationProps) {
       />
       <Sprinkles />
       <path d="M104 52Q106 40 116 34" fill="none" stroke={GREEN} strokeWidth="2.5" {...ROUND} />
-      <circle cx="102" cy="58" r="10" fill="#C8243C" stroke="#7A1222" strokeWidth="2" />
+      <circle cx="102" cy="58" r="10" fill={CHERRY} stroke={CHERRY_DARK} strokeWidth="2" />
       <circle cx="98.5" cy="54.5" r="3" fill="#fff" opacity="0.6" />
     </ItemFrame>
   );

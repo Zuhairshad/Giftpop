@@ -1,13 +1,13 @@
-import { GOLD, GREEN, HEART, PAPER } from "../palette";
+import { GOLD, GREEN, HEART, PAPER, SPRINKLE_BLUE } from "../palette";
 
 /** Rainbow sprinkles over the frosting: x, y, angle, colour. Fixed colours, like real sprinkles. */
 const BITS = [
   [66, 112, 30, HEART],
   [84, 116, -20, GOLD],
-  [104, 118, 60, "#6EC1E4"],
+  [104, 118, 60, SPRINKLE_BLUE],
   [126, 114, -40, GREEN],
   [140, 110, 15, PAPER],
-  [78, 92, 70, "#6EC1E4"],
+  [78, 92, 70, SPRINKLE_BLUE],
   [98, 96, -10, HEART],
   [120, 92, 40, GOLD],
   [92, 74, -50, GREEN],

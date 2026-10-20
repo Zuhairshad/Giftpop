@@ -1,5 +1,14 @@
 import { mix } from "../../placeholders/color";
-import { GOLD, GOLD_DARK, GOLD_LIGHT, itemPalette, PAPER, ROUND } from "../palette";
+import {
+  GOLD,
+  GOLD_DARK,
+  GOLD_LIGHT,
+  itemPalette,
+  PAPER,
+  ROUND,
+  DIAMOND,
+  DIAMOND_EDGE,
+} from "../palette";
 import { Linear, ref } from "../parts/gradients";
 import { useArtId } from "../parts/ids";
 import { ItemFrame } from "../parts/ItemFrame";
@@ -9,6 +18,8 @@ import type { ItemIllustrationProps } from "../types";
 
 const LID = "M50 104V62a22 22 0 0 1 22-22H128a22 22 0 0 1 22 22V104Z";
 const BASE = roundRectPath(48, 108, 104, 62, 10);
+const CUSHION_BACK = "M56 121Q56 112 78 112H122Q144 112 144 121Z";
+const CUSHION_FRONT = "M56 121H144Q144 131 122 131H78Q56 131 56 121Z";
 const GEM = "M90 74L95 66H105L110 74L100 88Z";
 
 /** An open ring box: velvet outside, satin-lined lid, a cushion slot holding a gold solitaire ring. */
@@ -39,23 +50,36 @@ export function JewelleryIllustration({ color }: ItemIllustrationProps) {
         strokeWidth="1.5"
         {...ROUND}
       />
-      <path d="M86 66h28" stroke={GOLD} strokeWidth="2" opacity="0.8" {...ROUND} />
-      <path d="M92 72h16" stroke={GOLD} strokeWidth="1.5" opacity="0.6" {...ROUND} />
+      <path d="M88 56h24" stroke={GOLD} strokeWidth="2" opacity="0.8" {...ROUND} />
       <ShadedPath d={BASE} fill={p.fill} deep={p.deep} shadow={p.shadow} stroke={p.dark} />
-      <path d="M56 112H144V128H56Z" fill={p.shadow} stroke={p.dark} strokeWidth="2" {...ROUND} />
-      <path d="M56 120H144" stroke={p.dark} strokeWidth="2" opacity="0.7" />
+      <path d={CUSHION_BACK} fill={p.shadow} stroke={p.dark} strokeWidth="2" {...ROUND} />
+      <path
+        d="M62 116Q100 112 138 116"
+        fill="none"
+        stroke={p.deep}
+        strokeWidth="2"
+        opacity="0.8"
+        {...ROUND}
+      />
       <path d="M48 108H152" stroke={p.dark} strokeWidth="3" {...ROUND} />
       <ellipse cx="100" cy="104" rx="15" ry="18" fill="none" stroke={GOLD_DARK} strokeWidth="8" />
       <ellipse cx="100" cy="104" rx="15" ry="18" fill="none" stroke={GOLD} strokeWidth="5" />
       <path d="M88 96Q90 90 95 87" fill="none" stroke={GOLD_LIGHT} strokeWidth="2" {...ROUND} />
-      <path d="M56 116H144V128H56Z" fill={p.shadow} />
-      <path d="M56 120H144" stroke={p.dark} strokeWidth="2" opacity="0.7" />
+      <path d={CUSHION_FRONT} fill={p.shadow} stroke={p.dark} strokeWidth="2" {...ROUND} />
+      <path
+        d="M62 126Q100 129 138 126"
+        fill="none"
+        stroke={p.deep}
+        strokeWidth="2"
+        opacity="0.8"
+        {...ROUND}
+      />
       <path d="M94 88h12l-2 4h-8Z" fill={GOLD} stroke={GOLD_DARK} strokeWidth="1.5" {...ROUND} />
-      <path d={GEM} fill="#E4F1F8" stroke="#7E9BAA" strokeWidth="1.8" {...ROUND} />
+      <path d={GEM} fill={DIAMOND} stroke={DIAMOND_EDGE} strokeWidth="1.8" {...ROUND} />
       <path
         d="M90 74H110M95 66L100 74L105 66M100 74V88"
         fill="none"
-        stroke="#7E9BAA"
+        stroke={DIAMOND_EDGE}
         strokeWidth="1"
         opacity="0.8"
       />
