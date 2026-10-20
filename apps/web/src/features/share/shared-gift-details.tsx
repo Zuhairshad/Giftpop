@@ -48,7 +48,7 @@ export function SharedGiftDetails({ view }: { view: SharedDesignView }): ReactEl
   return (
     <div className="min-w-0 space-y-6">
       <div>
-        <p className="font-script text-pink-strong text-2xl leading-none font-bold">
+        <p className="font-script text-lavender-deep text-2xl leading-none font-bold">
           Someone made this for you
         </p>
         <h1 className="display-lg text-ink mt-2 wrap-anywhere">

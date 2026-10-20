@@ -86,7 +86,7 @@ export function CategoryTabs({
               <span
                 className={cn(
                   "inline-grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-xs font-bold",
-                  active ? "bg-background text-foreground" : "bg-pink-soft text-pink-strong",
+                  active ? "bg-background text-foreground" : "bg-lavender text-lavender-deep",
                 )}
               >
                 {tab.picked}

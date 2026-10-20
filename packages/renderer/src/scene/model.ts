@@ -23,6 +23,8 @@ export interface SceneModel {
   layers: { back?: Asset; front?: Asset };
   /** In paint order, lowest `z` first. */
   entries: SceneEntry[];
+  /** The recipient's name for the gift tag ("For Sara"), or null when none is typed. */
+  tagName: string | null;
 }
 
 export interface SceneInput {
@@ -47,6 +49,7 @@ export function buildSceneModel({ design, packaging, items }: SceneInput): Scene
     label: describeGift(design, packaging, items),
     layoutType: packaging.layoutType,
     bounds: packagingSceneBounds(packaging),
+    tagName: design.personalisation.recipientName.trim() || null,
     colors: { wrapper: design.wrapperColor, ribbon: design.ribbonColor },
     layers: packaging.layers,
     entries,

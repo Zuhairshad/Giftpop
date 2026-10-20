@@ -43,7 +43,7 @@ export function QuestionSurface({ tracking }: { tracking: QuestionTracking }): R
       initial={false}
       animate={total > 0 ? { height: total } : undefined}
       transition={reduced ? { duration: 0 } : SPRING.question}
-      className="bg-surface shadow-float relative flex max-h-[58dvh] min-h-0 min-w-0 flex-col overflow-hidden rounded-t-lg min-[900px]:mr-10 min-[900px]:max-h-[calc(100%-1.75rem)] min-[900px]:w-[460px] min-[900px]:self-center min-[900px]:rounded-lg"
+      className="bg-surface shadow-float relative flex max-h-[50dvh] min-h-0 min-w-0 flex-col overflow-hidden rounded-t-lg min-[900px]:mr-10 min-[900px]:mb-7 min-[900px]:max-h-[calc(100%-3.5rem)] min-[900px]:w-[460px] min-[900px]:self-end min-[900px]:rounded-lg"
     >
       <div ref={top} className="shrink-0 px-4 pt-2 min-[900px]:px-6 min-[900px]:pt-5">
         <div

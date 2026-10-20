@@ -67,7 +67,7 @@ export function SharePanel({ country, design }: SharePanelProps): ReactElement {
       </button>
 
       {state.phase === "error" ? (
-        <p role="alert" className="text-pink-strong text-sm font-semibold">
+        <p role="alert" className="text-danger text-sm font-semibold">
           {state.message}
         </p>
       ) : null}

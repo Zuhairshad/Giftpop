@@ -62,7 +62,7 @@ export function LimitedField({
           {label}
         </label>
         <span
-          className={`text-xs font-semibold whitespace-nowrap tabular-nums ${warn ? "text-pink-strong" : "text-muted"}`}
+          className={`text-xs font-semibold whitespace-nowrap tabular-nums ${warn ? "text-warning" : "text-muted"}`}
         >
           <span className="sr-only">Characters used: </span>
           {formatCount(value.length, limit)}
@@ -87,7 +87,7 @@ export function LimitedField({
       <p
         id={messageId}
         role="status"
-        className={`mt-1 text-xs ${warn ? "text-pink-strong font-semibold" : "text-muted"}`}
+        className={`mt-1 text-xs ${warn ? "text-warning font-semibold" : "text-muted"}`}
       >
         {message}
       </p>

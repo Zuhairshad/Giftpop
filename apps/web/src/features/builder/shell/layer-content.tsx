@@ -70,14 +70,14 @@ export function LayerContent({
       >
         <p
           aria-hidden="true"
-          className="font-script text-foreground order-2 shrink-0 text-xl leading-none min-[900px]:order-none min-[900px]:text-[22px]"
+          className="font-script text-foreground order-2 shrink-0 pe-1 text-xl leading-none whitespace-nowrap min-[900px]:order-none min-[900px]:text-[22px]"
         >
           {questionProgress(question).label}
         </p>
         <h2
           ref={titleRef}
           tabIndex={-1}
-          className="font-display text-foreground text-[22px] leading-tight font-bold tracking-[-0.035em] wrap-anywhere min-[900px]:mt-1.5 min-[900px]:text-[30px]"
+          className="font-display text-foreground text-[22px] leading-tight font-bold tracking-[-0.035em] text-balance wrap-anywhere min-[900px]:mt-1.5 min-[900px]:text-[30px]"
         >
           {title}
         </h2>

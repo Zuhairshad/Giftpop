@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ReactElement, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 
 import { Button } from "@/components/ui";
 
@@ -65,9 +65,16 @@ export function GiftReveal({ scene, details }: GiftRevealProps): ReactElement {
           key={`scene-${run}`}
           className="gp-reveal-scene relative isolate mx-auto w-[min(100%,30rem,60dvh)] md:w-[min(100%,32rem)]"
         >
+          {/* The design's soft light pool, larger than the scene box so no edge shows. */}
           <span
             aria-hidden="true"
-            className="bg-pink-soft absolute inset-[4%] -z-10 rounded-full"
+            className="gp-light-pools absolute -inset-[18%] -z-10"
+            style={
+              {
+                "--gp-pool-a-shape": "closest-side at 50% 52%",
+                "--gp-pool-b-shape": "40% 40% at 30% 75%",
+              } as CSSProperties
+            }
           />
           {scene}
         </div>
