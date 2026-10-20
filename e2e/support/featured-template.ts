@@ -4,7 +4,7 @@ import { API_URL, STAFF_EMAIL, STAFF_PASSWORD } from "./env";
 export const FEATURED_TEMPLATE_TITLE = "E2E featured bouquet";
 
 interface CatalogItem {
-  item: { id: string; sizeUnits: number };
+  item: { id: string; sizeUnits: number; personalizable?: boolean };
   inStock: boolean;
 }
 interface CatalogPackaging {
@@ -58,9 +58,10 @@ export async function ensureFeaturedTemplate(): Promise<string> {
   const bouquet = catalog.packagings.find((p) => p.packaging.slug === "bouquet" && p.inStock);
   if (!bouquet) throw new Error("The US catalog has no bouquet");
   const { packaging } = bouquet;
-  // The smallest items first, so the minimum count always fits the capacity.
+  // The smallest items first, so the minimum count always fits the capacity. Nameable items are
+  // skipped: an order needs a name on each, and this template carries none.
   const picked = catalog.items
-    .filter((entry) => entry.inStock)
+    .filter((entry) => entry.inStock && !entry.item.personalizable)
     .sort((a, b) => a.item.sizeUnits - b.item.sizeUnits)
     .slice(0, packaging.minItems);
   const units = picked.reduce((sum, entry) => sum + entry.item.sizeUnits, 0);
