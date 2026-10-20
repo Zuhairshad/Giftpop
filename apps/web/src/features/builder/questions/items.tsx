@@ -15,11 +15,16 @@ import {
   pickedInCategory,
   quantityOf,
 } from "./items/items-copy";
+import { groupListByCategory, splitByPickerStyle } from "./items/list-items";
+import { MoreItemsList } from "./items/more-items-list";
 import { EDGE_FADE_CLASS, useEdgeFade } from "./items/use-edge-fade";
 
 import { cn } from "@/lib/cn";
 
-/** Question 3 body: category tabs, the live counter and the item tiles. */
+/**
+ * Question 3 body: category tabs, the live counter, the item tiles and, under them, the written
+ * list of more items (`pickerStyle: "list"`). Both are ordinary items to the store and the scene.
+ */
 export function ItemsBody(): ReactElement {
   const builder = useBuilder();
   const { catalog, packaging, lines } = builder;
@@ -45,13 +50,16 @@ export function ItemsBody(): ReactElement {
   }
 
   const selected = names.includes(requested) ? requested : ALL_CATEGORY;
-  const shown = filterItemsByCategory(catalog.items, selected);
+  const { tiles, list } = splitByPickerStyle(filterItemsByCategory(catalog.items, selected));
+  const listGroups = groupListByCategory(list, names, selected);
 
   return (
     <div className="space-y-3">
-      {/* Tabs and counter stay at the top of the surface's scroll area while the grid scrolls
-          under them (desktop: the grid is several rows tall). Bleeds over the body's padding. */}
-      <div className="bg-surface sticky top-0 z-10 -mx-4 space-y-3 px-4 min-[900px]:-mx-6 min-[900px]:border-b min-[900px]:border-border min-[900px]:px-6 min-[900px]:pb-3">
+      {/* Tabs and counter stay at the top of the surface's scroll area while the grid and the
+          written list scroll under them. Bleeds over the body's padding. On a short phone the
+          half-height sheet leaves less room than the header itself (84px at 320x568), so there it
+          scrolls away with the items instead of hiding them. */}
+      <div className="bg-surface z-10 [@media(min-height:740px)]:sticky [@media(min-height:740px)]:top-0 min-[900px]:sticky min-[900px]:top-0 -mx-4 space-y-3 px-4 min-[900px]:-mx-6 min-[900px]:border-b min-[900px]:border-border min-[900px]:px-6 min-[900px]:pb-3">
         <CategoryTabs tabs={tabs} selected={selected} onSelect={setRequested} idPrefix={idPrefix} />
         <Counter
           count={builder.itemCount}
@@ -66,17 +74,19 @@ export function ItemsBody(): ReactElement {
         aria-labelledby={tabId(idPrefix, names.indexOf(selected))}
       >
         {/* Phones: one scrolling row of 104px tiles, so the overview keeps its height.
-            Desktop: three columns. */}
+            Desktop: three columns. Kept mounted (hidden) when a tab has only written items, so
+            the edge-fade observer keeps watching the same element. */}
         <ul
           ref={rowRef}
           onScroll={onRowScroll}
           className={cn(
-            "grid auto-cols-[104px] grid-flow-col snap-x snap-proximity gap-2 overflow-x-auto p-0.5 pb-1.5 [scrollbar-width:none]",
+            "auto-cols-[104px] grid-flow-col snap-x snap-proximity gap-2 overflow-x-auto p-0.5 pb-1.5 [scrollbar-width:none]",
             "min-[900px]:grid-flow-row min-[900px]:grid-cols-3 min-[900px]:overflow-x-visible min-[900px]:gap-2.5",
             rowFade && EDGE_FADE_CLASS,
+            tiles.length > 0 ? "grid" : "hidden",
           )}
         >
-          {shown.map((entry) => (
+          {tiles.map((entry) => (
             <ItemTile
               key={entry.item.id}
               entry={entry}
@@ -88,6 +98,15 @@ export function ItemsBody(): ReactElement {
             />
           ))}
         </ul>
+        <MoreItemsList
+          groups={listGroups}
+          hasTiles={tiles.length > 0}
+          currency={catalog.currency}
+          qtyOf={(itemId) => quantityOf(lines, itemId)}
+          blockedReasonOf={builder.addBlockedReason}
+          onAdd={(entry) => builder.addItem(entry.item.id)}
+          onRemove={(entry) => builder.removeItem(entry.item.id)}
+        />
       </div>
     </div>
   );
