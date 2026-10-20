@@ -2,9 +2,13 @@ import { balloonGift } from "./balloon-gift";
 import { basket } from "./basket";
 import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
+import { framedGift } from "./framed-gift";
+import { giftTray } from "./gift-tray";
 import { heartBox } from "./heart-box";
 import { mugBouquet } from "./mug-bouquet";
+import { photoBouquet } from "./photo-bouquet";
 import { roundBox } from "./round-box";
+import { snackHamper } from "./snack-hamper";
 import type { LayoutFn, LayoutInput, Placement } from "./types";
 
 export { FULL_SCENE, packagingSceneBounds, sceneBounds } from "./bounds";
@@ -20,6 +24,10 @@ export const LAYOUTS = {
   "heart-box": heartBox,
   "mug-bouquet": mugBouquet,
   basket,
+  "framed-gift": framedGift,
+  "snack-hamper": snackHamper,
+  "photo-bouquet": photoBouquet,
+  "gift-tray": giftTray,
   "balloon-gift": balloonGift,
 } as const satisfies Record<string, LayoutFn>;
 

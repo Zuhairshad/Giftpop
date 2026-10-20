@@ -22,9 +22,13 @@ import { BalloonGiftIllustration } from "./packaging/balloon-gift";
 import { BasketIllustration } from "./packaging/basket";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
 import { BoxGridIllustration } from "./packaging/box-grid";
+import { FramedGiftIllustration } from "./packaging/framed-gift";
+import { GiftTrayIllustration } from "./packaging/gift-tray";
 import { HeartBoxIllustration } from "./packaging/heart-box";
 import { MugBouquetIllustration } from "./packaging/mug-bouquet";
+import { PhotoBouquetIllustration } from "./packaging/photo-bouquet";
 import { RoundBoxIllustration } from "./packaging/round-box";
+import { SnackHamperIllustration } from "./packaging/snack-hamper";
 import type { ItemIllustration, PackagingIllustration } from "./types";
 
 /**
@@ -64,5 +68,9 @@ export const PACKAGING_ILLUSTRATIONS: Readonly<Record<string, PackagingIllustrat
     "heart-box": HeartBoxIllustration,
     "mug-bouquet": MugBouquetIllustration,
     basket: BasketIllustration,
+    "framed-gift": FramedGiftIllustration,
+    "snack-hamper": SnackHamperIllustration,
+    "photo-bouquet": PhotoBouquetIllustration,
+    "gift-tray": GiftTrayIllustration,
     "balloon-gift": BalloonGiftIllustration,
   };

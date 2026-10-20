@@ -146,7 +146,7 @@ const CATALOGUE: Record<string, Row[]> = {
   Candles: [
     tile("candle", "Vanilla soy candle", "candle", "#e8c9a0", 2),
     tile("roseCandle", "Rose garden jar candle", "candle", "#f4a6b8", 2),
-        list("pillarCandle", "Ivory pillar candle", "candle", "#f3ead8", 2),
+    list("pillarCandle", "Ivory pillar candle", "candle", "#f3ead8", 2),
     list("travelCandle", "Lavender travel candle", "candle", "#b9a6d8", 1),
     list("teaLights", "Tea lights, set of 6", "candle", "#fff8e7", 1),
     list("diffuser", "Reed diffuser, 100 ml", "bottle", "#d9c7a7", 2),

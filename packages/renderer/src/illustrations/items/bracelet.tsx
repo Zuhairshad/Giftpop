@@ -107,14 +107,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
       ))}
       <g transform={TILT_TRANSFORM}>
         <path d={LOOP} fill="none" stroke={GOLD_DARK} strokeWidth="10" {...ROUND} />
-        <path
-          d={LOOP}
-          fill="none"
-          stroke={GOLD}
-          strokeWidth="7"
-          strokeDasharray="7 3"
-          {...ROUND}
-        />
+        <path d={LOOP} fill="none" stroke={GOLD} strokeWidth="7" strokeDasharray="7 3" {...ROUND} />
         <path
           d={LOOP}
           fill="none"
@@ -134,7 +127,13 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         <circle cx="-9" cy="3" r="1.8" fill={GOLD_LIGHT} stroke={GOLD_DARK} strokeWidth="1" />
       </g>
       {front.map((f, i) => (
-        <Clover key={i} x={f.x} y={f.y} size={i === 1 ? CENTRE_CHARM_SIZE : FRONT_CHARM_SIZE} {...colors} />
+        <Clover
+          key={i}
+          x={f.x}
+          y={f.y}
+          size={i === 1 ? CENTRE_CHARM_SIZE : FRONT_CHARM_SIZE}
+          {...colors}
+        />
       ))}
     </ItemFrame>
   );

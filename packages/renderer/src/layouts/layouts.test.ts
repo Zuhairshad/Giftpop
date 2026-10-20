@@ -120,9 +120,13 @@ describe("registry", () => {
       "basket",
       "bouquet-fan",
       "box-grid",
+      "framed-gift",
+      "gift-tray",
       "heart-box",
       "mug-bouquet",
+      "photo-bouquet",
       "round-box",
+      "snack-hamper",
     ]);
   });
 

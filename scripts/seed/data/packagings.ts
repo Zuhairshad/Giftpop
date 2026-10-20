@@ -175,7 +175,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Framed gift",
     description: "A framed keepsake with small gifts set around it. Pick 3 to 6 items.",
     kind: "box",
-    layoutType: "box-grid",
+    layoutType: "framed-gift",
     minItems: 3,
     maxItems: 6,
     // Six 1-unit items take 6 units; three 3-unit items take 9.
@@ -200,7 +200,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Snack hamper",
     description: "A tray-style hamper packed with snacks and treats. Pick 6 to 10 items.",
     kind: "box",
-    layoutType: "box-grid",
+    layoutType: "snack-hamper",
     minItems: 6,
     maxItems: 10,
     // Ten 1-unit items take 10 units; six 3-unit items take 18.
@@ -225,7 +225,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Photo bouquet",
     description: "A bouquet with a photo card tucked in the middle. Pick 5 to 8 items.",
     kind: "bouquet",
-    layoutType: "bouquet-fan",
+    layoutType: "photo-bouquet",
     minItems: 5,
     maxItems: 8,
     // Eight 1-unit items take 8 units; five 3-unit items take 15.
@@ -250,7 +250,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Gift tray",
     description: "A serving tray laid out with gifts, wrapped in clear film. Pick 4 to 7 items.",
     kind: "basket",
-    layoutType: "basket",
+    layoutType: "gift-tray",
     minItems: 4,
     maxItems: 7,
     // Seven 1-unit items take 7 units; four 3-unit items take 12.

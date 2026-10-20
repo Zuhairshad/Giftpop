@@ -37,13 +37,7 @@ function Lid({ wrapper, ribbon }: PackagingIllustrationProps) {
       <g clipPath={`url(#heart-lid-clip-${id})`}>
         <path d={LID_RIBBON} fill={r.fill} opacity="0.95" />
         <path d={LID_RIBBON_EDGES} stroke={r.edge} strokeWidth="5" />
-        <path
-          d={LID_SHEEN}
-          fill="none"
-          stroke={t.lit}
-          strokeWidth="8"
-          opacity="0.5"
-        />
+        <path d={LID_SHEEN} fill="none" stroke={t.lit} strokeWidth="8" opacity="0.5" />
       </g>
       <path d={LID_TOP} fill="none" {...stroke} />
       <path

@@ -123,7 +123,9 @@ export const heartBox: LayoutFn = ({ design }) => {
     let x: number;
     let y: number;
     if (isBack) {
-      x = awayFromDip(spread(backRank++, back.size, BACK_SPAN.min, BACK_SPAN.max)) + jitter(rng, X_JITTER);
+      x =
+        awayFromDip(spread(backRank++, back.size, BACK_SPAN.min, BACK_SPAN.max)) +
+        jitter(rng, X_JITTER);
       y = Math.min(lobeTop(x) + BACK_DEPTH, BACK_MAX_Y) + jitter(rng, Y_JITTER);
     } else {
       const rank = frontRank++;
