@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { parseHandoff, readHandoff, writeHandoff } from "./handoff";
+import {
+  parseHandoff,
+  parseHandoffEntry,
+  readHandoff,
+  readHandoffEntry,
+  writeHandoff,
+} from "./handoff";
 
 const NUMBER = "GP-PK-7K2M9Q";
 
@@ -48,5 +54,32 @@ describe("readHandoff and writeHandoff", () => {
     expect(readHandoff(NUMBER, broken)).toBeNull();
     expect(() => writeHandoff(NUMBER, "x@y.zz", broken)).not.toThrow();
     expect(readHandoff(NUMBER, undefined)).toBeNull();
+  });
+});
+
+describe("first name in the handoff", () => {
+  const memory = (): Pick<Storage, "getItem" | "setItem"> => {
+    const data = new Map<string, string>();
+    return {
+      getItem: (k: string) => data.get(k) ?? null,
+      setItem: (k: string, v: string) => void data.set(k, v),
+    };
+  };
+
+  it("round-trips the first name with the contact", () => {
+    const storage = memory();
+    writeHandoff(NUMBER, "a@b.co", storage, "Sara");
+    expect(readHandoffEntry(NUMBER, storage)).toEqual({ contact: "a@b.co", firstName: "Sara" });
+  });
+  it("answers a null name for entries written without one", () => {
+    const storage = memory();
+    writeHandoff(NUMBER, "a@b.co", storage);
+    expect(readHandoffEntry(NUMBER, storage)).toEqual({ contact: "a@b.co", firstName: null });
+  });
+  it("drops a bad name but keeps the contact", () => {
+    const raw = JSON.stringify({ number: NUMBER, contact: "a@b.co", firstName: 7 });
+    expect(parseHandoffEntry(raw, NUMBER)).toEqual({ contact: "a@b.co", firstName: null });
+    const long = JSON.stringify({ number: NUMBER, contact: "a@b.co", firstName: "x".repeat(41) });
+    expect(parseHandoffEntry(long, NUMBER)?.firstName).toBeNull();
   });
 });

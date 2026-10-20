@@ -120,7 +120,12 @@ export function useCheckout(
         headers: { [IDEMPOTENCY_KEY_HEADER]: key },
       })
         .then((response) => {
-          saveOrderHandoff(getSessionStorage(), response.number, request.contact.phone);
+          saveOrderHandoff(
+            getSessionStorage(),
+            response.number,
+            request.contact.phone,
+            request.contact.name,
+          );
           onPlaced(response.number);
         })
         .catch((error: unknown) => {
