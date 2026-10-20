@@ -1,6 +1,6 @@
 /*
  * Design tokens for The Giftpop storefront (docs/design/giftpop-DESIGN.md).
- * Raw values live here as CSS variables (light and dark); globals.css maps them into Tailwind v4 @theme.
+ * Raw values live here as CSS variables (light only); globals.css maps them into Tailwind v4 @theme.
  * Components use the names, never hex. The older names (pink, pink-soft, ...) stay as aliases for the new ones.
  */
 :root {
@@ -84,54 +84,5 @@
 @media (min-width: 768px) {
   :root {
     --gp-gutter: 40px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-
-    --gp-bg: #1b1020;
-    --gp-surface: #271a2e;
-    --gp-surface-soft: #33233b;
-    --gp-surface-deep: #40304a;
-    --gp-border: rgb(253 241 246 / 0.12);
-    --gp-border-strong: rgb(253 241 246 / 0.2);
-
-    --gp-ink: #fdf1f6;
-    --gp-ink-soft: #cdb8d6;
-    --gp-muted: #9c88a6;
-
-    --gp-pink: #ff6b9d;
-    --gp-pink-strong: #ff8fb5;
-    --gp-pink-soft: #4a2038;
-    --gp-on-pink: #2a0f1c;
-
-    --gp-lavender: #3e2f5c;
-    --gp-lavender-deep: #cdb8ff;
-    --gp-gold: #e3b93c;
-    --gp-kraft: #c69c6d;
-    --gp-butter: #d9b24a;
-    --gp-mint: #4f9c7f;
-    --gp-sky: #5b8fc4;
-    --gp-lilac: #8c74c9;
-    --gp-on-accent: #1b1020;
-
-    --gp-success: #5fd39a;
-    --gp-success-tint: #14392a;
-    --gp-warning: #f0b35a;
-    --gp-danger: #ff8a80;
-
-    --gp-focus: #fdf1f6;
-
-    --gp-pool-pink: #4a2038;
-    --gp-pool-opacity: 0.14;
-    --gp-pool-tone-pink: #ff6b9d;
-    --gp-pool-tone-lavender: #8c74c9;
-    --gp-light-pool: 14%;
-
-    --gp-shadow-2: 0 0 0 1px var(--gp-border);
-    --gp-shadow-3: 0 0 0 1px var(--gp-border), 0 24px 60px rgb(0 0 0 / 0.5);
-    --gp-shadow-cta: none;
   }
 }

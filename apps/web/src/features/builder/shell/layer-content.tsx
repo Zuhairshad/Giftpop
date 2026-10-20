@@ -63,7 +63,7 @@ export function LayerContent({
 
   return (
     // A leaving layer is inert, so focus and the screen reader move on to the new question.
-    <div inert={!isPresent} className="flex h-full min-h-0 flex-col">
+    <div inert={!isPresent} className="flex min-h-0 flex-1 flex-col">
       <div
         ref={titleBlock}
         className="flex shrink-0 items-baseline justify-between gap-2 px-4 pt-3 pb-2 min-[900px]:flex-col min-[900px]:items-stretch min-[900px]:gap-0 min-[900px]:px-6 min-[900px]:pt-3"

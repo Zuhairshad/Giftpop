@@ -75,7 +75,7 @@ export function HomeScreen({ headline, ticks, buildHref, chooseCountryHref }: Ho
         className="gp-light-pools pointer-events-none absolute inset-0 -z-10 [--gp-pool-a-shape:70%_42%_at_50%_62%] [--gp-pool-b-shape:60%_36%_at_0%_100%] md:[--gp-pool-a-shape:42%_60%_at_72%_52%] md:[--gp-pool-b-shape:34%_44%_at_8%_96%]"
       />
       {/* Same gutter as the header bar (16px phones, 40px desktop), so the copy lines up with the logo. */}
-      <div className="flex h-full min-h-0 w-full flex-col px-[var(--gp-gutter)] pt-3 pb-3 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:grid-rows-[1fr_auto_auto_auto_1fr] md:gap-x-2 md:pt-0 md:pb-0">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-[1320px] flex-col px-[var(--gp-gutter)] pt-3 pb-3 md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:grid-rows-[1fr_auto_auto_auto_1fr] md:gap-x-2 md:pt-0 md:pb-0">
         <div className="relative z-10 max-w-[560px] flex-none md:col-start-1 md:row-start-2">
           <p
             className={`bg-lavender text-lavender-deep font-script inline-flex rounded-full px-3.5 pt-1.5 pb-1 text-[22px] leading-[1.1] font-bold ${HIDE_EYEBROW}`}

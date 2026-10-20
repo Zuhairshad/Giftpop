@@ -53,7 +53,7 @@ export function QuestionSurface({ tracking }: { tracking: QuestionTracking }): R
         <NoticeBanner />
         <ProgressBar question={question} />
       </div>
-      <div className="relative min-h-0 flex-1 overflow-hidden">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <AnimatePresence mode="popLayout" initial={false} custom={custom}>
           <m.div
             key={question}
@@ -62,7 +62,7 @@ export function QuestionSurface({ tracking }: { tracking: QuestionTracking }): R
             initial="enter"
             animate="center"
             exit="exit"
-            className="h-full min-h-0"
+            className="flex min-h-0 flex-1 flex-col"
           >
             <LayerContent
               question={question}

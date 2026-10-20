@@ -14,9 +14,6 @@ const TAG_CSS = `
     drop-shadow(0 1px 1px color-mix(in srgb, var(--gp-ink) 6%, transparent))
     drop-shadow(0 6px 14px color-mix(in srgb, var(--gp-ink) 8%, transparent));
 }
-@media (prefers-color-scheme: dark) {
-  .gp-tag-lift { filter: drop-shadow(0 0 1px var(--gp-border-strong)); }
-}
 `;
 
 /* Illustration recipe: fill, outline darkened 38%, a light stripe for the twist of the fibres. */

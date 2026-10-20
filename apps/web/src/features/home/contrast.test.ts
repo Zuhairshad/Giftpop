@@ -9,7 +9,7 @@ const css = readFileSync(
   fileURLToPath(new URL("../../styles/tokens.css", import.meta.url)),
   "utf8",
 );
-const [lightBlock = "", darkBlock = ""] = css.split("@media (prefers-color-scheme: dark)");
+const lightBlock = css;
 
 function tokens(block: string): Record<string, string> {
   return Object.fromEntries(
@@ -42,12 +42,8 @@ const PAIRS: [string, string, string][] = [
   ["ink-soft", "surface-soft", "country suggestion bar text on warm"],
 ];
 
-describe.each([
-  ["light", lightBlock],
-  ["dark", darkBlock],
-])("token contrast (%s)", (_name, block) => {
-  const t = tokens(block);
-  const all = { ...tokens(lightBlock), ...t };
+describe("token contrast", () => {
+  const all = tokens(lightBlock);
   it.each(PAIRS)("%s on %s reaches 4.5:1 (%s)", (fg, bg) => {
     const ratio = contrastRatio(all[fg] ?? "", all[bg] ?? "");
     expect(ratio).toBeGreaterThanOrEqual(4.5);
