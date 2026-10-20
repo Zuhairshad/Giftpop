@@ -42,7 +42,7 @@ function baseDesign(packagingId: string): Omit<Design, "items"> {
     wrapperColor: DEFAULT_WRAPPER_COLOUR,
     ribbonColor: DEFAULT_RIBBON_COLOUR,
     arrangementSeed: 7,
-    personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+    personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
   };
 }
 
