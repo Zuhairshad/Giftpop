@@ -13,7 +13,9 @@ import { useBuilder } from "../state";
 import { LimitedField } from "./personalise/limited-field";
 import { nameableItems } from "./personalise/limits";
 
-/** Question 5 body: recipient, card message and names on personalizable items. All optional. */
+import { nameText } from "@/lib/input-filters";
+
+/** Question 5 body: recipient, card message and names on personalizable items. All required except the custom request. */
 export function PersonaliseBody(): ReactElement {
   const builder = useBuilder();
   const { catalog, lines } = builder;
@@ -28,13 +30,17 @@ export function PersonaliseBody(): ReactElement {
 
   return (
     <div className="space-y-4">
-      <p className="text-muted text-sm">Everything here is optional. Skip what you like.</p>
+      <p className="text-muted text-sm">
+        Fill in each field to continue. Only the last box is optional.
+      </p>
       <LimitedField
         label="Recipient"
         value={builder.recipientName}
         limit={RECIPIENT_NAME_MAX_LENGTH}
         onChange={builder.setRecipientName}
         placeholder="Who is it for?"
+        filter={nameText}
+        autoComplete="off"
       />
       <LimitedField
         label="Card message"
@@ -47,6 +53,7 @@ export function PersonaliseBody(): ReactElement {
       <LimitedField
         label="Anything else you'd like?"
         hint="Tell us about any special wish that is not listed. We will read it and get in touch if it costs extra. This does not change your price."
+        optional
         value={builder.customRequest}
         limit={CUSTOM_REQUEST_MAX_LENGTH}
         onChange={builder.setCustomRequest}
@@ -61,6 +68,7 @@ export function PersonaliseBody(): ReactElement {
               label={`Name on ${item.name}`}
               value={builder.itemNames[item.id] ?? ""}
               limit={limit}
+              filter={nameText}
               onChange={(text) => builder.setItemName(item.id, text)}
             />
           ))}

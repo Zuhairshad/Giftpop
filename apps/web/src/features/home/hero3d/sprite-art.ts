@@ -93,7 +93,11 @@ export async function loadSpriteArt(pxPerPosterPixel: number): Promise<SpriteArt
       }),
     );
     const tagBox = { x: 0, y: 0, w: GIFT_TAG.width, h: 70 };
-    const tagArt = wrap(tagBox, pxPerPosterPixel, createElement(GiftTagArt, { width: GIFT_TAG.width }));
+    const tagArt = wrap(
+      tagBox,
+      pxPerPosterPixel,
+      createElement(GiftTagArt, { width: GIFT_TAG.width }),
+    );
     const tag = keep(
       await svgToTexture({
         ...tagArt,

@@ -63,8 +63,9 @@ describe("buildPersonalisationRows", () => {
       buildPersonalisationRows({ ...base, customRequest }).map((r) => r.label);
     expect(labels("")).not.toContain("Your request");
     expect(labels("  ")).not.toContain("Your request");
-    expect(
-      buildPersonalisationRows({ ...base, customRequest: " Gold foil " }).at(-1),
-    ).toEqual({ label: "Your request", value: "Gold foil" });
+    expect(buildPersonalisationRows({ ...base, customRequest: " Gold foil " }).at(-1)).toEqual({
+      label: "Your request",
+      value: "Gold foil",
+    });
   });
 });

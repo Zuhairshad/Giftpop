@@ -20,6 +20,8 @@ type TextFieldProps = {
   /** A visible prefix, such as a dial code. */
   prefix?: string | null;
   hint?: string;
+  /** Removes characters the field can never hold, as the customer types or pastes. */
+  filter?: (value: string) => string;
 };
 
 /** A labelled input. The error is read out with the field and the field is marked invalid. */
@@ -36,6 +38,7 @@ export function TextField({
   maxLength,
   prefix,
   hint,
+  filter,
 }: TextFieldProps): ReactElement {
   const id = fieldId(name);
   const hintId = `${id}-hint`;
@@ -68,7 +71,7 @@ export function TextField({
           inputMode={inputMode}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy || undefined}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => onChange(filter ? filter(event.target.value) : event.target.value)}
           className={INPUT}
         />
       </div>

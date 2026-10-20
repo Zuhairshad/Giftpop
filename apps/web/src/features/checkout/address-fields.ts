@@ -2,12 +2,16 @@ import type { AddressFormat } from "@giftpop/contracts";
 
 import type { AddressFieldName } from "./fields";
 
+import { addressLineText, nameText, postalCodeText } from "@/lib/input-filters";
+
 export interface AddressFieldModel {
   name: AddressFieldName;
   label: string;
   required: boolean;
   autoComplete: string;
   maxLength: number;
+  /** Drops characters this field never holds. */
+  filter: (value: string) => string;
 }
 
 /**
@@ -22,6 +26,7 @@ export function buildAddressFields(format: AddressFormat): AddressFieldModel[] {
       required: true,
       autoComplete: "address-line1",
       maxLength: 120,
+      filter: addressLineText,
     },
     {
       name: "line2",
@@ -29,14 +34,23 @@ export function buildAddressFields(format: AddressFormat): AddressFieldModel[] {
       required: false,
       autoComplete: "address-line2",
       maxLength: 120,
+      filter: addressLineText,
     },
-    { name: "city", label: "City", required: true, autoComplete: "address-level2", maxLength: 80 },
+    {
+      name: "city",
+      label: "City",
+      required: true,
+      autoComplete: "address-level2",
+      maxLength: 80,
+      filter: nameText,
+    },
     {
       name: "region",
       label: format.region.label,
       required: format.region.required,
       autoComplete: "address-level1",
       maxLength: 80,
+      filter: nameText,
     },
     {
       name: "postalCode",
@@ -44,6 +58,7 @@ export function buildAddressFields(format: AddressFormat): AddressFieldModel[] {
       required: format.postalCode.required,
       autoComplete: "postal-code",
       maxLength: 20,
+      filter: postalCodeText,
     },
   ];
 }

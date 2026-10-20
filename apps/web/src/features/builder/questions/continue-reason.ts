@@ -5,6 +5,7 @@ import {
   itemsReady,
   layoutReady,
   packagingReady,
+  personaliseGap,
   personaliseReady,
   reviewReady,
 } from "./can-continue";
@@ -32,7 +33,16 @@ function blocked(reason: string): ContinueCheck {
 
 type Builder = Pick<
   BuilderApi,
-  "packaging" | "wrapperColor" | "ribbonColor" | "problems" | "design"
+  | "packaging"
+  | "wrapperColor"
+  | "ribbonColor"
+  | "problems"
+  | "design"
+  | "recipientName"
+  | "cardMessage"
+  | "itemNames"
+  | "lines"
+  | "catalog"
 >;
 
 export function packagingCheck(builder: Pick<Builder, "packaging">): ContinueCheck {
@@ -57,9 +67,26 @@ export function layoutCheck(): ContinueCheck {
   return layoutReady() ? READY : blocked(FIX_PROBLEMS_FIRST);
 }
 
-/** The first text that is too long. */
-export function personaliseCheck(builder: Pick<Builder, "packaging" | "problems">): ContinueCheck {
+export const ENTER_RECIPIENT = "Enter who the gift is for";
+export const WRITE_CARD_MESSAGE = "Write a card message";
+export const NAME_THE_ITEMS = "Add a name for each personalised item";
+
+const GAP_REASONS = {
+  recipient: ENTER_RECIPIENT,
+  message: WRITE_CARD_MESSAGE,
+  "item-name": NAME_THE_ITEMS,
+} as const;
+
+/** The first missing answer, then the first text that is too long. */
+export function personaliseCheck(
+  builder: Pick<
+    Builder,
+    "packaging" | "problems" | "recipientName" | "cardMessage" | "itemNames" | "lines" | "catalog"
+  >,
+): ContinueCheck {
   if (builder.packaging === null) return blocked(PICK_PACKAGING_FIRST);
+  const gap = personaliseGap(builder);
+  if (gap !== null) return blocked(GAP_REASONS[gap]);
   if (personaliseReady(builder)) return READY;
   const tooLong = builder.problems.find((problem) => problem.code === "TEXT_TOO_LONG");
   return blocked(tooLong?.message ?? FIX_PROBLEMS_FIRST);

@@ -19,6 +19,7 @@ import { builderHref } from "@/features/builder/state";
 import type { BuilderApi } from "@/features/builder/state";
 import { CARD, CARD_TITLE } from "@/features/order/ui";
 import { formatMoney } from "@/lib/format-money";
+import { digitsOnly, nameText } from "@/lib/input-filters";
 
 const SECTION_HEADING = `${CARD_TITLE} mb-4`;
 
@@ -97,6 +98,7 @@ export function CheckoutFormView({
             error={errors.name}
             autoComplete="name"
             maxLength={80}
+            filter={nameText}
           />
           <TextField
             name="email"
@@ -122,7 +124,8 @@ export function CheckoutFormView({
             onChange={(v) => setField("phone", v)}
             error={errors.phone}
             autoComplete="tel-national"
-            maxLength={20}
+            maxLength={15}
+            filter={digitsOnly}
           />
         </div>
       </section>
@@ -146,6 +149,7 @@ export function CheckoutFormView({
                 error={errors[field.name]}
                 autoComplete={field.autoComplete}
                 maxLength={field.maxLength}
+                filter={field.filter}
               />
             </div>
           ))}

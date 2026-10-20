@@ -86,23 +86,55 @@ describe("layout question", () => {
 });
 
 describe("personalise question", () => {
-  it("continues with everything empty", () => {
+  it("blocks while the recipient or the card message is empty", () => {
     const { api } = newTestStore();
     api().choosePackaging(BOUQUET_ID);
+    expect(personaliseReady(api())).toBe(false);
+    api().setRecipientName("   ");
+    api().setCardMessage("Happy birthday");
+    expect(personaliseReady(api())).toBe(false);
+    api().setRecipientName("Amna");
+    expect(personaliseReady(api())).toBe(true);
+    api().setCardMessage("");
+    expect(personaliseReady(api())).toBe(false);
+  });
+
+  it("needs a name on every item that can carry one", () => {
+    const { api } = newTestStore();
+    api().choosePackaging(BOUQUET_ID);
+    api().addItem(CHOC_ID);
+    api().setRecipientName("Amna");
+    api().setCardMessage("Hi");
+    expect(personaliseReady(api())).toBe(false);
+    api().setItemName(CHOC_ID, "  ");
+    expect(personaliseReady(api())).toBe(false);
+    api().setItemName(CHOC_ID, "Amna");
     expect(personaliseReady(api())).toBe(true);
   });
 
-  it("blocks only on a text-length problem", () => {
+  it("leaves the custom request optional", () => {
     const { api } = newTestStore();
     api().choosePackaging(BOUQUET_ID);
-    const packaging = api().packaging!;
-    expect(personaliseReady({ packaging, problems: [problem("TEXT_TOO_LONG")] })).toBe(false);
-    expect(personaliseReady({ packaging, problems: [problem("TOO_FEW_ITEMS")] })).toBe(true);
+    api().setRecipientName("Amna");
+    api().setCardMessage("Hi");
+    expect(api().customRequest).toBe("");
+    expect(personaliseReady(api())).toBe(true);
+  });
+
+  it("blocks on a text-length problem", () => {
+    const { api } = newTestStore();
+    api().choosePackaging(BOUQUET_ID);
+    api().setRecipientName("Amna");
+    api().setCardMessage("Hi");
+    const base = api();
+    expect(personaliseReady({ ...base, problems: [problem("TEXT_TOO_LONG")] })).toBe(false);
+    expect(personaliseReady({ ...base, problems: [problem("TOO_FEW_ITEMS")] })).toBe(true);
   });
 
   it("never leaves the store over the card message limit", () => {
     const { api } = newTestStore();
     api().choosePackaging(BOUQUET_ID);
+    api().setRecipientName("Amna");
     api().setCardMessage("x".repeat(CARD_MESSAGE_MAX_LENGTH + 50));
     expect(api().cardMessage).toHaveLength(CARD_MESSAGE_MAX_LENGTH);
     expect(personaliseReady(api())).toBe(true);

@@ -73,7 +73,9 @@ export default function PartnersPage() {
         ))}
       </ul>
       <section aria-labelledby="partner-how" className="mt-12">
-        <p className="font-script text-lavender-deep text-2xl leading-none font-bold">Step by step</p>
+        <p className="font-script text-lavender-deep text-2xl leading-none font-bold">
+          Step by step
+        </p>
         <h2
           id="partner-how"
           className="font-display mt-2 text-3xl leading-tight font-bold tracking-tight"

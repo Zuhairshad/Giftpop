@@ -75,7 +75,9 @@ export function FormFrame({
         <Success email={controller.values.email?.trim() ?? ""} />
       ) : (
         <>
-          <p className="font-script text-lavender-deep text-2xl leading-none font-bold">{eyebrow}</p>
+          <p className="font-script text-lavender-deep text-2xl leading-none font-bold">
+            {eyebrow}
+          </p>
           <h1 className="font-display mt-2 text-3xl leading-tight font-bold tracking-tight sm:text-4xl">
             {title}
           </h1>

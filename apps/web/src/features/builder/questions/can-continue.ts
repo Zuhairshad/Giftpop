@@ -1,6 +1,7 @@
 import type { BuilderApi } from "../state";
 
 import { continueState } from "./items/items-copy";
+import { nameableItems } from "./personalise/limits";
 
 /**
  * The rule behind each question's continue button, as pure functions of what the builder holds.
@@ -30,10 +31,32 @@ export function layoutReady(): boolean {
   return true;
 }
 
-/** Card message, recipient and item names are all within their limits. */
-export function personaliseReady(builder: Pick<BuilderApi, "packaging" | "problems">): boolean {
+export type PersonaliseGap = "recipient" | "message" | "item-name";
+
+/** The first required answer still missing, in the order the form shows them. */
+export function personaliseGap(
+  builder: Pick<BuilderApi, "recipientName" | "cardMessage" | "itemNames" | "lines" | "catalog">,
+): PersonaliseGap | null {
+  if (builder.recipientName.trim() === "") return "recipient";
+  if (builder.cardMessage.trim() === "") return "message";
+  const nameable = nameableItems(
+    builder.lines,
+    builder.catalog.items.map((entry) => entry.item),
+  );
+  const unnamed = nameable.some(({ item }) => (builder.itemNames[item.id] ?? "").trim() === "");
+  return unnamed ? "item-name" : null;
+}
+
+/** Recipient, card message and every item name are filled in and within their limits. */
+export function personaliseReady(
+  builder: Pick<
+    BuilderApi,
+    "packaging" | "problems" | "recipientName" | "cardMessage" | "itemNames" | "lines" | "catalog"
+  >,
+): boolean {
   return (
     builder.packaging !== null &&
+    personaliseGap(builder) === null &&
     !builder.problems.some((problem) => problem.code === "TEXT_TOO_LONG")
   );
 }

@@ -50,6 +50,16 @@ function form(overrides: Partial<FormValues["contact"] & FormValues["address"]> 
   };
 }
 
+describe("address field filters", () => {
+  it("keep letters-only fields free of digits and the postal code free of symbols", () => {
+    const filters = Object.fromEntries(buildAddressFields(PK).map((f) => [f.name, f.filter]));
+    expect(filters.city?.("Lahore 54000!")).toBe("Lahore ");
+    expect(filters.region?.("Punjab2")).toBe("Punjab");
+    expect(filters.postalCode?.("54000#")).toBe("54000");
+    expect(filters.line1?.("House 12, Street 4 <b>")).toBe("House 12, Street 4 b");
+  });
+});
+
 describe("buildAddressFields", () => {
   it("uses the country's own labels and required flags (PK)", () => {
     const fields = buildAddressFields(PK);

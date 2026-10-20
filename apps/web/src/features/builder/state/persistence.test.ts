@@ -25,7 +25,12 @@ const design: Design = {
   wrapperColor: "#cc0000",
   ribbonColor: "#00aa00",
   arrangementSeed: 99,
-  personalisation: { cardMessage: "Hi", customRequest: "", recipientName: "Sana", itemNames: { [CHOC_ID]: "Amna" } },
+  personalisation: {
+    cardMessage: "Hi",
+    customRequest: "",
+    recipientName: "Sana",
+    itemNames: { [CHOC_ID]: "Amna" },
+  },
 };
 
 const throwing: StorageLike = {

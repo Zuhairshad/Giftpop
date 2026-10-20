@@ -11,6 +11,8 @@ import {
   itemsCheck,
   layoutCheck,
   packagingCheck,
+  ENTER_RECIPIENT,
+  WRITE_CARD_MESSAGE,
   personaliseCheck,
   reviewCheck,
 } from "./continue-reason";
@@ -77,20 +79,32 @@ describe("continue reasons", () => {
     expect(layoutCheck()).toEqual({ ready: true, reason: null });
   });
 
-  it("names the text that is too long on the personalise question", () => {
+  it("names the first missing answer on the personalise question", () => {
     const { api } = newTestStore();
     api().choosePackaging(BOUQUET_ID);
-    const packaging = api().packaging!;
+    expect(personaliseCheck(api())).toEqual({ ready: false, reason: ENTER_RECIPIENT });
+    api().setRecipientName("Amna");
+    expect(personaliseCheck(api())).toEqual({ ready: false, reason: WRITE_CARD_MESSAGE });
+    api().setCardMessage("Hi");
+    expect(personaliseCheck(api())).toEqual({ ready: true, reason: null });
+    expect(personaliseCheck({ ...api(), packaging: null }).reason).toBe(PICK_PACKAGING_FIRST);
+  });
+
+  it("names the text that is too long once everything is filled", () => {
+    const { api } = newTestStore();
+    api().choosePackaging(BOUQUET_ID);
+    api().setRecipientName("Amna");
+    api().setCardMessage("Hi");
+    const base = api();
     expect(
       personaliseCheck({
-        packaging,
+        ...base,
         problems: [problem("TOO_FEW_ITEMS", "few"), problem("TEXT_TOO_LONG", "Card too long")],
       }),
     ).toEqual({ ready: false, reason: "Card too long" });
-    expect(personaliseCheck({ packaging, problems: [problem("TOO_FEW_ITEMS", "few")] }).ready).toBe(
+    expect(personaliseCheck({ ...base, problems: [problem("TOO_FEW_ITEMS", "few")] }).ready).toBe(
       true,
     );
-    expect(personaliseCheck({ packaging: null, problems: [] }).reason).toBe(PICK_PACKAGING_FIRST);
   });
 
   it("points at the problem list on review", () => {

@@ -52,7 +52,7 @@ export async function buildGift(page: Page, formatName: string): Promise<void> {
   await expect(counter).toBeVisible();
   const minimum = Number(/of (\d+)/.exec((await counter.innerText()) ?? "")?.[1]);
   expect(minimum).toBeGreaterThan(0);
-  for (let picked = 0; picked < minimum; ) {
+  for (let picked = 0; picked < minimum;) {
     const candidates = await page.getByRole("button", { name: /^Add (?!one more)/ }).all();
     let added = false;
     for (const candidate of candidates) {
@@ -77,6 +77,7 @@ export async function buildGift(page: Page, formatName: string): Promise<void> {
   // 5. Personalise.
   await page.getByLabel(/Card message/i).fill(CARD_MESSAGE);
   await page.getByLabel(/Recipient/i).fill(RECIPIENT);
+  for (const field of await page.getByLabel(/^Name on /).all()) await field.fill(RECIPIENT);
   await advance(page, /Continue to review/i, "Your gift is ready");
 
   // 6. Review.

@@ -16,6 +16,10 @@ interface LimitedFieldProps {
   /** Extra help shown under the label and read with the field. */
   hint?: string;
   autoComplete?: string;
+  /** Marks the field "(optional)" in its label. */
+  optional?: boolean;
+  /** Removes characters the field can never hold, before the limit is applied. */
+  filter?: (text: string) => string;
 }
 
 const CONTROL =
@@ -35,6 +39,8 @@ export function LimitedField({
   placeholder,
   hint,
   autoComplete,
+  optional = false,
+  filter,
 }: LimitedFieldProps): ReactElement {
   const id = useId();
   const messageId = `${id}-message`;
@@ -46,7 +52,7 @@ export function LimitedField({
   const warn = trimmed || state !== "ok";
 
   function handleChange(raw: string) {
-    const next = clampToLimit(raw, limit);
+    const next = clampToLimit(filter ? filter(raw) : raw, limit);
     setTrimmed(next.trimmed);
     onChange(next.text);
   }
@@ -55,6 +61,7 @@ export function LimitedField({
     id,
     value,
     placeholder,
+    required: !optional,
     "aria-describedby": hint ? `${hintId} ${messageId}` : messageId,
     onBlur: () => setTrimmed(false),
   };
@@ -64,6 +71,7 @@ export function LimitedField({
       <div className="mb-1 flex items-baseline justify-between gap-3">
         <label htmlFor={id} className="text-foreground min-w-0 text-sm font-semibold wrap-anywhere">
           {label}
+          {optional ? <span className="text-muted ml-2 font-normal">(optional)</span> : null}
         </label>
         <span
           className={`text-xs font-semibold whitespace-nowrap tabular-nums ${warn ? "text-warning" : "text-muted"}`}
