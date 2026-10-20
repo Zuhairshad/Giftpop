@@ -85,7 +85,9 @@ export async function listTemplates(): Promise<FeaturedTemplate[]> {
 export async function createTemplate(input: CreateTemplateRequest): Promise<FeaturedTemplate> {
   const saved = await DesignModel.findOne({ shareId: input.shareId }).lean<DesignDoc>();
   if (!saved) throw new AppError("NOT_FOUND", 404, "No saved gift with that share id");
-  const design = parseStoredDesign(saved.design);
+  const stored = parseStoredDesign(saved.design);
+  // A template is public; the customer's private request must not travel with it.
+  const design = { ...stored, personalisation: { ...stored.personalisation, customRequest: "" } };
   await assertSellableIn(input.countries, design);
 
   const created = await TemplateModel.create({

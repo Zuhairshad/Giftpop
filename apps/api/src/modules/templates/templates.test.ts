@@ -109,6 +109,24 @@ describe("staff routes", () => {
     expect((res.body as { id: string }[]).map((t) => t.id)).toEqual([second.id, first.id]);
   });
 
+  it("never copies a customer's private request into a public template", async () => {
+    const world = await seedWorld();
+    const base = makeDesign(world.packaging, [
+      [world.bar, 2],
+      [world.soap, 1],
+    ]);
+    const design: Design = {
+      ...base,
+      personalisation: { ...base.personalisation, customRequest: "gold foil, call me first" },
+    };
+    const { shareId } = await saveDesign("PK", design);
+    const template = await featured(shareId, {}, ["PK"]);
+    expect(template.design.personalisation.customRequest).toBe("");
+
+    const stored = await TemplateModel.findById(template.id).lean<{ design: Design }>();
+    expect(stored?.design.personalisation.customRequest).toBe("");
+  });
+
   it("rejects an unknown share id with 404", async () => {
     await setup();
     const res = await create({ title: "x", shareId: "nope123456", countries: ["PK"] });
