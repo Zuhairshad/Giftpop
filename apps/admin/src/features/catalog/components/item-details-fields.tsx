@@ -1,24 +1,20 @@
 "use client";
 
-import { ITEM_SHAPES } from "@giftpop/contracts";
 import type { SaveItemRequest } from "@giftpop/contracts";
 import { Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 
 import { DEFAULT_PERSONALIZATION_MAX_LENGTH } from "../lib/item-form";
 import type { ItemFormInput } from "../lib/item-form";
+import { SHAPE_OPTIONS } from "../lib/item-labels";
 
 import { ColourInput } from "./colour-input";
 import { Field, ToggleRow } from "./field";
 import { OptionSelect } from "./option-select";
+import { PickerStyleField } from "./picker-style-field";
 
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-
-const SHAPE_OPTIONS = ITEM_SHAPES.map((shape) => ({
-  value: shape,
-  label: shape.replace("-", " ").replace(/^./, (letter) => letter.toUpperCase()),
-}));
 
 export type ItemFormApi = UseFormReturn<ItemFormInput, unknown, SaveItemRequest>;
 
@@ -134,6 +130,19 @@ export function ItemDetailsFields({ form, categories }: ItemDetailsFieldsProps) 
           />
         )}
       </Field>
+
+      <Controller
+        control={control}
+        name="pickerStyle"
+        render={({ field: { value, onChange } }) => (
+          <PickerStyleField
+            value={value}
+            onChange={onChange}
+            error={errors.pickerStyle?.message}
+            className="sm:col-span-2"
+          />
+        )}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:col-span-2">
         <Controller

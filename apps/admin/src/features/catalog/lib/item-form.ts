@@ -2,6 +2,8 @@ import { SaveItemRequestSchema } from "@giftpop/contracts";
 import type { Asset, Item, SaveItemRequest } from "@giftpop/contracts";
 import type { z } from "zod";
 
+import { DEFAULT_PICKER_STYLE, resolvePickerStyle } from "./item-labels";
+
 /** The form library's input type: the contract's input, image included. */
 export type ItemFormInput = z.input<typeof SaveItemRequestSchema>;
 
@@ -18,6 +20,7 @@ export function emptyItemValues(): ItemFormValues {
     color: "#cccccc",
     sizeUnits: 1,
     personalizable: false,
+    pickerStyle: DEFAULT_PICKER_STYLE,
     active: true,
     sortOrder: 0,
   };
@@ -34,6 +37,7 @@ export function itemToFormValues(item: Item): ItemFormValues {
     ...(item.personalizationMaxLength !== undefined
       ? { personalizationMaxLength: item.personalizationMaxLength }
       : {}),
+    pickerStyle: resolvePickerStyle(item.pickerStyle),
     active: item.active,
     sortOrder: item.sortOrder,
   };
@@ -41,7 +45,8 @@ export function itemToFormValues(item: Item): ItemFormValues {
 
 /**
  * The request body for POST or PUT: the validated form values plus the committed image.
- * A name limit is only kept while the item is personalizable.
+ * A name limit is only kept while the item is personalizable. A missing picker style is sent as
+ * tile, so a save always states how the item is offered.
  */
 export function buildSaveItemRequest(
   values: SaveItemRequest,
@@ -50,6 +55,7 @@ export function buildSaveItemRequest(
   const { personalizationMaxLength, ...rest } = values;
   return SaveItemRequestSchema.parse({
     ...rest,
+    pickerStyle: resolvePickerStyle(values.pickerStyle),
     image,
     ...(values.personalizable && personalizationMaxLength !== undefined
       ? { personalizationMaxLength }
