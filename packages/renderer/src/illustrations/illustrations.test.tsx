@@ -73,8 +73,55 @@ describe("item illustrations", () => {
           expect(render(color)).toContain(`data-placeholder="${shape}"`);
         }
       });
+
+      it("keeps a visible outline on near-black and near-white", () => {
+        for (const color of ["#000000", "#111111", "#ffffff", "#fafafa"]) {
+          const outline = itemPalette(color).dark;
+          const markup = render(color);
+          expect(markup, color).toContain(`stroke="${outline}"`);
+          expect(Math.abs(luma(outline) - luma(color)), color).toBeGreaterThan(0.25);
+          expect(markup, color).not.toContain("NaN");
+        }
+      });
     });
   }
+
+  it("gives every shape its own drawing", () => {
+    // Strip what the frame adds (the shape name, the fit) and the generated ids, then compare.
+    const drawings = ITEM_SHAPES.map((shape) => {
+      const Art = ITEM_ILLUSTRATIONS[shape];
+      return renderToStaticMarkup(
+        <svg>
+          <Art color={PINK} />
+        </svg>,
+      )
+        .replace(/<g data-placeholder="[^"]*" transform="[^"]*">/, "<g>")
+        .replace(/(id="|url\(#)[^")]+/g, "$1x");
+    });
+    expect(new Set(drawings).size).toBe(ITEM_SHAPES.length);
+  });
+
+  it("draws every shape at its own fit, centred in the 200 box", () => {
+    for (const shape of ITEM_SHAPES) {
+      const Art = ITEM_ILLUSTRATIONS[shape];
+      const markup = renderToStaticMarkup(
+        <svg>
+          <Art color={PINK} />
+        </svg>,
+      );
+      const fit =
+        /data-placeholder="[^"]*" transform="translate\(([-\d.]+) ([-\d.]+)\) scale\(([\d.]+)\)/.exec(
+          markup,
+        );
+      expect(fit, shape).not.toBeNull();
+      const [, x, y, scale] = (fit ?? []).map(Number);
+      // Within a quarter of the box of the anchor, and not left at the untuned default.
+      expect(Math.abs((x ?? 0) - 100), shape).toBeLessThan(25);
+      expect(Math.abs((y ?? 0) - 100), shape).toBeLessThan(30);
+      expect(scale, shape).toBeGreaterThan(0.9);
+      expect(scale, shape).toBeLessThan(1.6);
+    }
+  });
 
   it("keeps ids unique when many copies share one tree", () => {
     const markup = renderToStaticMarkup(
