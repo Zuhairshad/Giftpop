@@ -4,11 +4,17 @@ import { BalloonIllustration } from "./items/balloon";
 import { BarIllustration } from "./items/bar";
 import { BottleIllustration } from "./items/bottle";
 import { BoxIllustration } from "./items/box";
+import { CandleIllustration } from "./items/candle";
 import { CardIllustration } from "./items/card";
+import { CosmeticIllustration } from "./items/cosmetic";
+import { CupcakeIllustration } from "./items/cupcake";
 import { FlowerIllustration } from "./items/flower";
+import { FrameIllustration } from "./items/frame";
 import { JarIllustration } from "./items/jar";
+import { JewelleryIllustration } from "./items/jewellery";
 import { MugIllustration } from "./items/mug";
-import { OtherIllustration, starFor } from "./items/other";
+import { OtherIllustration } from "./items/other";
+import { PerfumeIllustration } from "./items/perfume";
 import { SoftToyIllustration } from "./items/soft-toy";
 import { BasketIllustration } from "./packaging/basket";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
@@ -31,13 +37,12 @@ export const ITEM_ILLUSTRATIONS: Record<ItemShape, ItemIllustration> = {
   card: CardIllustration,
   "soft-toy": SoftToyIllustration,
   balloon: BalloonIllustration,
-  // Placeholders until each new shape has its own drawing (phase 8 art slice).
-  perfume: starFor("perfume"),
-  candle: starFor("candle"),
-  jewellery: starFor("jewellery"),
-  cosmetic: starFor("cosmetic"),
-  cupcake: starFor("cupcake"),
-  frame: starFor("frame"),
+  perfume: PerfumeIllustration,
+  candle: CandleIllustration,
+  jewellery: JewelleryIllustration,
+  cosmetic: CosmeticIllustration,
+  cupcake: CupcakeIllustration,
+  frame: FrameIllustration,
   other: OtherIllustration,
 };
 

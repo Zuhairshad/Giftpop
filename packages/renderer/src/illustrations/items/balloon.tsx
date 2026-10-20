@@ -1,42 +1,61 @@
-import { shade } from "../../placeholders/color";
-import { itemPalette, ROUND } from "../palette";
+import { SILVER, SILVER_DARK, itemPalette, ROUND } from "../palette";
+import { Radial, ref } from "../parts/gradients";
+import { useArtId } from "../parts/ids";
 import { ItemFrame } from "../parts/ItemFrame";
-import { ShadedPath } from "../parts/ShadedPath";
 import type { ItemIllustrationProps } from "../types";
 
 const BODY =
-  "M100 36C146 36 162 74 150 106C142 128 118 144 100 148C82 144 58 128 50 106C38 74 54 36 100 36Z";
+  "M100 28C142 28 158 60 156 90C154 120 126 144 104 149L100 151L96 149C74 144 46 120 44 90C42 60 58 28 100 28Z";
+const RIBBON = "M100 160C90 168 110 172 100 180C90 188 110 190 101 198";
 
-/** A helium balloon: glossy highlight, tied knot, a curling string. */
+/** A latex party balloon: a glossy round body, a tight knot and a curled ribbon. */
 export function BalloonIllustration({ color }: ItemIllustrationProps) {
   const p = itemPalette(color);
+  const gloss = useArtId("balloon-gloss", color);
   return (
-    <ItemFrame shape="balloon" fit={[1.15, 4.6, -3.5]}>
+    <ItemFrame shape="balloon" fit={[1.04, 0, -13.5]}>
+      <defs>
+        <Radial
+          id={gloss}
+          cx={80}
+          cy={60}
+          r={100}
+          stops={[
+            [0, p.shine],
+            [0.18, p.soft],
+            [0.45, p.fill],
+            [0.8, p.deep],
+            [1, p.shadow],
+          ]}
+        />
+      </defs>
+      <path d={RIBBON} fill="none" stroke={SILVER_DARK} strokeWidth="3" {...ROUND} />
+      <path d={RIBBON} fill="none" stroke={SILVER} strokeWidth="1.4" {...ROUND} />
+      <path d={BODY} fill={ref(gloss)} stroke={p.dark} strokeWidth="3" {...ROUND} />
       <path
-        d="M100 150C96 164 106 172 100 192"
-        fill="none"
-        stroke={shade(color, -0.2)}
+        d="M93 150Q100 147 107 150L104 160Q100 162 96 160Z"
+        fill={p.deep}
+        stroke={p.dark}
         strokeWidth="2.5"
         {...ROUND}
       />
-      <ShadedPath d={BODY} fill={p.fill} deep={p.deep} stroke={p.dark} shift={8} />
-      <path d="M92 146l8 12 8-12Z" fill={p.dark} stroke={p.dark} strokeWidth="2" {...ROUND} />
+      <path d="M98 151v8M102 151v8" stroke={p.dark} strokeWidth="1" opacity="0.5" />
       <ellipse
         cx="74"
-        cy="66"
-        rx="9"
-        ry="16"
-        fill={p.light}
-        opacity="0.75"
-        transform="rotate(24 74 66)"
+        cy="62"
+        rx="10"
+        ry="19"
+        fill="#fff"
+        opacity="0.6"
+        transform="rotate(28 74 62)"
       />
-      <circle cx="90" cy="46" r="3.5" fill={p.light} opacity="0.6" />
+      <circle cx="92" cy="44" r="4" fill="#fff" opacity="0.6" />
       <path
-        d="M128 60q8 10 6 24"
+        d="M140 92C138 112 126 128 110 138"
         fill="none"
-        stroke={p.dark}
+        stroke={p.light}
         strokeWidth="3"
-        opacity="0.18"
+        opacity="0.35"
         {...ROUND}
       />
     </ItemFrame>
