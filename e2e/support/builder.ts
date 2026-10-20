@@ -24,6 +24,12 @@ async function advance(page: Page, name: RegExp, nextTitle: string): Promise<voi
  * visible text.
  */
 export async function buildGift(page: Page, formatName: string): Promise<void> {
+  await buildGiftToPersonalise(page, formatName);
+  await personaliseAndReview(page);
+}
+
+/** Steps 1 to 4: stops on the personalise question ("Who's it for?"), nothing filled in. */
+export async function buildGiftToPersonalise(page: Page, formatName: string): Promise<void> {
   // 1. Packaging.
   await expect(
     page.getByRole("heading", { name: "What should your gift come in?", level: 2 }),
@@ -73,7 +79,10 @@ export async function buildGift(page: Page, formatName: string): Promise<void> {
   const moveUp = page.getByRole("button", { name: /^Move .* up$/ }).last();
   if (await moveUp.isEnabled()) await moveUp.click();
   await advance(page, /Continue to personalise/i, "Who's it for?");
+}
 
+/** Steps 5 and 6: fills the personalise question and stops on review. */
+export async function personaliseAndReview(page: Page): Promise<void> {
   // 5. Personalise.
   await page.getByLabel(/Card message/i).fill(CARD_MESSAGE);
   await page.getByLabel(/Recipient/i).fill(RECIPIENT);
