@@ -1,11 +1,21 @@
+import { BALLOON_GIFT_KNOT } from "../../layouts/balloon-gift";
 import { ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
 import { ribbonTones, wrapTones } from "./tones";
 
+const { x: KX, y: KY } = BALLOON_GIFT_KNOT;
+
 /** Strings leave the knot above the box and end under the balloon cluster (scene units). */
-const STRINGS =
-  "M500 690Q430 600 350 470M500 690Q470 590 420 450M500 690Q500 580 500 440M500 690Q530 590 580 450M500 690Q570 600 650 470";
+const STRINGS = [
+  "Q430 600 350 470",
+  "Q470 590 420 450",
+  "Q500 580 500 440",
+  "Q530 590 580 450",
+  "Q570 600 650 470",
+]
+  .map((curve) => `M${KX} ${KY}${curve}`)
+  .join("");
 
 /** Behind the items: ground shadow and the curling strings that gather at the knot above the box. */
 export function BalloonGiftBack({ wrapper, ribbon }: PackagingIllustrationProps) {

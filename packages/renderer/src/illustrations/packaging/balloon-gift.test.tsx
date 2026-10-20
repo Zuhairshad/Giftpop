@@ -1,6 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
+import { BALLOON_GIFT_KNOT } from "../../layouts/balloon-gift";
+
 import { BalloonGiftIllustration } from "./balloon-gift";
 import { BoxGridBack } from "./box-grid-back";
 
@@ -30,5 +32,16 @@ describe("balloon gift art", () => {
     const own = renderToStaticMarkup(<Back wrapper={WRAP} ribbon={RIBBON} />);
     const other = renderToStaticMarkup(<BoxGridBack wrapper={WRAP} ribbon={RIBBON} />);
     expect(own).not.toEqual(other);
+  });
+
+  it("starts every string and seats the bow at the layout's knot", () => {
+    const { x, y } = BALLOON_GIFT_KNOT;
+    const back = renderToStaticMarkup(<Back wrapper={WRAP} ribbon={RIBBON} />);
+    const starts = Array.from(back.matchAll(/M(\d+) (\d+)Q/g), (m) => [Number(m[1]), Number(m[2])]);
+    expect(starts.length).toBeGreaterThan(0);
+    for (const start of starts) expect(start).toEqual([x, y]);
+
+    const front = renderToStaticMarkup(<Front wrapper={WRAP} ribbon={RIBBON} />);
+    expect(front).toContain(`translate(${x} ${y + 4})`);
   });
 });

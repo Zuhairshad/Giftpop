@@ -2,7 +2,7 @@ import { ITEM_SHAPES } from "@giftpop/contracts";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { LAYOUT_TYPES } from "../layouts";
+import { LAYOUT_TYPES, LAYOUTS } from "../layouts";
 import { mix, shade } from "../placeholders/color";
 
 import { ruffleEdge } from "./packaging/ruffle";
@@ -27,6 +27,10 @@ describe("illustration registry", () => {
   it("has an item illustration for every item shape", () => {
     for (const shape of ITEM_SHAPES) expect(ITEM_ILLUSTRATIONS[shape]).toBeTypeOf("function");
     expect(Object.keys(ITEM_ILLUSTRATIONS).sort()).toEqual([...ITEM_SHAPES].sort());
+  });
+
+  it("registers packaging art for exactly the layout types", () => {
+    expect(Object.keys(PACKAGING_ILLUSTRATIONS).sort()).toEqual(Object.keys(LAYOUTS).sort());
   });
 
   it("has packaging art (Back and Front) for every layout type", () => {

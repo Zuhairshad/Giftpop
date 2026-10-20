@@ -1,5 +1,6 @@
 import { useId } from "react";
 
+import { BALLOON_GIFT_KNOT } from "../../layouts/balloon-gift";
 import { GOLD, ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
@@ -28,8 +29,8 @@ export function BalloonGiftFront({ wrapper, ribbon }: PackagingIllustrationProps
       <path d="M322 700H678V752H322Z" fill={t.lit} {...stroke} />
       <path d="M464 700H536V752H464Z" fill={r.fill} stroke={r.edge} strokeWidth="4" />
       <path d="M340 714H420" stroke="#fff" strokeWidth="8" opacity="0.45" {...ROUND} />
-      <circle cx="500" cy="690" r="9" fill={GOLD} />
-      <g transform="translate(500 694)">
+      <circle cx={BALLOON_GIFT_KNOT.x} cy={BALLOON_GIFT_KNOT.y} r="9" fill={GOLD} />
+      <g transform={`translate(${BALLOON_GIFT_KNOT.x} ${BALLOON_GIFT_KNOT.y + 4})`}>
         <Bow ribbon={ribbon} scale={0.42} />
       </g>
     </g>
