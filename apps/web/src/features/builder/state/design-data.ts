@@ -1,5 +1,6 @@
 import {
   CARD_MESSAGE_MAX_LENGTH,
+  CUSTOM_REQUEST_MAX_LENGTH,
   HexColorSchema,
   ITEM_NAME_MAX_LENGTH,
   MAX_DESIGN_LINES,
@@ -60,6 +61,7 @@ export function dataFromDesign(design: Design, catalog: CatalogResponse): Builde
       : (packaging.ribbonColors[0]?.hex ?? null),
     arrangementSeed: Number.isInteger(seed) && seed >= 0 && seed <= MAX_SEED ? seed : INITIAL_SEED,
     cardMessage: truncateText(design.personalisation.cardMessage, CARD_MESSAGE_MAX_LENGTH),
+    customRequest: truncateText(design.personalisation.customRequest, CUSTOM_REQUEST_MAX_LENGTH),
     recipientName: truncateText(design.personalisation.recipientName, RECIPIENT_NAME_MAX_LENGTH),
     itemNames,
   };

@@ -30,7 +30,7 @@ const DESIGN: Design = {
   wrapperColor: "#fff8e7",
   ribbonColor: "#d4af37",
   arrangementSeed: 5,
-  personalisation: { cardMessage: "Hi", recipientName: "Sam", itemNames: {} },
+  personalisation: { cardMessage: "Hi", customRequest: "", recipientName: "Sam", itemNames: {} },
 };
 
 function form(overrides: Partial<FormValues["contact"] & FormValues["address"]> = {}): FormValues {

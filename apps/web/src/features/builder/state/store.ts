@@ -162,6 +162,7 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
     setRibbonColor: (color: string) =>
       commit(step.setRibbonColor(current().data, catalog(), color)),
     setCardMessage: (text: string) => commit(step.setCardMessage(current().data, text)),
+    setCustomRequest: (text: string) => commit(step.setCustomRequest(current().data, text)),
     setRecipientName: (text: string) => commit(step.setRecipientName(current().data, text)),
     setItemName: (itemId: string, text: string) =>
       commit(step.setItemName(current().data, catalog(), itemId, text)),
@@ -196,6 +197,7 @@ export function createBuilderStore(options: BuilderStoreOptions): BuilderStore {
       ribbonColor: derived.ribbonColor,
       arrangementSeed: data.arrangementSeed,
       cardMessage: data.cardMessage,
+      customRequest: data.customRequest,
       recipientName: data.recipientName,
       itemNames: data.itemNames,
       itemCount: derived.itemCount,

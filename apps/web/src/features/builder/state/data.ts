@@ -9,6 +9,7 @@ export interface BuilderData {
   ribbonColor: HexColor | null;
   arrangementSeed: number;
   cardMessage: string;
+  customRequest: string;
   recipientName: string;
   itemNames: Readonly<Record<string, string>>;
 }
@@ -26,6 +27,7 @@ export function emptyData(): BuilderData {
     ribbonColor: null,
     arrangementSeed: INITIAL_SEED,
     cardMessage: "",
+    customRequest: "",
     recipientName: "",
     itemNames: {},
   };

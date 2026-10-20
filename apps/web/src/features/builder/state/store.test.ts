@@ -1,5 +1,6 @@
 import {
   CARD_MESSAGE_MAX_LENGTH,
+  CUSTOM_REQUEST_MAX_LENGTH,
   ITEM_NAME_MAX_LENGTH,
   RECIPIENT_NAME_MAX_LENGTH,
 } from "@giftpop/contracts";
@@ -333,6 +334,16 @@ describe("arrangement and colours", () => {
 });
 
 describe("text", () => {
+  it("keeps a custom request, cuts it at the limit and puts it in the design", () => {
+    const { api } = newTestStore();
+    api().choosePackaging(BOUQUET_ID);
+    expect(api().customRequest).toBe("");
+    api().setCustomRequest("r".repeat(CUSTOM_REQUEST_MAX_LENGTH + 20));
+    expect(api().customRequest).toHaveLength(CUSTOM_REQUEST_MAX_LENGTH);
+    expect(api().design?.personalisation.customRequest).toHaveLength(CUSTOM_REQUEST_MAX_LENGTH);
+    expect(api().problems).not.toContainEqual(expect.objectContaining({ code: "TEXT_TOO_LONG" }));
+  });
+
   it("cuts the card message and recipient name at the contract limits", () => {
     const { api } = newTestStore();
     api().setCardMessage("x".repeat(CARD_MESSAGE_MAX_LENGTH + 50));
@@ -404,6 +415,7 @@ describe("loadDesign", () => {
       arrangementSeed: 4242,
       personalisation: {
         cardMessage: "Hi",
+        customRequest: "Gold foil",
         recipientName: "Sana",
         itemNames: { [CHOC_ID]: "Amna", [UNKNOWN_ID]: "Ghost" },
       },
@@ -444,6 +456,7 @@ describe("loadDesign", () => {
       saved({
         personalisation: {
           cardMessage: "x".repeat(300),
+          customRequest: "r".repeat(900),
           recipientName: "y".repeat(90),
           itemNames: { [CHOC_ID]: "z".repeat(40) },
         },

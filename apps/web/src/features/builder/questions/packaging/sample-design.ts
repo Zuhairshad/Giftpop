@@ -60,6 +60,6 @@ export function buildSampleDesign(packaging: Packaging, items: readonly PricedIt
     wrapperColor: packaging.wrapperColors[0]?.hex ?? "#f7c6d4",
     ribbonColor: packaging.ribbonColors[0]?.hex ?? "#c41f56",
     arrangementSeed: SAMPLE_SEED,
-    personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+    personalisation: { cardMessage: "", customRequest: "", recipientName: "", itemNames: {} },
   };
 }
