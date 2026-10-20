@@ -15,6 +15,7 @@ export const FRAMED_GIFT_ID = "65a000000000000000000007";
 export const SNACK_HAMPER_ID = "65a000000000000000000008";
 export const PHOTO_BOUQUET_ID = "65a000000000000000000009";
 export const GIFT_TRAY_ID = "65a00000000000000000000a";
+export const BALLOON_GIFT_ID = "65a00000000000000000000b";
 
 export const PACKAGINGS: Packaging[] = [
   {
@@ -267,5 +268,30 @@ export const PACKAGINGS: Packaging[] = [
     layers: {},
     active: true,
     sortOrder: 10,
+  },
+  {
+    id: BALLOON_GIFT_ID,
+    slug: "balloon-gift",
+    name: "Balloon gift",
+    description: "Balloons floating above a small wrapped box. Pick 3 to 7 items.",
+    kind: "box",
+    layoutType: "balloon-gift",
+    minItems: 3,
+    maxItems: 7,
+    // Seven 1-unit items take 7 units; three 3-unit items take 9.
+    capacityUnits: 12,
+    wrapperColors: [
+      { name: "Blush pink", hex: "#f9c6d3" },
+      { name: "Cream", hex: "#f3ead8" },
+      { name: "Lavender", hex: "#c9b2f2" },
+    ],
+    ribbonColors: [
+      { name: "Hot pink", hex: "#e8467c" },
+      { name: "Gold", hex: "#d4a82f" },
+      { name: "White", hex: "#ffffff" },
+    ],
+    layers: {},
+    active: true,
+    sortOrder: 11,
   },
 ];

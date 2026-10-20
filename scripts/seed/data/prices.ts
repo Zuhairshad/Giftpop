@@ -3,6 +3,7 @@ import type { CountryPrice } from "@giftpop/contracts";
 import { COUNTRIES } from "./countries";
 import { ITEM_IDS, ITEMS, type ItemKey } from "./items";
 import {
+  BALLOON_GIFT_ID,
   BASKET_ID,
   BOUQUET_ID,
   BOX_ID,
@@ -121,6 +122,7 @@ const PACKAGING_BASE_PRICE: Record<string, number> = {
   [SNACK_HAMPER_ID]: 22,
   [PHOTO_BOUQUET_ID]: 16,
   [GIFT_TRAY_ID]: 19,
+  [BALLOON_GIFT_ID]: 17,
 };
 
 interface Gap {

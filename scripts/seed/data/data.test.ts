@@ -105,6 +105,7 @@ describe("packagings", () => {
     expect(layoutOf("snack-hamper")).toBe("box-grid");
     expect(layoutOf("photo-bouquet")).toBe("bouquet-fan");
     expect(layoutOf("gift-tray")).toBe("basket");
+    expect(layoutOf("balloon-gift")).toBe("balloon-gift");
     expect(PACKAGINGS.find((p) => p.kind === "mug")).toMatchObject({ layoutType: "mug-bouquet" });
   });
 
@@ -121,6 +122,7 @@ describe("packagings", () => {
       "snack-hamper": "box",
       "photo-bouquet": "bouquet",
       "gift-tray": "basket",
+      "balloon-gift": "box",
     });
   });
 
