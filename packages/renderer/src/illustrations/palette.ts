@@ -1,4 +1,4 @@
-import { shade } from "../placeholders/color";
+import { mix, shade } from "../placeholders/color";
 
 /** Fixed accents: the gold wrapper band, the green stem, the pink heart. Never tinted. */
 export const GOLD = "#D9A92E";
@@ -9,6 +9,25 @@ export const GREEN_DARK = shade(GREEN, -0.35);
 export const HEART = "#E8467C";
 export const PAPER = "#FFFAF6";
 export const INK = "#2B1733";
+/** Clear glass: a cool near-white body, shared by bottles, jars, candles and flacons. */
+export const GLASS = "#EEF5F7";
+/** Polished silver for caps and crowns. */
+export const SILVER = "#C9CED6";
+export const SILVER_DARK = "#7D8592";
+/** Wood, cake and wick: fixed materials the item colour never tints. */
+export const WOOD = "#B9875A";
+export const CAKE = "#D49A5B";
+export const CHOCOLATE = "#6B3A26";
+export const CHOCOLATE_DARK = "#3F2016";
+export const CHOCOLATE_LIGHT = "#B07A5C";
+export const DIAMOND = "#E4F1F8";
+export const DIAMOND_EDGE = "#7E9BAA";
+export const CHERRY = "#C8243C";
+export const CHERRY_DARK = "#7A1222";
+export const SPRINKLE_BLUE = "#6EC1E4";
+export const WICK = "#3A2A22";
+export const FLAME = "#FFC94D";
+export const FLAME_CORE = "#FFF3C4";
 
 /** Round joins and caps on every outline, as the design recipe asks. */
 export const ROUND = { strokeLinecap: "round", strokeLinejoin: "round" } as const;
@@ -41,6 +60,10 @@ export interface ItemPalette {
   deep: string;
   /** Slightly lighter than the fill, for inner petals, bellies and muzzles. */
   soft: string;
+  /** Near-white glint for specular highlights, still warmed by the fill. */
+  shine: string;
+  /** The fill pushed toward ink, for the contact edge where the object meets the surface. */
+  shadow: string;
 }
 
 export function itemPalette(color: string): ItemPalette {
@@ -52,5 +75,7 @@ export function itemPalette(color: string): ItemPalette {
     light: shade(color, veryDark ? 0.5 : 0.55),
     deep: veryDark ? shade(color, 0.06) : shade(color, -0.12),
     soft: shade(color, 0.4),
+    shine: mix(color, "#ffffff", veryDark ? 0.6 : 0.78),
+    shadow: veryDark ? shade(color, 0.12) : mix(color, INK, 0.3),
   };
 }
