@@ -14,7 +14,7 @@ import { AppError } from "../../lib/errors";
 import { getCountryCatalog } from "../catalog/public.service";
 import { CountryModel, type CountryDoc } from "../countries/model";
 import { DesignModel, type DesignDoc } from "../designs/model";
-import { parseStoredDesign } from "../designs/service";
+import { parseStoredDesign, withoutCustomRequest } from "../designs/service";
 
 import { TemplateModel, type TemplateDoc } from "./model";
 
@@ -85,9 +85,7 @@ export async function listTemplates(): Promise<FeaturedTemplate[]> {
 export async function createTemplate(input: CreateTemplateRequest): Promise<FeaturedTemplate> {
   const saved = await DesignModel.findOne({ shareId: input.shareId }).lean<DesignDoc>();
   if (!saved) throw new AppError("NOT_FOUND", 404, "No saved gift with that share id");
-  const stored = parseStoredDesign(saved.design);
-  // A template is public; the customer's private request must not travel with it.
-  const design = { ...stored, personalisation: { ...stored.personalisation, customRequest: "" } };
+  const design = withoutCustomRequest(parseStoredDesign(saved.design));
   await assertSellableIn(input.countries, design);
 
   const created = await TemplateModel.create({

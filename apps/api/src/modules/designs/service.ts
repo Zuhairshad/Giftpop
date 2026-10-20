@@ -18,6 +18,11 @@ import { DesignModel, type DesignDoc } from "./model";
 
 const MAX_SHARE_ID_ATTEMPTS = 5;
 
+/** A copy of the design without the customer's private request, for share links and templates. */
+export function withoutCustomRequest(design: Design): Design {
+  return { ...design, personalisation: { ...design.personalisation, customRequest: "" } };
+}
+
 /** A stored design that no longer parses is a server-side data fault, never the caller's mistake. */
 export function parseStoredDesign(stored: unknown): Design {
   const result = DesignSchema.safeParse(stored);
@@ -88,8 +93,7 @@ export async function getSharedDesign(
     shareId: saved.shareId,
     country: catalog.country,
     currency: catalog.currency,
-    // The request is private to the customer and staff, so a share link never carries it.
-    design: { ...design, personalisation: { ...design.personalisation, customRequest: "" } },
+    design: withoutCustomRequest(design),
     packaging: toPackaging(packagingDoc),
     packagingAvailable: catalog.packagings.some((p) => p.packaging.id === design.packagingId),
     // Design line order, so the response is stable.
