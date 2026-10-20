@@ -59,6 +59,13 @@ export function describeActionError(error: unknown): ActionError {
       return { message: CONFLICT_MESSAGE, fields: [] };
     case 400:
     case 422: {
+      if (error.code === "PAYMENT_REQUIRED") {
+        return {
+          message:
+            "Record the payment first (Record payment, on this page). An order is confirmed once the advance is recorded.",
+          fields: [],
+        };
+      }
       const seen = new Set<string>();
       const fields: ActionError["fields"] = [];
       for (const name of apiFieldNames(error.details)) {

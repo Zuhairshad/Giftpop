@@ -65,6 +65,25 @@ function stockLinesFor(order: Order): StockLine[] {
   ];
 }
 
+/** "Confirmed" means the payment is recorded: accepting a proof alone moves no money. */
+async function assertPaymentRecorded(orderId: string): Promise<void> {
+  const doc = await OrderModel.findById(orderId)
+    .select("status paymentStatus quote.dueNowMinor")
+    .lean<OrderDoc>();
+  if (
+    doc &&
+    doc.status === "awaiting_payment" &&
+    doc.paymentStatus === "unpaid" &&
+    doc.quote.dueNowMinor > 0
+  ) {
+    throw new AppError(
+      "PAYMENT_REQUIRED",
+      422,
+      "Record the payment first. An order is confirmed once the advance or full payment is recorded.",
+    );
+  }
+}
+
 /** One transaction: the state machine move and, for a cancellation, the stock coming back. */
 export async function changeStatus(
   orderId: string,
@@ -72,6 +91,7 @@ export async function changeStatus(
   fields: TransitionFields,
   staffId: string,
 ): Promise<AdminOrderDetail> {
+  if (to === "confirmed") await assertPaymentRecorded(orderId);
   const session = await mongoose.startSession();
   try {
     await session.withTransaction(async () => {

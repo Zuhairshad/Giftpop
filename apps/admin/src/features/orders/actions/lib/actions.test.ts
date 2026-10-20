@@ -274,5 +274,8 @@ describe("describeActionError", () => {
       expect(describeActionError(error).message).not.toMatch(/raw api text|boom/);
     }
     expect(describeActionError(api(401, "UNAUTHENTICATED")).message).toContain("Sign in");
+    expect(describeActionError(api(422, "PAYMENT_REQUIRED")).message).toContain(
+      "Record the payment first",
+    );
   });
 });

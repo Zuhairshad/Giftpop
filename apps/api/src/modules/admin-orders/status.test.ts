@@ -40,7 +40,7 @@ describe("POST /:id/status over the full 10 x 10 table", () => {
   for (const from of ORDER_STATUSES) {
     it(`from ${from}: allows exactly ${ALLOWED[from].join(", ") || "nothing"}`, async () => {
       for (const to of ORDER_STATUSES) {
-        const id = await insertOrder(from);
+        const id = await insertOrder(from, { paymentStatus: "advance_paid" });
         const res = await api(app, session).post(`/${id}/status`, { to, ...FULL });
         if (ALLOWED[from].includes(to)) {
           expect(res.status, `${from} -> ${to}`).toBe(200);
@@ -98,7 +98,7 @@ describe("POST /:id/status fields and history", () => {
   });
 
   it("records who made the change, by id and name", async () => {
-    const id = await insertOrder("awaiting_payment");
+    const id = await insertOrder("awaiting_payment", { paymentStatus: "advance_paid" });
     const res = await api(app, session).post(`/${id}/status`, {
       to: "confirmed",
       note: "Checked the transfer",
@@ -113,6 +113,26 @@ describe("POST /:id/status fields and history", () => {
       actorName: "Amina Staff",
       note: "Checked the transfer",
     });
+  });
+
+  it("refuses to confirm an order that has no payment recorded (422) and changes nothing", async () => {
+    const id = await insertOrder("awaiting_payment", { paymentStatus: "unpaid" });
+    const res = await api(app, session).post(`/${id}/status`, { to: "confirmed" });
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe("PAYMENT_REQUIRED");
+    expect(res.body.error.message).toMatch(/record the payment/i);
+    const stored = await OrderModel.findById(id).lean();
+    expect(stored?.status).toBe("awaiting_payment");
+    expect(stored?.history).toHaveLength(1);
+  });
+
+  it("still lets staff cancel an unpaid order", async () => {
+    const id = await insertOrder("awaiting_payment", { paymentStatus: "unpaid" });
+    const res = await api(app, session).post(`/${id}/status`, {
+      to: "cancelled",
+      reason: "No reply",
+    });
+    expect(res.status).toBe(200);
   });
 
   it("answers 400 for a bad body or id and 404 for an unknown order", async () => {
