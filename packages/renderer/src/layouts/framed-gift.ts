@@ -1,5 +1,5 @@
 import { clamp, round2 } from "./geometry";
-import { createRng, jitter } from "./prng";
+import { createRng, jitter, shuffleInPlace } from "./prng";
 import { expandDesignItems, ITEM_BASE_SIZE, type LayoutFn, type Placement } from "./types";
 
 /** Outer edge of the picture frame, in scene units. Shared with the art: change both together. */
@@ -65,16 +65,7 @@ export const framedGift: LayoutFn = ({ design }) => {
   const rng = createRng(design.arrangementSeed);
   const slots = slotsFor(count);
 
-  // Seeded shuffle: item i then takes shuffled slot i.
-  for (let i = count - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    const a = slots[i];
-    const b = slots[j];
-    if (a && b) {
-      slots[i] = b;
-      slots[j] = a;
-    }
-  }
+  shuffleInPlace(rng, slots);
 
   const { x: wx, y: wy, width, height } = FRAMED_GIFT_WINDOW;
   return slots.map((slot, rank): Placement => {

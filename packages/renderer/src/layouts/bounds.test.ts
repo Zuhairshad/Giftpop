@@ -66,6 +66,10 @@ describe("sceneBounds", () => {
 describe.each([
   ["mug-bouquet", 5],
   ["basket", 9],
+  ["framed-gift", 6],
+  ["snack-hamper", 10],
+  ["photo-bouquet", 8],
+  ["gift-tray", 7],
 ] as const)("%s crop", (layoutType, maxItems) => {
   it("is smaller than the square and fits every item, half its size each way, for 60 seeds", () => {
     const b = sceneBounds(layoutType);

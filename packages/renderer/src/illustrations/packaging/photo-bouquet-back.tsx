@@ -1,5 +1,5 @@
 import { PHOTO_BOUQUET_GATHER } from "../../layouts/photo-bouquet";
-import { GREEN, GREEN_DARK, ROUND } from "../palette";
+import { GREEN, GREEN_DARK, INK, ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
 import { wrapTones } from "./tones";
@@ -26,7 +26,7 @@ export function PhotoBouquetBack({ wrapper }: PackagingIllustrationProps) {
   const t = wrapTones(wrapper);
   return (
     <g data-art="back">
-      <ellipse cx="500" cy="950" rx="200" ry="18" fill="#2B1733" opacity="0.16" />
+      <ellipse cx="500" cy="950" rx="200" ry="18" fill={INK} opacity="0.16" />
       <path d={STEMS} fill="none" stroke={GREEN_DARK} strokeWidth="9" {...ROUND} />
       <path d={STEMS} fill="none" stroke={GREEN} strokeWidth="5" {...ROUND} />
       <path

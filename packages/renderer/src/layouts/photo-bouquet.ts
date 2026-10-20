@@ -1,5 +1,5 @@
 import { clamp, clampToScene, round2 } from "./geometry";
-import { createRng, jitter } from "./prng";
+import { createRng, jitter, shuffleInPlace } from "./prng";
 import { expandDesignItems, type LayoutFn, type Placement } from "./types";
 
 /** Where every stem gathers, at the top of the paper cone. Shared with the art: change both together. */
@@ -46,15 +46,7 @@ export const photoBouquet: LayoutFn = ({ design }) => {
   const scale = clamp(1.12 - count * 0.055, 0.6, 1);
   const slots = domeSlots(count);
 
-  for (let i = count - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    const a = slots[i];
-    const b = slots[j];
-    if (a && b) {
-      slots[i] = b;
-      slots[j] = a;
-    }
-  }
+  shuffleInPlace(rng, slots);
 
   const placed = slots.map((slot, itemIndex) => {
     const x = clampToScene(slot.x + jitter(rng, 8));

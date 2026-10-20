@@ -1,11 +1,10 @@
 import { GIFT_TRAY } from "../../layouts/gift-tray";
-import { ROUND } from "../palette";
+import { INK, ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
 import { boxTones, ribbonTones, wrapTones } from "./tones";
 
 const { left, right, backY, frontY, bottomY } = GIFT_TRAY;
-const SHADOW_COLOR = "#2B1733";
 /** The opening is the rim inset a little, so a lip shows all round. */
 const OPEN_LEFT = left + 14;
 const OPEN_RIGHT = right - 14;
@@ -32,7 +31,7 @@ export function GiftTrayBack({ wrapper, ribbon }: PackagingIllustrationProps) {
   const r = ribbonTones(ribbon);
   return (
     <g data-art="back">
-      <path d={SHADOW} fill={SHADOW_COLOR} opacity="0.1" />
+      <path d={SHADOW} fill={INK} opacity="0.1" />
       {([-1, 1] as const).map((dir) => (
         <g key={dir} fill="none" {...ROUND}>
           <path d={handle(dir)} stroke={box.edge} strokeWidth="30" />

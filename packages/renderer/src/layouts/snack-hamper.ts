@@ -1,5 +1,5 @@
 import { clamp, round2 } from "./geometry";
-import { createRng, jitter } from "./prng";
+import { createRng, jitter, shuffleInPlace } from "./prng";
 import { expandDesignItems, ITEM_BASE_SIZE, type LayoutFn, type Placement } from "./types";
 
 /**
@@ -65,16 +65,7 @@ export const snackHamper: LayoutFn = ({ design }) => {
     slots.push({ x, row: 1, rank: k, inRow: front });
   }
 
-  // Seeded shuffle of the slots: item i then takes shuffled slot i.
-  for (let i = count - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    const a = slots[i];
-    const b = slots[j];
-    if (a && b) {
-      slots[i] = b;
-      slots[j] = a;
-    }
-  }
+  shuffleInPlace(rng, slots);
 
   return slots.map((slot, itemIndex): Placement => {
     const isFront = slot.row === 1;

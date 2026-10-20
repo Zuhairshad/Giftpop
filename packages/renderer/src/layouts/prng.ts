@@ -14,3 +14,16 @@ export function createRng(seed: number): () => number {
 export function jitter(rng: () => number, amount: number): number {
   return (rng() * 2 - 1) * amount;
 }
+
+/** Fisher-Yates shuffle in place, driven by `rng`. */
+export function shuffleInPlace<T>(rng: () => number, items: T[]): void {
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const a = items[i];
+    const b = items[j];
+    if (a !== undefined && b !== undefined) {
+      items[i] = b;
+      items[j] = a;
+    }
+  }
+}

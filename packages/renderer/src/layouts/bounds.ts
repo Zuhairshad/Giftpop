@@ -28,6 +28,10 @@ const CROPS: Readonly<Record<string, SceneBounds>> = {
   "mug-bouquet": Object.freeze({ x: 110, y: 120, width: 740, height: 760 }),
   // Basket: the handle's arch peaks near y 225, the rim and shadow span x 150 to 850.
   basket: Object.freeze({ x: 100, y: 180, width: 800, height: 710 }),
+  "framed-gift": Object.freeze({ x: 60, y: 40, width: 880, height: 910 }),
+  "snack-hamper": Object.freeze({ x: 100, y: 225, width: 800, height: 720 }),
+  "photo-bouquet": Object.freeze({ x: 60, y: 20, width: 880, height: 960 }),
+  "gift-tray": Object.freeze({ x: 30, y: 260, width: 940, height: 550 }),
 };
 
 /**

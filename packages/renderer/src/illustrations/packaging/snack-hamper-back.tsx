@@ -1,5 +1,5 @@
 import { SNACK_HAMPER } from "../../layouts/snack-hamper";
-import { ROUND } from "../palette";
+import { INK, ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
 import { boxTones, wrapTones } from "./tones";
@@ -31,8 +31,8 @@ export function SnackHamperBack({ wrapper }: PackagingIllustrationProps) {
   const line = { stroke: box.edge, strokeWidth: 4, ...ROUND } as const;
   return (
     <g data-art="back">
-      <ellipse cx="500" cy="915" rx="400" ry="24" fill="#2B1733" opacity="0.16" />
-      <ellipse cx="500" cy="908" rx="330" ry="12" fill="#2B1733" opacity="0.14" />
+      <ellipse cx="500" cy="915" rx="400" ry="24" fill={INK} opacity="0.16" />
+      <ellipse cx="500" cy="908" rx="330" ry="12" fill={INK} opacity="0.14" />
       <path d={`M190 440H810L${R + 25} ${rimY}H${L - 25}Z`} fill={box.wall} {...line} />
       <path
         d="M200 500H800M208 548H792M216 596H784"

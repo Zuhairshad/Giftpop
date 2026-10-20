@@ -1,5 +1,5 @@
 import { clampToScene, round2 } from "./geometry";
-import { createRng, jitter } from "./prng";
+import { createRng, jitter, shuffleInPlace } from "./prng";
 import { expandDesignItems, ITEM_BASE_SIZE, type LayoutFn, type Placement } from "./types";
 
 /**
@@ -67,15 +67,7 @@ export const giftTray: LayoutFn = ({ design }) => {
     for (let k = 0; k < n; k++) slots.push({ x: 500 + (k - (n - 1) / 2) * step, y, row });
   });
 
-  for (let i = count - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    const a = slots[i];
-    const b = slots[j];
-    if (a && b) {
-      slots[i] = b;
-      slots[j] = a;
-    }
-  }
+  shuffleInPlace(rng, slots);
 
   return slots.map((slot, index): Placement => ({
     itemIndex: index,

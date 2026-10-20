@@ -3,7 +3,7 @@ import {
   FRAMED_GIFT_HANGER,
   FRAMED_GIFT_WINDOW as W,
 } from "../../layouts/framed-gift";
-import { GOLD, GOLD_DARK, ROUND } from "../palette";
+import { GOLD, GOLD_DARK, INK, ROUND } from "../palette";
 import type { PackagingIllustrationProps } from "../types";
 
 import { boxTones, ribbonTones, wrapTones } from "./tones";
@@ -23,7 +23,7 @@ export function FramedGiftBack({ wrapper, ribbon }: PackagingIllustrationProps) 
   const cord = `M${F.x + 90} ${F.y + 8}L${HX} ${HY}L${right - 90} ${F.y + 8}`;
   return (
     <g data-art="back">
-      <ellipse cx="500" cy="925" rx="330" ry="20" fill="#2B1733" opacity="0.16" />
+      <ellipse cx="500" cy="925" rx="330" ry="20" fill={INK} opacity="0.16" />
       <path d={cord} fill="none" stroke={r.fill} strokeWidth="9" {...ROUND} />
       <path d={cord} fill="none" stroke={r.light} strokeWidth="3" opacity="0.6" {...ROUND} />
       <circle cx={HX} cy={HY} r="11" fill={GOLD} stroke={GOLD_DARK} strokeWidth="4" />
@@ -33,7 +33,7 @@ export function FramedGiftBack({ wrapper, ribbon }: PackagingIllustrationProps) 
         width={F.width}
         height={F.height}
         rx="14"
-        fill="#2B1733"
+        fill={INK}
         opacity="0.12"
       />
       <rect x={F.x} y={F.y} width={F.width} height={F.height} rx="14" fill={t.base} {...stroke} />
