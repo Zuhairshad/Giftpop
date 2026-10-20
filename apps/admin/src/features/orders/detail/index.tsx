@@ -55,10 +55,10 @@ export async function OrderDetail({ id }: { id: string }) {
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <div className="grid min-w-0 grid-cols-1 content-start gap-4">
           <GiftSection order={order} />
-          <CustomerSection order={order} />
         </div>
         <div className="grid min-w-0 grid-cols-1 content-start gap-4">
           <PaymentSection order={order} />
+          <CustomerSection order={order} />
           <TimelineSection order={order} />
         </div>
       </div>

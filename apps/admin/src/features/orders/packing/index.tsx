@@ -188,10 +188,6 @@ export async function PackingSheet({ id }: { id: string }) {
               />
             </div>
           </section>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <Checklist order={order} />
           <Personalisation order={order} />
           {notes.length > 0 ? (
             <section
@@ -208,6 +204,10 @@ export async function PackingSheet({ id }: { id: string }) {
               </ul>
             </section>
           ) : null}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <Checklist order={order} />
         </div>
       </div>
 

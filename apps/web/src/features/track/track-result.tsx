@@ -25,13 +25,15 @@ export function TrackResult({ view }: { view: PublicOrderView }): ReactElement {
         </div>
       </header>
 
-      <div className="grid gap-6 sm:gap-8 md:grid-cols-2 md:items-start">
-        <div className="min-w-0 space-y-6 sm:space-y-8">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-2 md:items-stretch">
+        <div className="flex min-w-0 flex-col gap-6 sm:gap-8">
           <TimelineList view={view} />
           {view.shipment ? <ShipmentPanel shipment={view.shipment} /> : null}
-          <AmountsPanel view={view} />
+          <div className="md:flex-1 md:[&>*]:h-full">
+            <AmountsPanel view={view} />
+          </div>
         </div>
-        <div className="min-w-0 md:sticky md:top-6">
+        <div className="min-w-0 md:[&>*]:h-full">
           <GiftPanel view={view} />
         </div>
       </div>
