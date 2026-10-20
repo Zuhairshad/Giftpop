@@ -33,11 +33,20 @@ describe("Poster", () => {
     }
   });
 
-  it("keeps the backdrop and hides only the foreground when the canvas takes over", () => {
-    const handoff = renderToStaticMarkup(<Poster foreground={false} />);
-    expect(html).toContain("opacity:1");
-    expect(handoff).toContain("opacity:0");
-    expect(handoff).toContain('fill="#FFC2D8" opacity="0.8"');
+  it("keeps the backdrop and the floor shadow and hides only the foreground", () => {
+    const empty = renderToStaticMarkup(<Poster foreground="hide" />);
+    const foreground = empty.slice(empty.indexOf("data-hero-poster-foreground"));
+    const stage = empty.slice(0, empty.indexOf("data-hero-poster-foreground"));
+    expect(html).toContain('class="opacity-100"');
+    expect(foreground).toMatch(/^data-hero-poster-foreground="" class="opacity-0"/);
+    expect(stage).toContain('fill="#FFC2D8" opacity="0.8"');
+    expect(stage).toContain("data-hero-floor");
+    expect(foreground).not.toContain("data-hero-floor");
+  });
+
+  it("shows the still on first paint only for reduced motion", () => {
+    const first = renderToStaticMarkup(<Poster foreground="auto" />);
+    expect(first).toContain('class="opacity-0 motion-reduce:opacity-100"');
   });
 
   it("gives each instance its own pattern ids", () => {

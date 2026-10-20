@@ -13,6 +13,13 @@ describe("hasWebGL", () => {
     expect(loseContext).toHaveBeenCalledOnce();
   });
 
+  it("asks for a hardware context (no software rasteriser)", () => {
+    const getContext = vi.fn(() => null);
+    hasWebGL({ createElement: () => ({ getContext }) });
+    expect(getContext).toHaveBeenCalledWith("webgl2", { failIfMajorPerformanceCaveat: true });
+    expect(getContext).toHaveBeenCalledWith("webgl", { failIfMajorPerformanceCaveat: true });
+  });
+
   it("falls back to webgl1", () => {
     const gl = { getExtension: () => null };
     const doc = {
@@ -109,6 +116,14 @@ describe("whenLoadedThenIdle", () => {
     whenLoadedThenIdle(h.fake, 2500, vi.fn());
     expect(h.pendingTimers()).toBe(1);
     expect(h.listenerCount()).toBe(0);
+  });
+
+  it("passes the idle timeout on, so the scene never waits long for idle", () => {
+    const h = host("complete");
+    const request = vi.fn(() => 1);
+    whenLoadedThenIdle({ ...h.fake, requestIdleCallback: request }, 0, vi.fn(), 400);
+    h.runTimers();
+    expect(request).toHaveBeenCalledWith(expect.any(Function), { timeout: 400 });
   });
 
   it("cancels both stages", () => {

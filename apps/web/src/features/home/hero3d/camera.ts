@@ -27,3 +27,14 @@ export function placeCamera(
   );
   camera.lookAt(0, 0, 0);
 }
+
+/**
+ * World y of the top edge of the frame, measured on the vertical plane `planeZ`, for a camera
+ * placed by `placeCamera` (azimuth ignored: it is a few degrees). Used to time the box's entry.
+ */
+export function visibleTop(distance: number, elevation: number, planeZ: number): number {
+  const camY = distance * Math.sin(elevation);
+  const camZ = distance * Math.cos(elevation);
+  const pitch = (CAMERA.fov * Math.PI) / 360 - elevation;
+  return camY + (camZ - planeZ) * Math.tan(pitch);
+}

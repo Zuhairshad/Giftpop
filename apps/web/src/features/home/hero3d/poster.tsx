@@ -5,18 +5,25 @@ import { GiftTagArt, GiftTagText, PolaroidArt, StarArt, TrufflesArt } from "./de
 import { BoxBody, Interior, Lid, SpriteItem, Sticker } from "./poster-parts";
 import { SPARKLES } from "./sprites";
 
+const FOREGROUND_CLASS = {
+  show: "opacity-100",
+  hide: "opacity-0",
+  // First paint: the stage stays empty for the 3D drop, unless the visitor asked for less motion.
+  auto: "opacity-0 motion-reduce:opacity-100",
+} as const;
+
 /**
  * The resting state of the hero as one SVG: lid lifted with its bow, ribbon tails, gifts in the
- * box, gifts floating out, the sticker topper, the "For Sara" tag and sparkles.
- * It paints with the page (server-rendered), scales to its box, and is the last frame of the
- * 3D animation. `foreground={false}` hides everything except the soft pink backdrop, which the
- * canvas keeps using; the canvas has no backdrop of its own.
+ * box, gifts floating out, the sticker topper, the "For Sara" tag and sparkles. It is the still
+ * shown for reduced motion, no WebGL or an error. The pink backdrop and the soft pool of shadow
+ * on the floor are always drawn (they are the empty stage the 3D box lands on); `foreground`
+ * shows or hides everything else.
  */
 export function Poster({
-  foreground = true,
+  foreground = "show",
   className,
 }: {
-  foreground?: boolean;
+  foreground?: keyof typeof FOREGROUND_CLASS;
   className?: string;
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -26,15 +33,6 @@ export function Poster({
   const { x, y, w, h } = POSTER_VIEWBOX;
   const body = (
     <>
-      <ellipse
-        cx={380}
-        cy={612}
-        rx={236}
-        ry={26}
-        fill={PALETTE.shadow}
-        opacity={0.14}
-        filter={`url(#${blur8})`}
-      />
       <ellipse
         cx={380}
         cy={606}
@@ -110,9 +108,20 @@ export function Poster({
         fill={PALETTE.blob}
         opacity={0.8}
       />
+      <ellipse
+        cx={380}
+        cy={612}
+        rx={236}
+        ry={26}
+        fill={PALETTE.shadow}
+        opacity={0.14}
+        filter={`url(#${blur8})`}
+        data-hero-floor=""
+      />
       <g
         data-hero-poster-foreground=""
-        style={{ opacity: foreground ? 1 : 0, transition: "opacity 400ms ease" }}
+        className={FOREGROUND_CLASS[foreground]}
+        style={{ transition: "opacity 400ms ease" }}
       >
         {body}
       </g>

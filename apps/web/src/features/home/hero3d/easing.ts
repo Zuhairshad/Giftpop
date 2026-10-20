@@ -21,3 +21,20 @@ export const smoothstep = (edge0: number, edge1: number, x: number): number => {
   const t = clamp01((x - edge0) / (edge1 - edge0));
   return t * t * (3 - 2 * t);
 };
+
+/** Like smoothstep on 0..1 but with zero acceleration at both ends too (Perlin's smootherstep). */
+export const smootherstep01 = (u: number): number => {
+  const x = clamp01(u);
+  return x * x * x * (x * (x * 6 - 15) + 10);
+};
+
+/**
+ * Starts and ends at rest (zero speed at 0 and 1), rises to `1 + amount` at `peakAt`, then
+ * settles back to exactly 1. Speed is continuous everywhere (zero at the apex, like a spring at
+ * the top of its swing), so the motion springs into place without a pop.
+ */
+export const softOvershoot = (u: number, amount = 0.08, peakAt = 0.68): number => {
+  const x = clamp01(u);
+  if (x <= peakAt) return (1 + amount) * smootherstep01(x / peakAt);
+  return 1 + amount * (1 - smootherstep01((x - peakAt) / (1 - peakAt)));
+};

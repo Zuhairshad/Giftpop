@@ -1,5 +1,4 @@
 import {
-  BoxGeometry,
   Color,
   DoubleSide,
   Group,
@@ -13,108 +12,64 @@ import {
 import type { Texture } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 
+import { buildBow } from "./bow";
+import { boxShell, roundedSlab } from "./box-geometry";
 import { BOX, GIFT_TAG, LID_SIZE, PALETTE, RIBBON_BAND_WIDTH } from "./constants";
-import { bentTail, bowLoop, tissueSheet } from "./geometry";
+import { bentTail, tissueSheet } from "./geometry";
 import { posterToWorld } from "./layout";
 import type { Owner } from "./owner";
-import { DOTS_TILE_WORLD, dotsTexture } from "./textures";
+import { DOTS_TILE_WORLD, dotsTexture, paperBumpTexture } from "./textures";
 
 export interface BoxParts {
   /** Origin at the middle of the box base; the timeline squashes and drops this group. */
   group: Group;
   lid: Group;
   lidBody: Mesh;
-  lidBand: Mesh;
-  band: Mesh;
+  /** The lid's ribbon: one band front to back, one side to side. */
+  lidBandZ: Mesh;
+  lidBandX: Mesh;
+  /** The band down the front of the box, with the piece that wraps over the top edge. */
+  band: Group;
   /** Tail pivots: scale Y unrolls them down the front. */
   tails: Group[];
   tag: Mesh;
+  tagMaterial: MeshBasicMaterial;
 }
+
+const RIBBON_DEPTH = 0.03;
 
 function ribbonMaterial(owner: Owner): MeshPhysicalMaterial {
   return owner.material(
     new MeshPhysicalMaterial({
       color: PALETTE.ribbon,
-      roughness: 0.38,
+      roughness: 0.42,
       sheen: 1,
-      sheenRoughness: 0.35,
+      sheenRoughness: 0.3,
       sheenColor: new Color(PALETTE.ribbonSheen),
       side: DoubleSide,
     }),
   );
 }
 
-function bow(owner: Owner, ribbon: MeshPhysicalMaterial): Group {
-  const bowGroup = new Group();
-  for (const side of [-1, 1] as const) {
-    const loop = new Mesh(owner.geometry(bowLoop(side)), ribbon);
-    loop.position.z = -0.035;
-    loop.rotation.y = -side * 0.32;
-    loop.rotation.z = side * 0.12;
-    bowGroup.add(loop);
-    const tail = new Mesh(owner.geometry(bentTail(0.2, 0.7, side, 0.22, 0.08)), ribbon);
-    tail.position.set(side * 0.06, -0.1, 0.02);
-    tail.rotation.z = side * 0.18;
-    bowGroup.add(tail);
-  }
-  const knot = new Mesh(owner.geometry(new RoundedBoxGeometry(0.26, 0.26, 0.22, 3, 0.09)), ribbon);
-  knot.position.z = 0.02;
-  bowGroup.add(knot);
-  return bowGroup;
+/** Matte card with a fine grain and foil dots. UVs are world units, so one texture fits every face. */
+function paperMaterial(owner: Owner, tint?: Color): MeshStandardMaterial {
+  const map = owner.texture(dotsTexture());
+  map.repeat.set(1 / DOTS_TILE_WORLD, 1 / DOTS_TILE_WORLD);
+  const bumpMap = owner.texture(paperBumpTexture());
+  bumpMap.repeat.copy(map.repeat);
+  return owner.material(
+    new MeshStandardMaterial({
+      map,
+      bumpMap,
+      bumpScale: 0.35,
+      roughness: 0.78,
+      ...(tint ? { color: tint } : {}),
+    }),
+  );
 }
 
-/** The black, gold-dotted box with its lid, ribbon band, tails, bow, tissue and truffles. */
-export function buildBox(owner: Owner, tagTexture: Texture): BoxParts {
-  const dots = owner.texture(dotsTexture());
-  const wallMaterial = (width: number, height: number) => {
-    const map = owner.texture(dots.clone());
-    map.repeat.set(width / DOTS_TILE_WORLD, height / DOTS_TILE_WORLD);
-    map.needsUpdate = true;
-    return owner.material(new MeshStandardMaterial({ map, roughness: 0.9 }));
-  };
-  const group = new Group();
-  const { width, height, depth, wall } = BOX;
-  const add = (
-    geometry: BoxGeometry,
-    material: MeshStandardMaterial,
-    x: number,
-    y: number,
-    z: number,
-  ) => {
-    const mesh = new Mesh(owner.geometry(geometry), material);
-    mesh.position.set(x, y, z);
-    group.add(mesh);
-    return mesh;
-  };
-
-  // Walls, floor and rim.
-  const front = wallMaterial(width, height);
-  add(new BoxGeometry(width, height, wall), front, 0, height / 2, depth / 2 - wall / 2);
-  add(new BoxGeometry(width, height, wall), front, 0, height / 2, -depth / 2 + wall / 2);
-  const side = wallMaterial(depth, height);
-  add(new BoxGeometry(wall, height, depth - 2 * wall), side, -width / 2 + wall / 2, height / 2, 0);
-  add(new BoxGeometry(wall, height, depth - 2 * wall), side, width / 2 - wall / 2, height / 2, 0);
-  add(new BoxGeometry(width, wall, depth), wallMaterial(width, depth), 0, wall / 2, 0);
-  const rim = owner.material(
-    new MeshStandardMaterial({ color: PALETTE.bodyLight, roughness: 0.85 }),
-  );
-  const rimY = height - BOX.rimHeight / 2;
-  const rimGeometry = new RoundedBoxGeometry(BOX.rimWidth, BOX.rimHeight, BOX.rimDepth, 2, 0.05);
-  const sideRim = new RoundedBoxGeometry(BOX.rimDepth, BOX.rimHeight, depth, 2, 0.05);
-  for (const z of [depth / 2, -depth / 2]) {
-    const mesh = new Mesh(owner.geometry(rimGeometry.clone()), rim);
-    mesh.position.set(0, rimY, z);
-    group.add(mesh);
-  }
-  for (const x of [-BOX.rimWidth / 2 + BOX.rimDepth / 2, BOX.rimWidth / 2 - BOX.rimDepth / 2]) {
-    const mesh = new Mesh(owner.geometry(sideRim.clone()), rim);
-    mesh.position.set(x, rimY, 0);
-    group.add(mesh);
-  }
-  rimGeometry.dispose();
-  sideRim.dispose();
-
-  // Tissue and gold truffles inside.
+function addInterior(owner: Owner, group: Group): void {
+  const { width, depth, height, wall } = BOX;
   const tissue = new Mesh(
     owner.geometry(tissueSheet(width - 2 * wall, depth - 2 * wall)),
     owner.material(
@@ -129,83 +84,146 @@ export function buildBox(owner: Owner, tagTexture: Texture): BoxParts {
   tissue.position.y = height - 0.1;
   group.add(tissue);
   const gold = owner.material(
-    new MeshStandardMaterial({ color: PALETTE.gold, roughness: 0.35, metalness: 0.5 }),
+    new MeshStandardMaterial({ color: PALETTE.gold, roughness: 0.32, metalness: 0.55 }),
   );
   for (const [px, py, r] of [
     [516, 362, 0.17],
     [482, 368, 0.15],
   ] as const) {
     const w = posterToWorld(px, py);
-    const truffle = new Mesh(owner.geometry(new SphereGeometry(r, 20, 14)), gold);
+    const truffle = new Mesh(owner.geometry(new SphereGeometry(r, 24, 16)), gold);
     truffle.position.set(w.x, w.y - BOX.floorY, 0.45);
     group.add(truffle);
   }
+}
 
-  // Ribbon band down the front, and two tails that unroll.
-  const ribbon = ribbonMaterial(owner);
-  const band = new Mesh(owner.geometry(new BoxGeometry(RIBBON_BAND_WIDTH, height, 0.05)), ribbon);
-  band.position.set(0, height / 2, depth / 2 + 0.09);
+function addRibbonFront(owner: Owner, group: Group, ribbon: MeshPhysicalMaterial) {
+  const { height, depth, wall } = BOX;
+  const band = new Group();
+  const front = new Mesh(
+    owner.geometry(new RoundedBoxGeometry(RIBBON_BAND_WIDTH, height, RIBBON_DEPTH, 2, 0.012)),
+    ribbon,
+  );
+  front.position.set(0, height / 2, depth / 2 + RIBBON_DEPTH / 2 + 0.002);
+  band.add(front);
+  const over = new Mesh(
+    owner.geometry(new RoundedBoxGeometry(RIBBON_BAND_WIDTH, RIBBON_DEPTH, wall + 0.08, 2, 0.012)),
+    ribbon,
+  );
+  over.position.set(0, height + RIBBON_DEPTH / 2, depth / 2 - wall / 2 + 0.01);
+  band.add(over);
   group.add(band);
+
   const tails: Group[] = [];
-  for (const side2 of [-1, 1] as const) {
+  for (const side of [-1, 1] as const) {
     const pivot = new Group();
-    pivot.position.set(side2 * (RIBBON_BAND_WIDTH / 2 + 0.01), height - 0.1, depth / 2 + 0.13);
+    pivot.position.set(side * (RIBBON_BAND_WIDTH / 2 + 0.01), height - 0.1, depth / 2 + 0.05);
     pivot.add(
-      new Mesh(owner.geometry(bentTail(0.46, 1.9, side2, side2 === 1 ? 0.55 : 0.5, 0.32)), ribbon),
+      new Mesh(owner.geometry(bentTail(0.46, 1.9, side, side === 1 ? 0.55 : 0.5, 0.3)), ribbon),
     );
     group.add(pivot);
     tails.push(pivot);
   }
+  return { band, tails };
+}
+
+function addTag(owner: Owner, group: Group, tagTexture: Texture) {
   const tagWorld = posterToWorld(GIFT_TAG.x + 62.6, GIFT_TAG.y + 21.6);
+  const tagMaterial = owner.material(
+    new MeshBasicMaterial({
+      map: tagTexture,
+      transparent: true,
+      premultipliedAlpha: true,
+      alphaTest: 0.01,
+      side: DoubleSide,
+    }),
+  );
   const tag = new Mesh(
     owner.geometry(
       new PlaneGeometry((GIFT_TAG.width * GIFT_TAG.scale) / 100, (70 * GIFT_TAG.scale) / 100),
     ),
-    owner.material(
-      new MeshBasicMaterial({
-        map: tagTexture,
-        transparent: true,
-        premultipliedAlpha: true,
-        alphaTest: 0.04,
-        side: DoubleSide,
-      }),
-    ),
+    tagMaterial,
   );
-  tag.position.set(tagWorld.x, tagWorld.y - BOX.floorY, depth / 2 + 0.2);
+  tag.position.set(tagWorld.x, tagWorld.y - BOX.floorY, BOX.depth / 2 + 0.2);
   tag.rotation.z = (-GIFT_TAG.rotDeg * Math.PI) / 180;
   group.add(tag);
+  return { tag, tagMaterial };
+}
 
-  // The lid, with its band and bow.
+function buildLid(owner: Owner, ribbon: MeshPhysicalMaterial) {
   const lid = new Group();
-  const lidMap = owner.texture(dots.clone());
-  lidMap.repeat.set(LID_SIZE.width / DOTS_TILE_WORLD, LID_SIZE.height / DOTS_TILE_WORLD);
-  lidMap.needsUpdate = true;
-  const lidMaterial = owner.material(
-    new MeshStandardMaterial({
-      map: lidMap,
-      color: new Color().setRGB(1.7, 1.55, 1.8),
-      roughness: 0.85,
-    }),
-  );
   const lidBody = new Mesh(
     owner.geometry(
-      new RoundedBoxGeometry(LID_SIZE.width, LID_SIZE.height, LID_SIZE.depth, 3, 0.09),
+      roundedSlab(LID_SIZE.width, LID_SIZE.depth, LID_SIZE.height, BOX.corner, BOX.bevel),
     ),
-    lidMaterial,
+    paperMaterial(owner, new Color().setRGB(1.55, 1.42, 1.65)),
   );
+  lidBody.geometry.translate(0, -LID_SIZE.height / 2, 0);
   lid.add(lidBody);
-  const lidBand = new Mesh(
+  const lidBandZ = new Mesh(
     owner.geometry(
-      new BoxGeometry(RIBBON_BAND_WIDTH, LID_SIZE.height + 0.02, LID_SIZE.depth + 0.04),
+      new RoundedBoxGeometry(
+        RIBBON_BAND_WIDTH,
+        LID_SIZE.height + 2 * RIBBON_DEPTH,
+        LID_SIZE.depth + 2 * RIBBON_DEPTH,
+        2,
+        0.014,
+      ),
     ),
     ribbon,
   );
-  lid.add(lidBand);
-  const bowGroup = bow(owner, ribbon);
-  bowGroup.position.set(0, LID_SIZE.height / 2 + 0.22, 0.25);
-  bowGroup.rotation.x = -0.18;
-  lid.add(bowGroup);
+  lid.add(lidBandZ);
+  const lidBandX = new Mesh(
+    owner.geometry(
+      new RoundedBoxGeometry(
+        LID_SIZE.width + 2 * RIBBON_DEPTH,
+        LID_SIZE.height + RIBBON_DEPTH,
+        RIBBON_BAND_WIDTH,
+        2,
+        0.014,
+      ),
+    ),
+    ribbon,
+  );
+  lid.add(lidBandX);
+  const bow = buildBow(owner, ribbon);
+  bow.position.set(0, LID_SIZE.height / 2 + RIBBON_DEPTH, 0.05);
+  lid.add(bow);
+  return { lid, lidBody, lidBandZ, lidBandX };
+}
+
+/** The black, gold-dotted box with its lid, ribbon, tails, bow, tag, tissue and truffles. */
+export function buildBox(owner: Owner, tagTexture: Texture): BoxParts {
+  const group = new Group();
+  const paper = paperMaterial(owner);
+  const shell = new Mesh(
+    owner.geometry(
+      boxShell({
+        width: BOX.width,
+        depth: BOX.depth,
+        height: BOX.height,
+        wall: BOX.wall,
+        corner: BOX.corner,
+        bevel: BOX.bevel,
+      }),
+    ),
+    paper,
+  );
+  group.add(shell);
+  const floor = new Mesh(
+    owner.geometry(
+      roundedSlab(BOX.width - 2 * BOX.wall, BOX.depth - 2 * BOX.wall, BOX.wall, 0.03, 0.01),
+    ),
+    paper,
+  );
+  group.add(floor);
+  addInterior(owner, group);
+
+  const ribbon = ribbonMaterial(owner);
+  const { band, tails } = addRibbonFront(owner, group, ribbon);
+  const { tag, tagMaterial } = addTag(owner, group, tagTexture);
+  const { lid, lidBody, lidBandZ, lidBandX } = buildLid(owner, ribbon);
   group.add(lid);
 
-  return { group, lid, lidBody, lidBand, band, tails, tag };
+  return { group, lid, lidBody, lidBandZ, lidBandX, band, tails, tag, tagMaterial };
 }

@@ -25,9 +25,8 @@ export interface SpriteArt {
   dispose(): void;
 }
 
-const ITEM_PX = 256;
-const STICKER_SCALE = 1.6;
-const TAG_SCALE = 2;
+/** Blur of the soft shadow baked under each item and the sticker, poster pixels. */
+const SPRITE_SHADOW_BLUR = 7;
 
 function wrap(
   box: { x: number; y: number; w: number; h: number },
@@ -40,8 +39,11 @@ function wrap(
   return { svg, width, height };
 }
 
-/** Renders item illustrations, the sticker and the tag to canvas textures. Rejects on any failure. */
-export async function loadSpriteArt(): Promise<SpriteArt> {
+/**
+ * Renders item illustrations (whatever `ItemIllustrationSvg` draws), the sticker and the tag to
+ * canvas textures at `pxPerPosterPixel` (see `artPixelsPerPosterPixel`). Rejects on any failure.
+ */
+export async function loadSpriteArt(pxPerPosterPixel: number): Promise<SpriteArt> {
   const textures: Texture[] = [];
   const keep = <T extends Texture>(texture: T): T => {
     textures.push(texture);
@@ -55,7 +57,7 @@ export async function loadSpriteArt(): Promise<SpriteArt> {
         if (def.kind === "item" && def.shape) {
           const art = wrap(
             { x: 0, y: 0, w: ITEM_ART_BOX.w, h: ITEM_ART_BOX.h },
-            ITEM_PX / ITEM_ART_BOX.w,
+            pxPerPosterPixel,
             createElement(ItemIllustrationSvg, {
               shape: def.shape,
               color: def.color,
@@ -68,11 +70,12 @@ export async function loadSpriteArt(): Promise<SpriteArt> {
               await svgToTexture({
                 ...art,
                 box: { x: 0, y: 0, w: ITEM_ART_BOX.w, h: ITEM_ART_BOX.h },
+                shadowBlur: SPRITE_SHADOW_BLUR,
               }),
             ),
           );
         } else {
-          const art = wrap(STICKER_ART, STICKER_SCALE, createElement(StickerArt));
+          const art = wrap(STICKER_ART, pxPerPosterPixel, createElement(StickerArt));
           sprites.set(
             def.id,
             keep(
@@ -82,6 +85,7 @@ export async function loadSpriteArt(): Promise<SpriteArt> {
                 labels: STICKER_LABELS,
                 labelColor: STICKER_TEXT_COLOR,
                 fontFamily,
+                shadowBlur: SPRITE_SHADOW_BLUR,
               }),
             ),
           );
@@ -89,7 +93,7 @@ export async function loadSpriteArt(): Promise<SpriteArt> {
       }),
     );
     const tagBox = { x: 0, y: 0, w: GIFT_TAG.width, h: 70 };
-    const tagArt = wrap(tagBox, TAG_SCALE, createElement(GiftTagArt, { width: GIFT_TAG.width }));
+    const tagArt = wrap(tagBox, pxPerPosterPixel, createElement(GiftTagArt, { width: GIFT_TAG.width }));
     const tag = keep(
       await svgToTexture({
         ...tagArt,

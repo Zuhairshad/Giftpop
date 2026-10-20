@@ -18,10 +18,15 @@ export const DROP = {
   /** Fraction of impact speed kept after impact 1 and impact 2. Impact 3 only settles. */
   restitution: [0.45, 0.3],
   /** Squash on Y at each of the three impacts, and how long it lasts. */
+  /**
+   * Squash on Y at each of the three impacts, and how long it lasts. Chosen so the top of the box
+   * keeps roughly the speed it arrived with (amount x height x pi / duration ~ impact speed), so
+   * the impact reads as a soft squash rather than a hard stop.
+   */
   squash: [
-    { amount: 0.12, duration: 0.08 },
-    { amount: 0.06, duration: 0.07 },
-    { amount: 0.03, duration: 0.06 },
+    { amount: 0.14, duration: 0.062 },
+    { amount: 0.07, duration: 0.06 },
+    { amount: 0.03, duration: 0.07 },
   ],
   /** Stretch while moving fast in the air. */
   airStretch: 0.04,
@@ -50,10 +55,24 @@ export const IDLE = {
   cameraDriftDeg: 1.5,
 } as const;
 /**
- * Keeping the page responsive: the scene starts this long after the window `load` event (then waits for
- * idle), so hydration, first paint and the first taps never compete with building the scene.
+ * The page paints the headline and an empty stage; the scene starts this long after the window
+ * `load` event, at the next idle moment (at most `START_IDLE_TIMEOUT_MS` later), so the drop is the
+ * first thing the visitor sees, about a second after load.
  */
-export const START_AFTER_LOAD_MS = 2500;
+export const START_AFTER_LOAD_MS = 0;
+export const START_IDLE_TIMEOUT_MS = 400;
+/**
+ * If the scene has not drawn its first frame this long after it was armed (slow network or a
+ * very slow device), the stage shows the static composition instead and the scene is dropped.
+ */
+export const STATIC_FALLBACK_MS = 6000;
+/**
+ * The clock starts this long before the box first shows at the top of the frame, so the
+ * stage never sits empty while the box falls through the space above it.
+ */
+export const DROP_ENTRY_LEAD = 0.06;
+/** Height of the closed box's highest point (bow top) above the base, world units. */
+export const CLOSED_BOX_REACH = 3.55;
 /** Once everything has settled the idle float only needs a gentle frame rate (saves battery on phones). */
 export const IDLE_RENDER = { afterSeconds: IDLE.rampEnd + 0.4, fps: 30 } as const;
 /** Hard budget from the brief: the resting state is reached before this. */
@@ -67,9 +86,9 @@ export const BOX = {
   height: 2.36,
   depth: 2.2,
   wall: 0.1,
-  rimWidth: 3.48,
-  rimHeight: 0.26,
-  rimDepth: 0.14,
+  /** Radius of the box's vertical corners and of the bevel on every edge. */
+  corner: 0.07,
+  bevel: 0.025,
   floorY: -2.83,
   /** The box sits with its front face on the z = 0 plane, where the poster layout is exact. */
   frontZ: 0,
@@ -83,9 +102,16 @@ export const LID_SIZE = { width: 2.8, height: 0.7, depth: 1.6 } as const;
  * A closed lid must cover the box (wider and deeper than the rim); the poster's lid is smaller, so
  * the lid body is stretched while closed and eases to its poster size as it lifts.
  */
-export const LID_CLOSED_SCALE = { x: 1.26, z: 1.46 } as const;
+export const LID_CLOSED_SCALE = { x: 1.27, z: 1.5 } as const;
+/** How far the closed lid's skirt comes down over the box walls. */
+export const LID_SKIRT = 0.26;
 /** Lid centre in box-local coordinates (origin at the middle of the box base). */
-export const LID_CLOSED = { x: 0, y: BOX.height + LID_SIZE.height / 2, z: 0, rotDeg: 0 } as const;
+export const LID_CLOSED = {
+  x: 0,
+  y: BOX.height + LID_SIZE.height / 2 - LID_SKIRT,
+  z: 0,
+  rotDeg: 0,
+} as const;
 /** Lid in the poster: centre (330, 155), rotated 9 degrees counter-clockwise on screen. */
 export const LID_REST = { x: -0.5, y: 1.7 - BOX.floorY, z: BOX.depth / 2, rotDeg: 9 } as const;
 

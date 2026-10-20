@@ -1,5 +1,5 @@
 import { BOX, BOX_Z, BURST, IDLE, SPARKLE } from "./constants";
-import { clamp01, easeOutBack, easeOutCubic, lerp } from "./easing";
+import { clamp01, easeOutBack, lerp } from "./easing";
 import { degToRad, posterToWorld } from "./layout";
 import { SPARKLES, SPRITES } from "./sprites";
 import type { SparkleDef, SpriteDef } from "./sprites";
@@ -49,7 +49,8 @@ export function spriteAt(def: SpriteDef, t: number, idle: number): SpriteState {
   const start = spriteStartTime(def);
   const u = clamp01((t - start) / BURST.flight);
   const from = spriteStart(def);
-  const p = easeOutCubic(u);
+  // Launch fast and glide in: a softer start than a cubic, so no sprite streaks across a frame.
+  const p = 1 - Math.pow(1 - u, 2.2);
   const wave = Math.sin(2 * Math.PI * (t / IDLE.floatPeriod + def.phase));
   return {
     x: lerp(from.x, rest.x, p),

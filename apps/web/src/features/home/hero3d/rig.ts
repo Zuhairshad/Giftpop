@@ -11,7 +11,6 @@ import {
 
 import { buildBox } from "./box-parts";
 import { BOX, BOX_Z, PALETTE } from "./constants";
-import { clamp01 } from "./easing";
 import { posterToWorld } from "./layout";
 import { Owner } from "./owner";
 import type { SpriteArt } from "./sprite-art";
@@ -26,6 +25,9 @@ export interface Rig {
   /** Frees geometries, materials and textures the rig made (the shared art is freed by its owner). */
   dispose(): void;
 }
+
+/** The contact shadow under the box; the poster keeps a wider soft pool on the floor under it. */
+const SHADOW_OPACITY = 0.26;
 
 function addLights(root: Group): void {
   root.add(new HemisphereLight(0xfff1f7, 0xcdb8ff, 1.15));
@@ -51,7 +53,7 @@ export function buildRig(art: SpriteArt): Rig {
       map: owner.texture(radialTexture()),
       color: PALETTE.shadow,
       transparent: true,
-      opacity: 0.3,
+      opacity: SHADOW_OPACITY,
       depthWrite: false,
     }),
   );
@@ -138,17 +140,19 @@ export function buildRig(art: SpriteArt): Rig {
     box.lid.position.set(lid.x, lid.y, lid.z);
     box.lid.rotation.z = lid.rotZ;
     box.lidBody.scale.set(lid.scaleX, 1, lid.scaleZ);
-    box.lidBand.scale.z = lid.scaleZ;
+    box.lidBandZ.scale.z = lid.scaleZ;
+    box.lidBandX.scale.x = lid.scaleX;
     box.band.position.x = ribbon.sway;
     for (const tail of box.tails) {
       tail.visible = ribbon.tail > 0.001;
       tail.scale.y = Math.max(ribbon.tail, 0.0001);
     }
-    box.tag.visible = ribbon.tail > 0.2;
-    box.tag.scale.setScalar(clamp01((ribbon.tail - 0.2) / 0.8));
+    box.tag.visible = ribbon.tag > 0.001;
+    box.tag.scale.setScalar(0.75 + 0.25 * ribbon.tag);
+    box.tagMaterial.opacity = ribbon.tag;
 
     shadow.scale.set(state.shadow.scale, state.shadow.scale, 1);
-    shadowMaterial.opacity = 0.3 * state.shadow.opacity;
+    shadowMaterial.opacity = SHADOW_OPACITY * state.shadow.opacity;
     ring.visible = state.ring.opacity > 0.004;
     ring.scale.setScalar(1.6 * state.ring.scale);
     ringMaterial.opacity = state.ring.opacity;

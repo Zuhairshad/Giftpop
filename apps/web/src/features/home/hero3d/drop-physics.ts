@@ -1,5 +1,5 @@
-import { DROP } from "./constants";
-import { clamp01 } from "./easing";
+import { BOX, CLOSED_BOX_REACH, DROP, DROP_ENTRY_LEAD } from "./constants";
+import { clamp01, smootherstep01 } from "./easing";
 import { degToRad } from "./layout";
 
 /** One ground contact: the box is squashed on the floor from `start` to `takeoff`. */
@@ -95,7 +95,7 @@ export function boxMotionAt(t: number): BoxMotion {
   }
   let rotZ = 0;
   if (t < FIRST_CONTACT.start) {
-    rotZ = degToRad(fallTiltDeg) * (1 - t / FIRST_CONTACT.start);
+    rotZ = degToRad(fallTiltDeg) * (1 - smootherstep01(t / FIRST_CONTACT.start));
   } else if (fall.flight >= 0) {
     rotZ = degToRad(bounceTiltDeg[fall.flightIndex] ?? 0) * Math.sin(Math.PI * fall.flight);
   } else if (t >= LAST_CONTACT.takeoff && t < WOBBLE_END) {
@@ -114,4 +114,20 @@ export function boxMotionAt(t: number): BoxMotion {
     flight: fall.flight,
     flightIndex: fall.flightIndex,
   };
+}
+
+/**
+ * The time at which the falling box's highest point reaches `visibleTop` (world y of the top
+ * edge of the frame), less `DROP_ENTRY_LEAD`. Starting the clock there means a taller stage (a
+ * phone) does not show the box popping in mid-air and a shorter one does not wait on an empty
+ * stage. Never later than shortly before the first impact.
+ */
+export function dropEntryTime(visibleTop: number): number {
+  if (!Number.isFinite(visibleTop)) return 0;
+  const { height, gravity } = DROP;
+  const baseAtEntry = visibleTop - BOX.floorY - CLOSED_BOX_REACH;
+  if (baseAtEntry >= height) return 0;
+  const fallen = height - Math.max(baseAtEntry, 0);
+  const t = Math.sqrt((2 * fallen) / gravity) - DROP_ENTRY_LEAD;
+  return Math.min(Math.max(t, 0), FIRST_CONTACT.start - 0.12);
 }
