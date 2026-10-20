@@ -8,7 +8,7 @@ import { buildAddressFields } from "./address-fields";
 import { ErrorSummary } from "./error-summary";
 import { errorSummaryEntries } from "./error-summary-model";
 import type { FieldName } from "./fields";
-import { failureMessage, needsItemsLink } from "./order-errors";
+import { failureMessage, needsItemsLink, needsPersonaliseLink } from "./order-errors";
 import { PaymentSection } from "./payment-section";
 import { TextField } from "./text-field";
 import { useCheckout } from "./use-checkout";
@@ -48,6 +48,15 @@ function Failure({
           className="inline-flex min-h-11 items-center font-semibold text-pink-strong underline underline-offset-4"
         >
           Back to your items
+        </Link>
+      ) : null}
+      {needsPersonaliseLink(failure) ? (
+        <Link
+          href={builderHref(builder.country)}
+          onClick={() => builder.goToQuestion("personalise")}
+          className="inline-flex min-h-11 items-center font-semibold text-pink-strong underline underline-offset-4"
+        >
+          Back to who it&apos;s for
         </Link>
       ) : null}
     </div>

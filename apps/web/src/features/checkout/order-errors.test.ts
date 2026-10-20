@@ -5,6 +5,7 @@ import {
   failureMessage,
   mapDetailsToFields,
   needsItemsLink,
+  needsPersonaliseLink,
 } from "./order-errors";
 
 import { ApiError, ApiNetworkError } from "@/lib/api-errors";
@@ -86,5 +87,28 @@ describe("classifyOrderError", () => {
     expect(needsItemsLink({ kind: "sold_out" })).toBe(true);
     expect(needsItemsLink({ kind: "generic" })).toBe(false);
     expect(failureMessage({ kind: "design_invalid" })).toMatch(/Something in your gift changed/);
+  });
+});
+
+describe("order rejected for missing or invalid text", () => {
+  const rejected = (problems: { code: string }[]) =>
+    new ApiError(422, { code: "DESIGN_INVALID", message: "x", details: { problems } });
+
+  it("sends the customer back to the personalise step", () => {
+    const failure = classifyOrderError(
+      rejected([{ code: "TEXT_REQUIRED" }, { code: "TEXT_INVALID" }]),
+    );
+    expect(failure).toEqual({ kind: "text_missing" });
+    expect(needsPersonaliseLink(failure)).toBe(true);
+    expect(needsItemsLink(failure)).toBe(false);
+    expect(failureMessage(failure)).toMatch(/Who's it for/);
+  });
+
+  it("keeps the items message when any problem is about the gift itself", () => {
+    expect(
+      classifyOrderError(rejected([{ code: "TEXT_REQUIRED" }, { code: "OUT_OF_STOCK" }])),
+    ).toEqual({
+      kind: "design_invalid",
+    });
   });
 });

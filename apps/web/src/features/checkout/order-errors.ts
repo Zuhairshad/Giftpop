@@ -8,11 +8,21 @@ import { ApiError, ApiNetworkError } from "@/lib/api-errors";
 export type OrderFailure =
   | { kind: "fields"; fields: FieldErrors }
   | { kind: "design_invalid" }
+  | { kind: "text_missing" }
   | { kind: "sold_out" }
   | { kind: "in_progress" }
   | { kind: "rate_limited" }
   | { kind: "offline" }
   | { kind: "generic" };
+
+const TextProblemsSchema = z.object({
+  problems: z
+    .array(z.object({ code: z.string() }))
+    .min(1)
+    .refine((problems) =>
+      problems.every((p) => p.code === "TEXT_REQUIRED" || p.code === "TEXT_INVALID"),
+    ),
+});
 
 const DetailsSchema = z.array(z.object({ field: z.string(), message: z.string() }));
 
@@ -38,7 +48,10 @@ export function classifyOrderError(error: unknown): OrderFailure {
     const soldOut = typeof details === "object" && details !== null && "outOfStock" in details;
     return soldOut ? { kind: "sold_out" } : { kind: "in_progress" };
   }
-  if (error.code === "DESIGN_INVALID") return { kind: "design_invalid" };
+  if (error.code === "DESIGN_INVALID") {
+    const textOnly = TextProblemsSchema.safeParse(error.details).success;
+    return { kind: textOnly ? "text_missing" : "design_invalid" };
+  }
   if (error.status === 422 || error.code === "VALIDATION_ERROR") {
     const fields = mapDetailsToFields(error.details);
     if (Object.keys(fields).length > 0) return { kind: "fields", fields };
@@ -53,6 +66,8 @@ export function failureMessage(failure: OrderFailure): string | null {
       return "Some details need another look. Check the fields marked below.";
     case "design_invalid":
       return "Something in your gift changed and it can no longer be ordered as it is. Go back to your items and check it.";
+    case "text_missing":
+      return 'Your gift is missing a recipient, a card message or an item name, or one of them has characters it cannot hold. Go back to "Who\'s it for?" and check them.';
     case "sold_out":
       return "An item in your gift just sold out. Go back to your items and swap it for another.";
     case "in_progress":
@@ -69,4 +84,9 @@ export function failureMessage(failure: OrderFailure): string | null {
 /** Whether the banner should offer a link back to the items step. */
 export function needsItemsLink(failure: OrderFailure): boolean {
   return failure.kind === "design_invalid" || failure.kind === "sold_out";
+}
+
+/** Whether the banner should offer a link back to the personalise step. */
+export function needsPersonaliseLink(failure: OrderFailure): boolean {
+  return failure.kind === "text_missing";
 }
