@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../../state";
 import { reviewReady } from "../can-continue";
+import { missingDetailsReason } from "../continue-reason";
 
 import { Button, ButtonLink } from "@/components/ui";
 import { checkoutHref } from "@/features/share/links";
@@ -24,6 +25,13 @@ export function ReviewCheckoutAction({
   reasonId?: string;
 }): ReactElement {
   const builder = useBuilder();
+  if (reviewReady(builder) && missingDetailsReason(builder) !== null) {
+    return (
+      <Button size="md" className={className} onClick={() => builder.goToQuestion("personalise")}>
+        Add the missing details
+      </Button>
+    );
+  }
   if (reviewReady(builder)) {
     return (
       <ButtonLink href={checkoutHref(builder.country)} size="md" className={className}>

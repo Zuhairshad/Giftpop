@@ -4,11 +4,15 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
+
+import { missingDetailsReason } from "./continue-reason";
 import { CardPanel } from "./review/card-panel";
 import { cardSummary } from "./review/card-summary";
 import { REVIEW_BLOCKED_HINT_ID, REVIEW_PROBLEMS_ID } from "./review/checkout-action";
 import { PriceSection } from "./review/price-section";
 import { SharePanel } from "./review/share-panel";
+
+import { Button } from "@/components/ui";
 
 /**
  * Question 6 body: the card, the price for both payment modes from the API quote and "Save and
@@ -24,6 +28,7 @@ export function ReviewBody(): ReactElement {
   }
   const blocked = problems.length > 0;
   const card = cardSummary(design.personalisation);
+  const missing = blocked ? null : missingDetailsReason(builder);
 
   return (
     <div className="space-y-5">
@@ -46,6 +51,16 @@ export function ReviewBody(): ReactElement {
           <p id={REVIEW_BLOCKED_HINT_ID} className="text-muted text-sm">
             Checkout opens once the problems above are fixed. Go back to fix them.
           </p>
+        </div>
+      ) : null}
+
+      {missing !== null ? (
+        <div role="alert" className="bg-warm space-y-2 rounded-md p-3 text-sm">
+          <p className="font-semibold">{missing} before you check out</p>
+          <p>We need these to make and label your gift.</p>
+          <Button size="md" variant="ghost" onClick={() => builder.goToQuestion("personalise")}>
+            Go to who it&apos;s for
+          </Button>
         </div>
       ) : null}
 

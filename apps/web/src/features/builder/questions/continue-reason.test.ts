@@ -13,6 +13,7 @@ import {
   packagingCheck,
   ENTER_RECIPIENT,
   WRITE_CARD_MESSAGE,
+  missingDetailsReason,
   personaliseCheck,
   reviewCheck,
 } from "./continue-reason";
@@ -73,6 +74,16 @@ describe("continue reasons", () => {
     const check = itemsCheck(api());
     expect(check.ready).toBe(false);
     expect(check.reason).toMatch(/^Pick at least \d+ items/);
+  });
+
+  it("names what is still missing before checkout, then nothing once it is filled in", () => {
+    const { api } = newTestStore();
+    api().choosePackaging(BOUQUET_ID);
+    expect(missingDetailsReason(api())).toBe(ENTER_RECIPIENT);
+    api().setRecipientName("Amna");
+    expect(missingDetailsReason(api())).toBe(WRITE_CARD_MESSAGE);
+    api().setCardMessage("Hi");
+    expect(missingDetailsReason(api())).toBeNull();
   });
 
   it("never blocks the layout question", () => {

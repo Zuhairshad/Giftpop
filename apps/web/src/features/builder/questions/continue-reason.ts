@@ -77,6 +77,14 @@ const GAP_REASONS = {
   "item-name": NAME_THE_ITEMS,
 } as const;
 
+/** What still has to be filled in on "Who's it for?" before an order can be placed, or null. */
+export function missingDetailsReason(
+  builder: Pick<Builder, "recipientName" | "cardMessage" | "itemNames" | "lines" | "catalog">,
+): string | null {
+  const gap = personaliseGap(builder);
+  return gap === null ? null : GAP_REASONS[gap];
+}
+
 /** The first missing answer, then the first text that is too long. */
 export function personaliseCheck(
   builder: Pick<
