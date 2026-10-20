@@ -48,6 +48,7 @@ const itemSchema = new Schema(
     personalizable: { type: Boolean, required: true },
     personalizationMaxLength: { type: Number },
     image: { type: assetSchema },
+    pickerStyle: { type: String, default: "tile" },
     active: { type: Boolean, required: true },
     sortOrder: { type: Number, default: 0 },
   },

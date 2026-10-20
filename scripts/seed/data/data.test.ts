@@ -78,8 +78,9 @@ describe("countries", () => {
   it("give every country neutral payment instructions with a placeholder account", () => {
     for (const country of COUNTRIES) {
       const text = country.paymentInstructions;
-      expect(text).toContain("account 0000 0000 0000");
-      expect(text).toContain("reference: your order number");
+      // Labelled lines, so the order page shows them as rows.
+      expect(text).toContain("Account title: The Giftpop");
+      expect(text).toContain("Account number: 0000 0000 0000");
       expect(text).not.toMatch(/DEV ONLY/i);
       // Only zeros: no digit sequence that could be a real account number.
       expect(text).not.toMatch(/[1-9]/);

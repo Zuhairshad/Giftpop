@@ -27,7 +27,9 @@ const staff = { "x-test-role": "staff" };
 const TIMEOUT = 30_000;
 
 async function priceIn(packagingId: string, country = "PK"): Promise<void> {
-  await upsertPrices([{ kind: "packaging", packagingId, country, priceMinor: 5000, inStock: true }]);
+  await upsertPrices([
+    { kind: "packaging", packagingId, country, priceMinor: 5000, inStock: true },
+  ]);
 }
 
 async function publicPackaging(id: string, country = "PK"): Promise<Packaging | undefined> {

@@ -8,7 +8,7 @@ import { CardIllustration } from "./items/card";
 import { FlowerIllustration } from "./items/flower";
 import { JarIllustration } from "./items/jar";
 import { MugIllustration } from "./items/mug";
-import { OtherIllustration } from "./items/other";
+import { OtherIllustration, starFor } from "./items/other";
 import { SoftToyIllustration } from "./items/soft-toy";
 import { BasketIllustration } from "./packaging/basket";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
@@ -31,6 +31,13 @@ export const ITEM_ILLUSTRATIONS: Record<ItemShape, ItemIllustration> = {
   card: CardIllustration,
   "soft-toy": SoftToyIllustration,
   balloon: BalloonIllustration,
+  // Placeholders until each new shape has its own drawing (phase 8 art slice).
+  perfume: starFor("perfume"),
+  candle: starFor("candle"),
+  jewellery: starFor("jewellery"),
+  cosmetic: starFor("cosmetic"),
+  cupcake: starFor("cupcake"),
+  frame: starFor("frame"),
   other: OtherIllustration,
 };
 

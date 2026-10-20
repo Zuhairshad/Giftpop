@@ -21,11 +21,13 @@ export function toItemDoc(item: Item): ItemDoc {
       personalizationMaxLength: item.personalizationMaxLength,
     }),
     ...(item.image && { image: item.image }),
+    pickerStyle: item.pickerStyle ?? "tile",
     active: item.active,
     sortOrder: item.sortOrder,
   };
 }
 
+/** Lean reads skip schema defaults, so an item saved before `pickerStyle` existed reads as "tile". */
 export function toItem(doc: ItemDoc): Item {
   return {
     id: doc._id.toHexString(),
@@ -39,6 +41,7 @@ export function toItem(doc: ItemDoc): Item {
       personalizationMaxLength: doc.personalizationMaxLength,
     }),
     ...(doc.image && { image: doc.image }),
+    pickerStyle: doc.pickerStyle ?? "tile",
     active: doc.active,
     sortOrder: doc.sortOrder,
   };

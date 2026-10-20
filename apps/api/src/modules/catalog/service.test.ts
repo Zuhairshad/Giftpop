@@ -15,8 +15,9 @@ describe("upsertItem", () => {
     const item = makeItem({ personalizable: true, personalizationMaxLength: 12 });
     const first = await upsertItem(item);
     const second = await upsertItem(item);
-    expect(first).toEqual(item);
-    expect(second).toEqual(item);
+    // The API always answers with a picker style; an item saved without one reads as "tile".
+    expect(first).toEqual({ ...item, pickerStyle: "tile" });
+    expect(second).toEqual({ ...item, pickerStyle: "tile" });
     expect(await ItemModel.countDocuments()).toBe(1);
   });
 

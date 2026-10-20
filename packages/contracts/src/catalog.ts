@@ -24,6 +24,12 @@ export const ITEM_SHAPES = [
   "card",
   "soft-toy",
   "balloon",
+  "perfume",
+  "candle",
+  "jewellery",
+  "cosmetic",
+  "cupcake",
+  "frame",
   "other",
 ] as const;
 export const ItemShapeSchema = z.enum(ITEM_SHAPES);
@@ -76,6 +82,14 @@ export const PackagingSchema = PackagingFieldsSchema.refine(
 );
 export type Packaging = z.infer<typeof PackagingSchema>;
 
+/**
+ * How the builder offers an item: `tile` shows its picture in the item grid, `list` puts it in the
+ * written list of more items under the grid (name and price only). Data, not code: staff pick it.
+ */
+export const ITEM_PICKER_STYLES = ["tile", "list"] as const;
+export const ItemPickerStyleSchema = z.enum(ITEM_PICKER_STYLES);
+export type ItemPickerStyle = z.infer<typeof ItemPickerStyleSchema>;
+
 export const ItemFieldsSchema = z.object({
   id: ObjectIdSchema,
   name: z.string().min(1).max(80),
@@ -87,6 +101,8 @@ export const ItemFieldsSchema = z.object({
   /** Required when `personalizable`. */
   personalizationMaxLength: z.number().int().positive().max(40).optional(),
   image: AssetSchema.optional(),
+  /** Absent means `tile` (items stored before this field existed, order snapshots). */
+  pickerStyle: ItemPickerStyleSchema.optional(),
   active: z.boolean(),
   sortOrder: z.number().int().default(0),
 });
