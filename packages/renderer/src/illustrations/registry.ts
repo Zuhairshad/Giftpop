@@ -10,8 +10,10 @@ import { JarIllustration } from "./items/jar";
 import { MugIllustration } from "./items/mug";
 import { OtherIllustration } from "./items/other";
 import { SoftToyIllustration } from "./items/soft-toy";
+import { BasketIllustration } from "./packaging/basket";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
 import { BoxGridIllustration } from "./packaging/box-grid";
+import { MugBouquetIllustration } from "./packaging/mug-bouquet";
 import { RoundBoxIllustration } from "./packaging/round-box";
 import type { ItemIllustration, PackagingIllustration } from "./types";
 
@@ -41,4 +43,6 @@ export const PACKAGING_ILLUSTRATIONS: Readonly<Record<string, PackagingIllustrat
     "bouquet-fan": BouquetFanIllustration,
     "box-grid": BoxGridIllustration,
     "round-box": RoundBoxIllustration,
+    "mug-bouquet": MugBouquetIllustration,
+    basket: BasketIllustration,
   };

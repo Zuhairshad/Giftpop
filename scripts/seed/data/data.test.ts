@@ -115,6 +115,8 @@ describe("packagings", () => {
     expect(PACKAGINGS.find((p) => p.slug === "round-hat-box")).toMatchObject({
       layoutType: "round-box",
     });
+    expect(PACKAGINGS.find((p) => p.kind === "basket")).toMatchObject({ layoutType: "basket" });
+    expect(PACKAGINGS.find((p) => p.kind === "mug")).toMatchObject({ layoutType: "mug-bouquet" });
   });
 
   it("group every packaging by kind", () => {

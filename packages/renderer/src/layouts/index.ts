@@ -1,5 +1,7 @@
+import { basket } from "./basket";
 import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
+import { mugBouquet } from "./mug-bouquet";
 import { roundBox } from "./round-box";
 import type { LayoutFn, LayoutInput, Placement } from "./types";
 
@@ -13,6 +15,8 @@ export const LAYOUTS = {
   "bouquet-fan": bouquetFan,
   "box-grid": boxGrid,
   "round-box": roundBox,
+  "mug-bouquet": mugBouquet,
+  basket,
 } as const satisfies Record<string, LayoutFn>;
 
 export type KnownLayoutType = keyof typeof LAYOUTS;

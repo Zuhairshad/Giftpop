@@ -63,6 +63,29 @@ describe("sceneBounds", () => {
   });
 });
 
+describe.each([
+  ["mug-bouquet", 5],
+  ["basket", 9],
+] as const)("%s crop", (layoutType, maxItems) => {
+  it("is smaller than the square and fits every item, half its size each way, for 60 seeds", () => {
+    const b = sceneBounds(layoutType);
+    expect(b.width * b.height).toBeLessThan(SCENE_SIZE * SCENE_SIZE);
+    const packaging = makePackaging({ layoutType });
+    for (let count = 1; count <= maxItems; count += 1) {
+      for (let s = 0; s < 60; s += 1) {
+        const seed = (s * 2654435761) >>> 0;
+        for (const p of computePlacements({ design: makeDesign(count, seed), packaging })) {
+          const reach = p.scale * ITEM_BASE_SIZE * 0.5;
+          expect(p.x - reach).toBeGreaterThanOrEqual(b.x);
+          expect(p.x + reach).toBeLessThanOrEqual(b.x + b.width);
+          expect(p.y - reach).toBeGreaterThanOrEqual(b.y);
+          expect(p.y + reach).toBeLessThanOrEqual(b.y + b.height);
+        }
+      }
+    }
+  });
+});
+
 describe("packagingSceneBounds", () => {
   it("crops a bouquet with no layer images and shows the full square once one is uploaded", () => {
     const bouquet = makePackaging({ layoutType: "bouquet-fan" });

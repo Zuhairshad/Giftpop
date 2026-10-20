@@ -92,7 +92,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Gift basket",
     description: "A woven basket packed full, tied with a ribbon. Pick 6 to 9 items.",
     kind: "basket",
-    layoutType: "box-grid",
+    layoutType: "basket",
     minItems: 6,
     maxItems: 9,
     // The 9 smallest items take 9 units; any 6 items take at most 14.
@@ -117,7 +117,7 @@ export const PACKAGINGS: Packaging[] = [
     name: "Mug bouquet",
     description: "A small bouquet tucked into a mug. Pick 3 to 5 items.",
     kind: "mug",
-    layoutType: "bouquet-fan",
+    layoutType: "mug-bouquet",
     minItems: 3,
     maxItems: 5,
     // The 5 smallest items take 5 units; any 3 items take at most 8.

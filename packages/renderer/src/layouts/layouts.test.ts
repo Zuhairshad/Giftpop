@@ -114,8 +114,14 @@ describe("registry", () => {
     }
   });
 
-  it("includes bouquet-fan, box-grid and round-box", () => {
-    expect([...LAYOUT_TYPES].sort()).toEqual(["bouquet-fan", "box-grid", "round-box"]);
+  it("includes every packaging layout", () => {
+    expect([...LAYOUT_TYPES].sort()).toEqual([
+      "basket",
+      "bouquet-fan",
+      "box-grid",
+      "mug-bouquet",
+      "round-box",
+    ]);
   });
 
   it("throws a clear error for an unknown layout type", () => {
