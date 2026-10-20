@@ -12,6 +12,9 @@ const RIM = frontEdgePath();
 const BAND_OFFSET = 62;
 const BAND_WIDTH = 44;
 const BOW_X = 372;
+const RAIL_GAP = 14;
+const HIGHLIGHT_DY = 24;
+const WALL_SHADE_HEIGHT = WALL_DEPTH + 260;
 
 /** Over the items: the heart's front wall, a ribbon band along it, the lit rim and a bow. */
 export function HeartBoxFront({ wrapper, ribbon }: PackagingIllustrationProps) {
@@ -32,19 +35,19 @@ export function HeartBoxFront({ wrapper, ribbon }: PackagingIllustrationProps) {
       </defs>
       <path d={WALL} fill={t.base} />
       <g clipPath={`url(#${clipId})`}>
-        <rect x="610" y="440" width="220" height={WALL_DEPTH + 260} fill={t.back} opacity="0.5" />
-        <rect x="170" y="440" width="90" height={WALL_DEPTH + 260} fill={t.back} opacity="0.25" />
+        <rect x="610" y="440" width="220" height={WALL_SHADE_HEIGHT} fill={t.back} opacity="0.5" />
+        <rect x="170" y="440" width="90" height={WALL_SHADE_HEIGHT} fill={t.back} opacity="0.25" />
         <path d={band} fill="none" stroke={r.edge} strokeWidth={BAND_WIDTH + 8} />
         <path d={band} fill="none" stroke={r.fill} strokeWidth={BAND_WIDTH} />
         <path
-          d={frontEdgePath({ dy: BAND_OFFSET - 14 })}
+          d={frontEdgePath({ dy: BAND_OFFSET - RAIL_GAP })}
           fill="none"
           stroke={GOLD}
           strokeWidth="2.5"
           opacity="0.9"
         />
         <path
-          d={frontEdgePath({ dy: BAND_OFFSET + 14 })}
+          d={frontEdgePath({ dy: BAND_OFFSET + RAIL_GAP })}
           fill="none"
           stroke={GOLD}
           strokeWidth="2.5"
@@ -59,7 +62,7 @@ export function HeartBoxFront({ wrapper, ribbon }: PackagingIllustrationProps) {
           {...ROUND}
         />
         <path
-          d={frontEdgePath({ dy: 24 })}
+          d={frontEdgePath({ dy: HIGHLIGHT_DY })}
           fill="none"
           stroke="#fff"
           strokeWidth="9"

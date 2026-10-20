@@ -10,9 +10,19 @@ const TILT = -24;
 const TILT_RAD = (TILT * Math.PI) / 180;
 
 const deg = (d: number) => (d * Math.PI) / 180;
+const TILT_TRANSFORM = `rotate(${TILT} ${CX} ${CY})`;
+const BACK_ANGLES = [215, 325];
+const FRONT_ANGLES = [40, 90, 140];
+const CLASP_ANGLE = 262;
+const BACK_CHARM_SIZE = 0.72;
+const FRONT_CHARM_SIZE = 1.0;
+const CENTRE_CHARM_SIZE = 1.2;
+const CLASP_SCALE = 1.35;
+const LOBE_ROTATIONS = [0, 90, 180, 270];
 
 /** A point on the tilted chain loop at angle `t` (radians; positive sin is the near side). */
-function onLoop(t: number): { x: number; y: number } {
+function onLoop(angle: number): { x: number; y: number } {
+  const t = deg(angle);
   const x = RX * Math.cos(t);
   const y = RY * Math.sin(t);
   return {
@@ -46,7 +56,7 @@ function Clover({
     <g transform={`translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${size})`} data-charm="clover">
       <circle cy="-2" r="2.4" fill="none" stroke={GOLD_DARK} strokeWidth="1.4" />
       <g transform="translate(0 4)">
-        {[0, 90, 180, 270].map((a) => (
+        {LOBE_ROTATIONS.map((a) => (
           <path
             key={a}
             d={LOBE}
@@ -74,13 +84,13 @@ function Clover({
 /** A tilted gold chain bracelet seen three-quarter, with four-leaf clover charms and a lobster clasp. */
 export function BraceletIllustration({ color }: ItemIllustrationProps) {
   const p = itemPalette(color);
-  const back = [deg(215), deg(325)].map(onLoop);
-  const front = [deg(40), deg(90), deg(140)].map(onLoop);
-  const clasp = onLoop(deg(262));
+  const back = BACK_ANGLES.map(onLoop);
+  const front = FRONT_ANGLES.map(onLoop);
+  const clasp = onLoop(CLASP_ANGLE);
   const colors = { fill: p.fill, dark: p.dark, shine: p.shine };
   return (
     <ItemFrame shape="bracelet" fit={[1.2, 0, -8]}>
-      <g transform={`rotate(${TILT} ${CX} ${CY})`}>
+      <g transform={TILT_TRANSFORM}>
         <ellipse
           cx={CX}
           cy={CY + 7}
@@ -93,9 +103,9 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         />
       </g>
       {back.map((b, i) => (
-        <Clover key={i} x={b.x} y={b.y} size={0.72} {...colors} />
+        <Clover key={i} x={b.x} y={b.y} size={BACK_CHARM_SIZE} {...colors} />
       ))}
-      <g transform={`rotate(${TILT} ${CX} ${CY})`}>
+      <g transform={TILT_TRANSFORM}>
         <path d={LOOP} fill="none" stroke={GOLD_DARK} strokeWidth="10" {...ROUND} />
         <path
           d={LOOP}
@@ -116,7 +126,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         />
       </g>
       <g
-        transform={`translate(${clasp.x.toFixed(2)} ${clasp.y.toFixed(2)}) rotate(${TILT}) scale(1.35)`}
+        transform={`translate(${clasp.x.toFixed(2)} ${clasp.y.toFixed(2)}) rotate(${TILT}) scale(${CLASP_SCALE})`}
         data-clasp="lobster"
       >
         <path d={CLASP} fill="none" stroke={GOLD_DARK} strokeWidth="4.6" {...ROUND} />
@@ -124,7 +134,7 @@ export function BraceletIllustration({ color }: ItemIllustrationProps) {
         <circle cx="-9" cy="3" r="1.8" fill={GOLD_LIGHT} stroke={GOLD_DARK} strokeWidth="1" />
       </g>
       {front.map((f, i) => (
-        <Clover key={i} x={f.x} y={f.y} size={i === 1 ? 1.2 : 1.0} {...colors} />
+        <Clover key={i} x={f.x} y={f.y} size={i === 1 ? CENTRE_CHARM_SIZE : FRONT_CHARM_SIZE} {...colors} />
       ))}
     </ItemFrame>
   );
