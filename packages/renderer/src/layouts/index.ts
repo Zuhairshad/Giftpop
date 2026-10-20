@@ -1,3 +1,4 @@
+import { balloonGift } from "./balloon-gift";
 import { basket } from "./basket";
 import { bouquetFan } from "./bouquet-fan";
 import { boxGrid } from "./box-grid";
@@ -19,6 +20,7 @@ export const LAYOUTS = {
   "heart-box": heartBox,
   "mug-bouquet": mugBouquet,
   basket,
+  "balloon-gift": balloonGift,
 } as const satisfies Record<string, LayoutFn>;
 
 export type KnownLayoutType = keyof typeof LAYOUTS;

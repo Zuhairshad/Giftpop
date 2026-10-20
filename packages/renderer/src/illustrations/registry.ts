@@ -18,6 +18,7 @@ import { NecklaceIllustration } from "./items/necklace";
 import { OtherIllustration } from "./items/other";
 import { PerfumeIllustration } from "./items/perfume";
 import { SoftToyIllustration } from "./items/soft-toy";
+import { BalloonGiftIllustration } from "./packaging/balloon-gift";
 import { BasketIllustration } from "./packaging/basket";
 import { BouquetFanIllustration } from "./packaging/bouquet-fan";
 import { BoxGridIllustration } from "./packaging/box-grid";
@@ -63,4 +64,5 @@ export const PACKAGING_ILLUSTRATIONS: Readonly<Record<string, PackagingIllustrat
     "heart-box": HeartBoxIllustration,
     "mug-bouquet": MugBouquetIllustration,
     basket: BasketIllustration,
+    "balloon-gift": BalloonGiftIllustration,
   };

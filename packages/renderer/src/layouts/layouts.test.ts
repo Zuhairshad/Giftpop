@@ -116,6 +116,7 @@ describe("registry", () => {
 
   it("includes every packaging layout", () => {
     expect([...LAYOUT_TYPES].sort()).toEqual([
+      "balloon-gift",
       "basket",
       "bouquet-fan",
       "box-grid",
