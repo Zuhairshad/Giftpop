@@ -75,7 +75,7 @@ describe("buildShareMetadata", () => {
     const view = makeSharedView({
       design: {
         ...base.design,
-        personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+        personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
       },
     });
     const meta = buildShareMetadata(view);

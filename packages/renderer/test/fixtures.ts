@@ -59,6 +59,6 @@ export function makeDesign(itemCount: number, seed = 1, qtyEach = 1): Design {
     wrapperColor: "#c8a97e",
     ribbonColor: "#c0392b",
     arrangementSeed: seed,
-    personalisation: { cardMessage: "", recipientName: "", itemNames: {} },
+    personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
   };
 }

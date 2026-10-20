@@ -2,6 +2,7 @@ import { snapshotsToSceneDocs } from "@giftpop/contracts";
 import type { PublicOrderView } from "@giftpop/contracts";
 import type { ReactElement } from "react";
 
+import { visibleCustomRequest } from "./gift-request";
 import { ItemList } from "./item-list";
 import { CARD, CARD_TITLE, META_LABEL, WELL } from "./ui";
 
@@ -18,6 +19,7 @@ export function GiftPanel({
   const { cardMessage, recipientName, itemNames } = view.design.personalisation;
   const recipient = recipientName.trim();
   const message = cardMessage.trim();
+  const request = visibleCustomRequest(view.design.personalisation.customRequest);
   const rows = view.items.map((item) => ({
     key: item.itemId,
     name: item.name,
@@ -37,7 +39,7 @@ export function GiftPanel({
         </div>
       </div>
       <ItemList rows={rows} />
-      {recipient || message ? (
+      {recipient || message || request ? (
         <dl className="border-border space-y-3 border-t pt-4">
           {recipient ? (
             <div>
@@ -49,6 +51,12 @@ export function GiftPanel({
             <div>
               <dt className={META_LABEL}>Card message</dt>
               <dd className="wrap-anywhere whitespace-pre-line">{message}</dd>
+            </div>
+          ) : null}
+          {request ? (
+            <div>
+              <dt className={META_LABEL}>Your request</dt>
+              <dd className="wrap-anywhere whitespace-pre-line">{request}</dd>
             </div>
           ) : null}
         </dl>
