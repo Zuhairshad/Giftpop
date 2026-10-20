@@ -29,6 +29,14 @@ test("a customer's own request is saved with the order and shown on the order pa
   expect(number).toMatch(/^GP-PK-/);
 
   await expect(page.getByRole("heading", { name: "Your order", level: 1 })).toBeVisible();
-  await expect(page.getByText("Your request", { exact: true })).toBeVisible();
+  // Lookups are limited to 10 per minute per IP and earlier flows used them: wait out the minute.
+  const limited = page.getByText("Too many tries");
+  const request = page.getByText("Your request", { exact: true });
+  await expect(request.or(limited)).toBeVisible();
+  if (await limited.isVisible()) {
+    await page.waitForTimeout(61_000);
+    await page.getByRole("button", { name: "Try again" }).click();
+  }
+  await expect(request).toBeVisible();
   await expect(page.getByText(CUSTOM_REQUEST)).toBeVisible();
 });
