@@ -1,9 +1,11 @@
 import {
+  LookupOrdersRequestSchema,
+  LookupOrdersResponseSchema,
   OrderNumberSchema,
   PublicOrderViewSchema,
   TrackOrderRequestSchema,
 } from "@giftpop/contracts";
-import type { PublicOrderView, TrackOrderRequest } from "@giftpop/contracts";
+import type { LookupOrdersRequest, PublicOrderView, TrackOrderRequest } from "@giftpop/contracts";
 
 import { ApiError, ApiNetworkError, apiRequest } from "@/lib/api";
 
@@ -55,4 +57,23 @@ export function describeLookupError(error: unknown): LookupFailure {
   }
   if (error instanceof ApiNetworkError) return { kind: "network", message: error.message };
   return { kind: "other", message: "Something went wrong on our side. Try again in a moment." };
+}
+
+export const FORGOT_CONTACT_ERROR = "Enter the phone number or email you used to order.";
+
+export function parseForgotInput(
+  contact: string,
+): { ok: true; value: LookupOrdersRequest } | { ok: false; error: string } {
+  const parsed = LookupOrdersRequestSchema.safeParse({ contact });
+  return parsed.success
+    ? { ok: true, value: parsed.data }
+    : { ok: false, error: FORGOT_CONTACT_ERROR };
+}
+
+/** Asks the API to email the order numbers. It answers the same whether or not orders exist. */
+export function requestOrderLinks(request: LookupOrdersRequest): Promise<void> {
+  return apiRequest("/orders/lookup", LookupOrdersResponseSchema, {
+    method: "POST",
+    body: request,
+  }).then(() => undefined);
 }

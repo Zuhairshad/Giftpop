@@ -2,12 +2,16 @@ import { z } from "zod";
 
 import { IsoDateTimeSchema, ObjectIdSchema } from "./common";
 
-/** `staff_alert` goes to the team (for example a new partner request) and belongs to no order. */
+/**
+ * `staff_alert` goes to the team (for example a new partner request) and belongs to no order.
+ * `order_lookup` is the "forgot your order number" email: it lists the customer's order numbers.
+ */
 export const NOTIFICATION_TYPES = [
   "order_created",
   "payment_recorded",
   "status_changed",
   "staff_alert",
+  "order_lookup",
 ] as const;
 export const NotificationTypeSchema = z.enum(NOTIFICATION_TYPES);
 export type NotificationType = z.infer<typeof NotificationTypeSchema>;

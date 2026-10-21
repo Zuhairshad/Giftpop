@@ -180,6 +180,15 @@ export const TrackOrderRequestSchema = z.object({
 });
 export type TrackOrderRequest = z.infer<typeof TrackOrderRequestSchema>;
 
+/** "Forgot your order number?": the phone or email used to order. The answer never says whether orders exist. */
+export const LookupOrdersRequestSchema = z.object({
+  contact: z.string().trim().min(3).max(200),
+});
+export type LookupOrdersRequest = z.infer<typeof LookupOrdersRequestSchema>;
+
+export const LookupOrdersResponseSchema = z.object({ ok: z.literal(true) });
+export type LookupOrdersResponse = z.infer<typeof LookupOrdersResponseSchema>;
+
 /** The customer-facing view: no staff notes, no actor ids. */
 export const PublicTrackingViewSchema = z.object({
   number: OrderNumberSchema,

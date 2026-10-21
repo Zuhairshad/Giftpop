@@ -164,7 +164,7 @@ function statusChanged(
 
 /** Pure: builds the customer message from the order's customer-facing fields and the payload. */
 export function renderNotification(
-  type: Exclude<NotificationType, "staff_alert">,
+  type: Exclude<NotificationType, "staff_alert" | "order_lookup">,
   order: TemplateOrder,
   payload: Record<string, unknown>,
   options: TemplateOptions,
@@ -177,4 +177,18 @@ export function renderNotification(
     case "status_changed":
       return statusChanged(order, payload, options);
   }
+}
+
+/** The "forgot your order number" email: each order number with a link that opens the tracking form. */
+export function renderOrderLookup(numbers: string[], options: TemplateOptions): RenderedMessage {
+  const base = options.trackBaseUrl.replace(/\/+$/, "");
+  const lines = [
+    "You asked for your Giftpop order numbers. Here they are:",
+    "",
+    ...numbers.map((number) => `${number}: ${base}/track?number=${encodeURIComponent(number)}`),
+    "",
+    "Open a link and enter the phone number or email you used to order.",
+    "If you did not ask for this, you can ignore this email.",
+  ];
+  return { subject: "Your Giftpop order numbers", text: lines.join("\n") };
 }
