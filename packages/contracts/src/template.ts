@@ -56,8 +56,11 @@ export type CreateTemplateRequest = z.infer<typeof CreateTemplateRequestSchema>;
 export const UpdateTemplateRequestSchema = CreateTemplateRequestSchema.omit({ shareId: true })
   .extend({ active: z.boolean() })
   .partial()
-  // Redeclared without defaults so that leaving them out of an update changes nothing.
+  // `.partial()` keeps the inner defaults, so these are redeclared without them: leaving a field out
+  // of an update must change nothing (a one-field PATCH used to reset description and sortOrder).
   .extend({
+    description: CreateTemplateRequestSchema.shape.description.unwrap().optional(),
+    sortOrder: z.number().int().optional(),
     category: TemplateCategorySchema.nullable().optional(),
     featured: z.boolean().optional(),
   });

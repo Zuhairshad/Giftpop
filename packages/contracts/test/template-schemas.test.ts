@@ -45,6 +45,10 @@ describe("UpdateTemplateRequestSchema", () => {
     expect("category" in parsed).toBe(false);
     expect("featured" in parsed).toBe(false);
   });
+  it("leaves description and sortOrder out too, so a one-field update does not reset them", () => {
+    const parsed = UpdateTemplateRequestSchema.parse({ active: false });
+    expect(parsed).toEqual({ active: false });
+  });
   it("lets staff clear the category with null", () => {
     expect(UpdateTemplateRequestSchema.parse({ category: null }).category).toBeNull();
   });
