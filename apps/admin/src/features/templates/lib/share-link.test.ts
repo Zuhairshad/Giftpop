@@ -1,6 +1,22 @@
 import { describe, expect, it } from "vitest";
 
-import { extractShareId } from "./share-link";
+import { extractShareId, readShareInput } from "./share-link";
+
+describe("readShareInput", () => {
+  it("says what it understood", () => {
+    expect(readShareInput("")).toEqual({ kind: "empty", shareId: null });
+    expect(readShareInput("  ")).toEqual({ kind: "empty", shareId: null });
+    expect(readShareInput("abc123XYZ_")).toEqual({ kind: "id", shareId: "abc123XYZ_" });
+    expect(readShareInput(" https://shop.test/g/abc123XYZ_ ")).toEqual({
+      kind: "link",
+      shareId: "abc123XYZ_",
+    });
+    expect(readShareInput("https://shop.test/pk/build")).toEqual({
+      kind: "unreadable",
+      shareId: null,
+    });
+  });
+});
 
 describe("extractShareId", () => {
   it("accepts a bare id", () => {

@@ -7,6 +7,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { createTemplate, updateTemplate } from "../api/client";
+import { categoryOptions } from "../lib/category";
 import { countryChoices } from "../lib/countries";
 import { describeRejection, readTemplateRejection } from "../lib/problems";
 import {
@@ -19,7 +20,10 @@ import {
 } from "../lib/template-form";
 import type { TemplateFormValues } from "../lib/template-form";
 
+import { CategoryField } from "./category-field";
 import { CountryCheckboxes } from "./country-checkboxes";
+import { ShareSourceField } from "./share-source-field";
+import type { CreateSource } from "./share-source-field";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,13 +38,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Field, FormAlert } from "@/features/catalog/components/field";
+import { Field, FormAlert, ToggleRow } from "@/features/catalog/components/field";
 import { readApiError } from "@/features/catalog/lib/api-errors";
 import { isApiError } from "@/lib/api";
 
 interface TemplateDialogProps {
-  /** The template to edit, or null to create one from a share link. */
+  /** The template to edit, or null to create one. */
   template: FeaturedTemplate | null;
+  /** Which way a new template is being made. Ignored when editing. */
+  source: CreateSource;
+  /** All templates, for the categories already in use. */
+  templates: readonly FeaturedTemplate[];
+  /** Where the shop's builder lives, when known. */
+  builderUrl?: string | undefined;
   open: boolean;
   countries: readonly Country[];
   onOpenChange: (open: boolean) => void;
@@ -50,6 +60,9 @@ interface TemplateDialogProps {
 /** Remounts its form each time it opens, so a cancelled edit never lingers. */
 export function TemplateDialog({
   template,
+  source,
+  templates,
+  builderUrl,
   open,
   countries,
   onOpenChange,
@@ -61,6 +74,9 @@ export function TemplateDialog({
         {open ? (
           <TemplateForm
             template={template}
+            source={source}
+            templates={templates}
+            builderUrl={builderUrl}
             countries={countries}
             onDone={() => onOpenChange(false)}
             onSaved={onSaved}
@@ -73,11 +89,17 @@ export function TemplateDialog({
 
 function TemplateForm({
   template,
+  source,
+  templates,
+  builderUrl,
   countries,
   onDone,
   onSaved,
 }: {
   template: FeaturedTemplate | null;
+  source: CreateSource;
+  templates: readonly FeaturedTemplate[];
+  builderUrl: string | undefined;
   countries: readonly Country[];
   onDone: () => void;
   onSaved: (template: FeaturedTemplate) => void;
@@ -89,6 +111,7 @@ function TemplateForm({
   const [saveError, setSaveError] = useState<string>();
   const { isSubmitting, errors } = form.formState;
   const selectedCountries = useWatch({ control: form.control, name: "countries" });
+  const shareLink = useWatch({ control: form.control, name: "shareLink" });
   const countryName = (code: string) => countries.find((c) => c.code === code)?.name ?? code;
 
   async function onSubmit(values: TemplateFormValues) {
@@ -110,33 +133,45 @@ function TemplateForm({
   }
 
   const choices = countryChoices(countries, selectedCountries);
+  const categories = categoryOptions(templates, template?.category ?? null);
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="grid grid-cols-1 gap-4">
       <DialogHeader>
-        <DialogTitle>{template ? "Edit template" : "Create from share link"}</DialogTitle>
+        <DialogTitle>
+          {template
+            ? "Edit template"
+            : source === "builder"
+              ? "Create from a gift I built"
+              : "Create from share link"}
+        </DialogTitle>
         <DialogDescription>
           {template
             ? "The design stays as it was saved. Change how it is listed."
-            : "Save a gift in the builder, copy its share link, and paste it here."}
+            : source === "builder"
+              ? "Build the gift in the shop, share it there, then come back with the link."
+              : "Save a gift in the builder, copy its share link, and paste it here."}
         </DialogDescription>
       </DialogHeader>
 
-      <Field
-        label="Share link or share id"
-        error={errors.shareLink?.message}
-        hint={template ? "The design cannot be changed after creating the template." : undefined}
-      >
-        {(control) => (
-          <Input
-            {...control}
-            autoComplete="off"
-            placeholder="https://…/g/abc123XYZ_"
-            disabled={template !== null}
-            {...form.register("shareLink")}
-          />
-        )}
-      </Field>
+      {template ? (
+        <Field
+          label="Share link or share id"
+          hint="The design cannot be changed after creating the template."
+        >
+          {(control) => (
+            <Input {...control} autoComplete="off" disabled {...form.register("shareLink")} />
+          )}
+        </Field>
+      ) : (
+        <ShareSourceField
+          source={source}
+          builderUrl={builderUrl}
+          value={shareLink}
+          error={errors.shareLink?.message}
+          registration={form.register("shareLink")}
+        />
+      )}
       <Field label="Title" error={errors.title?.message}>
         {(control) => <Input {...control} maxLength={80} {...form.register("title")} />}
       </Field>
@@ -157,10 +192,34 @@ function TemplateForm({
           />
         )}
       />
+      <Controller
+        control={form.control}
+        name="category"
+        render={({ field }) => (
+          <CategoryField
+            value={field.value}
+            options={categories}
+            onChange={field.onChange}
+            error={errors.category?.message ?? errors.category?.slug?.message}
+          />
+        )}
+      />
+      <Controller
+        control={form.control}
+        name="featured"
+        render={({ field }) => (
+          <ToggleRow
+            label="Featured gift"
+            description="Shown first on the ready-made gifts page for the countries it is listed in."
+          >
+            {({ id }) => <Switch id={id} checked={field.value} onCheckedChange={field.onChange} />}
+          </ToggleRow>
+        )}
+      />
       <Field
         label="Sort order"
         error={errors.sortOrder?.message}
-        hint="Lower numbers show first on the home page."
+        hint="Lower numbers show first."
         className="sm:w-40"
       >
         {(control) => (
@@ -180,7 +239,7 @@ function TemplateForm({
           render={({ field }) => (
             <div className="flex items-center gap-3">
               <Switch id="template-active" checked={field.value} onCheckedChange={field.onChange} />
-              <Label htmlFor="template-active">Show on the home page</Label>
+              <Label htmlFor="template-active">Show to customers</Label>
             </div>
           )}
         />

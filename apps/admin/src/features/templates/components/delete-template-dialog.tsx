@@ -72,8 +72,8 @@ function DeleteBody({
       <DialogHeader>
         <DialogTitle>Remove this template?</DialogTitle>
         <DialogDescription className="wrap-anywhere">
-          &ldquo;{template.title}&rdquo; will leave the home page. The saved design and its share
-          link keep working.
+          &ldquo;{template.title}&rdquo; will no longer be shown to customers. The saved design and
+          its share link keep working.
         </DialogDescription>
       </DialogHeader>
       <FormAlert message={error} />

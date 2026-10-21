@@ -1,8 +1,14 @@
-import { CountrySchema, FeaturedTemplateSchema, SharedDesignViewSchema } from "@giftpop/contracts";
+import {
+  CountrySchema,
+  FeaturedTemplateSchema,
+  PublicTemplateSchema,
+  SharedDesignViewSchema,
+} from "@giftpop/contracts";
 import type {
   Country,
   CreateTemplateRequest,
   FeaturedTemplate,
+  PublicTemplate,
   SharedDesignView,
   UpdateTemplateRequest,
 } from "@giftpop/contracts";
@@ -41,4 +47,19 @@ export function loadSharedDesign(shareId: string, signal?: AbortSignal): Promise
   return apiFetch(`/designs/${encodeURIComponent(shareId)}`, SharedDesignViewSchema, {
     ...(signal ? { signal } : {}),
   });
+}
+
+/**
+ * What customers see in one country: the public list, with the price the API computed.
+ * `no-cache` so the browser checks with the server instead of using its 60 second copy.
+ */
+export function listPublicTemplates(
+  countryCode: string,
+  signal?: AbortSignal,
+): Promise<PublicTemplate[]> {
+  return apiFetch(
+    `/templates?country=${encodeURIComponent(countryCode)}`,
+    z.array(PublicTemplateSchema),
+    { headers: { "Cache-Control": "no-cache" }, ...(signal ? { signal } : {}) },
+  );
 }
