@@ -224,7 +224,7 @@ test("staff see the frozen gift and the same total in the admin app", async ({ p
     .getByText("Total", { exact: true })
     .locator("xpath=following-sibling::dd[1]");
   expect(usdToMinor(await total.innerText()), "admin total equals the card price").toBe(cardMinor);
-  await expect(payment.getByText("Cash on delivery").first()).toBeVisible();
+  await expect(payment.getByText("Advance now, rest on delivery").first()).toBeVisible();
 });
 
 test.describe("no horizontal overflow on the gifts page", () => {
