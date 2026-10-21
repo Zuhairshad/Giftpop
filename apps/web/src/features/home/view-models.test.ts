@@ -1,7 +1,7 @@
 import { PublicTemplateSchema, type PublicTemplate } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
-import { countryPath, templateCards } from "./view-models";
+import { countryPath, giftsHrefFromBuild, giftsPath, templateCards } from "./view-models";
 
 const ID_A = "a".repeat(24);
 
@@ -56,14 +56,39 @@ describe("countryPath", () => {
 });
 
 describe("templateCards", () => {
-  it("links to the builder with the share id and carries no price", () => {
+  it("links to the builder with the share id", () => {
     const [card] = templateCards([template("PK")], "PK");
     expect(card?.href).toBe("/pk/build?from=abcDEF12_-");
     expect(card?.title).toBe("Birthday joy");
-    expect(Object.keys(card ?? {}).join(",")).not.toMatch(/price|quote|currency/i);
+  });
+
+  it("carries the API's price and currency through unchanged", () => {
+    const [card] = templateCards([template("PK", { priceMinor: 450050 })], "PK");
+    expect(card?.priceMinor).toBe(450050);
+    expect(card?.currency).toBe("PKR");
+    const [free] = templateCards([template("PK", { priceMinor: 0, currency: "USD" })], "PK");
+    expect(free?.priceMinor).toBe(0);
+    expect(free?.currency).toBe("USD");
   });
 
   it("drops templates for another country", () => {
     expect(templateCards([template("US")], "PK")).toEqual([]);
+  });
+});
+
+describe("giftsPath", () => {
+  it("lower-cases the country code", () => {
+    expect(giftsPath("PK")).toBe("/pk/gifts");
+  });
+});
+
+describe("giftsHrefFromBuild", () => {
+  it("maps a country's builder link to its catalog", () => {
+    expect(giftsHrefFromBuild("/gb/build")).toBe("/gb/gifts");
+  });
+
+  it("is null before a country is chosen", () => {
+    expect(giftsHrefFromBuild("/countries")).toBeNull();
+    expect(giftsHrefFromBuild("/pk/build/review")).toBeNull();
   });
 });

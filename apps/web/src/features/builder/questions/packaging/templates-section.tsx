@@ -2,15 +2,17 @@ import type { CountryCode } from "@giftpop/contracts";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
+import { priceLabel } from "../price-label";
 import { SafeScene } from "../safe-scene";
 
-import { templateLinkLabel, templateStartHref } from "./template-href";
+import { TemplateStartLink } from "./template-start-link";
 
-import type { TemplateCardModel } from "@/features/home/view-models";
+import { giftsPath, type TemplateCardModel } from "@/features/home/view-models";
 
 /**
  * "Start from a ready-made gift": the featured templates for this country, each opening the
- * builder pre-filled. Shows nothing when there are none. No price: it comes from a quote.
+ * builder pre-filled, with the price the API worked out for it (shown, never sent back), and a
+ * link to the full catalog. Shows nothing when there are none.
  */
 export function TemplatesSection({
   country,
@@ -22,10 +24,18 @@ export function TemplatesSection({
   if (templates.length === 0) return null;
   return (
     <section aria-labelledby="builder-templates-heading" className="mt-6">
-      <h3 id="builder-templates-heading" className="text-foreground text-base font-semibold">
-        Start from a ready-made gift
-      </h3>
-      <ul className="mt-2 grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+        <h3 id="builder-templates-heading" className="text-foreground text-base font-semibold">
+          Start from a ready-made gift
+        </h3>
+        <Link
+          href={giftsPath(country)}
+          className="text-pink-strong inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4"
+        >
+          See all ready-made gifts
+        </Link>
+      </div>
+      <ul className="grid grid-cols-1 gap-2 min-[560px]:grid-cols-2">
         {templates.map((card) => (
           <li key={card.id} className="bg-surface rounded-md shadow-hairline flex gap-3 p-2">
             <div
@@ -49,15 +59,10 @@ export function TemplatesSection({
                   {card.description}
                 </p>
               ) : null}
-              <Link
-                href={templateStartHref(country, card.href)}
-                // Starts with the visible text so voice control matches it; an sr-only span would
-                // make Chrome add a space ("Start from this : ...").
-                aria-label={templateLinkLabel(card.title)}
-                className="text-pink-strong mt-auto inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4"
-              >
-                Start from this
-              </Link>
+              <p className="text-foreground text-sm font-semibold">
+                {priceLabel(card.priceMinor, card.currency)}
+              </p>
+              <TemplateStartLink country={country} cardHref={card.href} title={card.title} />
             </div>
           </li>
         ))}

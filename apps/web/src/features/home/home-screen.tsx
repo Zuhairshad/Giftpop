@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { HeroStage } from "./hero3d";
 import { HOME_EYEBROW, HOME_HEADLINE, HOME_LEDE } from "./home-copy";
+import { giftsHrefFromBuild } from "./view-models";
 
 import { ButtonLink } from "@/components/ui";
 
@@ -17,6 +18,10 @@ type HomeScreenProps = {
 const HIDE_EYEBROW = "[@media(max-height:700px)]:hidden";
 const HIDE_LEDE = "[@media(max-height:620px)]:hidden";
 const HIDE_TICKS = "[@media(max-height:600px)]:hidden";
+
+// A quiet second way on, dropped on short screens so the scene and the primary button keep the room.
+const QUIET_LINK =
+  "text-muted hover:text-foreground inline-flex min-h-11 items-center justify-center rounded-md px-3 text-sm font-semibold underline underline-offset-4 [@media(max-height:640px)]:hidden";
 
 function CheckIcon() {
   return (
@@ -60,6 +65,8 @@ function ArrowIcon() {
  * Server-rendered; the scene is `HeroStage`, which loads its own client code.
  */
 export function HomeScreen({ ticks, buildHref, chooseCountryHref }: HomeScreenProps) {
+  // Only a country's own home links on to its ready-made gifts; `/` has no country yet.
+  const giftsHref = giftsHrefFromBuild(buildHref);
   return (
     <div data-viewport-fit="home" className="relative isolate h-full min-h-0 overflow-hidden">
       {/* Feathered pink and lavender light pools (globals.css), centred on the scene. */}
@@ -108,11 +115,13 @@ export function HomeScreen({ ticks, buildHref, chooseCountryHref }: HomeScreenPr
             <ArrowIcon />
           </ButtonLink>
           {chooseCountryHref ? (
-            <Link
-              href={chooseCountryHref}
-              className="text-muted hover:text-foreground inline-flex min-h-11 items-center justify-center rounded-md px-3 text-sm font-semibold underline underline-offset-4 [@media(max-height:640px)]:hidden"
-            >
+            <Link href={chooseCountryHref} className={QUIET_LINK}>
               Choose your country
+            </Link>
+          ) : null}
+          {giftsHref ? (
+            <Link href={giftsHref} className={QUIET_LINK}>
+              Browse ready-made gifts
             </Link>
           ) : null}
         </div>
