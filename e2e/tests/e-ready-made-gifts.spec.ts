@@ -41,7 +41,8 @@ async function openGifts(page: Page, query = ""): Promise<void> {
     await expect(
       page
         .getByRole("heading", { name: BIRTHDAY_GIFT.title })
-        .or(page.getByRole("heading", { name: THANK_YOU_GIFT.title })),
+        .or(page.getByRole("heading", { name: THANK_YOU_GIFT.title }))
+        .first(),
     ).toBeVisible({ timeout: 5_000 });
   }).toPass({ timeout: 120_000, intervals: [1_000, 5_000, 10_000] });
 }
@@ -84,10 +85,11 @@ test("the ready-made gifts page lists each gift with picture, contents and price
   for (const gift of [birthday, thankYou]) {
     const card = giftCard(page, gift.title);
     await expect(card).toBeVisible();
-    await expect(card.getByRole("img").first()).toBeVisible();
+    // The picture is decorative (aria-hidden: the title next to it names the gift), so look for the drawing.
+    await expect(card.locator("svg").first()).toBeVisible();
     await expect(card.getByText("What is inside")).toBeVisible();
     for (const name of gift.itemSummary.names) {
-      await expect(card.getByText(name, { exact: false }).first()).toBeVisible();
+      await expect(card.getByRole("listitem").filter({ hasText: name }).first()).toBeVisible();
     }
     if (gift.itemSummary.moreCount > 0) {
       await expect(card.getByText(`+${gift.itemSummary.moreCount} more`)).toBeVisible();
@@ -158,7 +160,8 @@ test("a customer orders a ready-made gift at the price on its card", async ({ pa
 
   // The button opens the builder's review step, pre-filled with the gift.
   await orderButton(card).click();
-  await expect(page).toHaveURL(/\/us\/build\/review/);
+  // The builder keeps its question in state, so the URL stays /us/build while it shows the review question.
+  await expect(page).toHaveURL(/\/us\/build(\?|$)/);
   await expect(page.getByRole("heading", { name: "Your gift is ready", level: 2 })).toBeVisible();
 
   // Server owns money: an untouched gift costs what its card said.
@@ -253,7 +256,7 @@ test.describe("screenshots of the gifts page", () => {
     test(`gifts page at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await openGifts(page);
-      await expect(page.getByRole("img").first()).toBeVisible();
+      await expect(page.locator("article svg").first()).toBeVisible();
       // Park the mouse off every control (a hover state would look like a pressed button) and let
       // fonts and any motion settle before looking at pixels.
       await page.mouse.move(width - 2, Math.floor(height / 2));
