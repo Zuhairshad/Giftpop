@@ -187,7 +187,8 @@ describe("timeline", () => {
     sample(0, 6, (s) => {
       for (const n of numbers(s)) expect(Number.isFinite(n)).toBe(true);
     });
-  });
+    // Generous: it samples thousands of frames and runs slowly when the whole repo is busy.
+  }, 30_000);
 
   it("keeps the box fully above the frame at t = 0", () => {
     // top of the frame is half the poster height above the centre

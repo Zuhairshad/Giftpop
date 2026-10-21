@@ -28,6 +28,8 @@ describe("template form mapping", () => {
       shareId: "abc123XYZ_",
       countries: ["PK", "AE"],
       sortOrder: 2,
+      category: null,
+      featured: false,
     });
   });
   it("throws when the link is unreadable", () => {

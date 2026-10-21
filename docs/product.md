@@ -99,3 +99,15 @@ Staff move each request through `new`, `in_talks`, `accepted`, `declined`, with 
 ## Featured templates
 
 Staff can mark a saved design as a featured template with a title and a country list. The builder's first question shows templates for the customer's country; "Start from this" opens the builder pre-filled on the review question.
+
+## Ready-made gifts
+
+A browsable catalog of finished gifts at `/<cc>/gifts`, for customers who do not want to build. It lists the featured templates for the country (active, listed for it, and sellable there today, as in "Featured templates").
+
+- **Card.** The gift's picture, title, "What is inside" (up to 4 item names, then "+N more"), the price in the country's currency, and one primary button. The price is the total of the quote for the country's first payment mode, from catalog prices only, computed by the API; the browser never sends or computes it. Shipping follows the country's rules, so a gift over the free-shipping line shows no shipping.
+- **Categories.** An occasion (birthday, anniversary, graduation, thank you, get well) with a slug and a name, stored on each template. They are data, not an enum: the filter chips on the page are the categories of the templates that are live in that country, each a real link (`/<cc>/gifts?category=<slug>`). A template with no category appears only under "All".
+- **Featured.** A staff flag that puts a gift first on the page; otherwise the order is `sortOrder`, then title.
+- **Ordering one.** The button opens the builder's review step pre-filled, where the customer adds the recipient and card message and can still change items; "Order this gift" is the primary button there and the price follows the live quote. Text fields (name on a mug, card message) arrive empty and are required at checkout.
+- **Frozen.** An order stores the design, item snapshots and quote at the time, so later edits to a template never change an old order.
+- **Staff.** Create from a share link or from a gift built in the builder, choose category and featured, reorder, hide, and see the live price per listed country.
+

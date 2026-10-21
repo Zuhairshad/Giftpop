@@ -173,7 +173,8 @@ export const PACKAGINGS: Packaging[] = [
     id: FRAMED_GIFT_ID,
     slug: "framed-gift",
     name: "Framed gift",
-    description: "A framed keepsake with your gifts hung inside like a gallery wall. Pick 3 to 6 items.",
+    description:
+      "A framed keepsake with your gifts hung inside like a gallery wall. Pick 3 to 6 items.",
     kind: "box",
     layoutType: "framed-gift",
     minItems: 3,
@@ -223,7 +224,8 @@ export const PACKAGINGS: Packaging[] = [
     id: PHOTO_BOUQUET_ID,
     slug: "photo-bouquet",
     name: "Photo bouquet",
-    description: "A hand-tied bouquet of gifts on stems, wrapped in a paper cone. Pick 5 to 8 items.",
+    description:
+      "A hand-tied bouquet of gifts on stems, wrapped in a paper cone. Pick 5 to 8 items.",
     kind: "bouquet",
     layoutType: "photo-bouquet",
     minItems: 5,

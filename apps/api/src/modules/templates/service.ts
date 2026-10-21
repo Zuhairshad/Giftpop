@@ -28,6 +28,8 @@ function toFeatured(doc: TemplateDoc): FeaturedTemplate {
     countries: doc.countries,
     active: doc.active,
     sortOrder: doc.sortOrder,
+    category: doc.category ?? null,
+    featured: doc.featured ?? false,
     createdAt: doc.createdAt.toISOString(),
   };
 }
@@ -96,6 +98,8 @@ export async function createTemplate(input: CreateTemplateRequest): Promise<Feat
     countries: [...new Set(input.countries)],
     active: true,
     sortOrder: input.sortOrder,
+    category: input.category,
+    featured: input.featured,
     createdAt: new Date(),
   });
   return toFeatured(created.toObject());
@@ -113,6 +117,8 @@ export async function updateTemplate(
   if (input.description !== undefined) set.description = input.description;
   if (input.sortOrder !== undefined) set.sortOrder = input.sortOrder;
   if (input.active !== undefined) set.active = input.active;
+  if (input.category !== undefined) set.category = input.category;
+  if (input.featured !== undefined) set.featured = input.featured;
   if (input.countries !== undefined) {
     await assertSellableIn(input.countries, parseStoredDesign(doc.design));
     set.countries = [...new Set(input.countries)];
@@ -168,6 +174,11 @@ export async function listPublicTemplates(country: CountryCode): Promise<PublicT
       design,
       packaging: packaging.packaging,
       items: [...items.values()],
+      category: doc.category ?? null,
+      featured: doc.featured ?? false,
+      // Step A stub: the api-templates agent computes the real price and summary.
+      priceMinor: 0,
+      itemSummary: { names: [], moreCount: 0 },
     });
   }
   return result;

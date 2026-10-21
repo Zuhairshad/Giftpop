@@ -1,7 +1,9 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
 import { HeaderCountryPicker, HeaderCountrySuggestion } from "@/features/country";
+import { COUNTRY_COOKIE, validCountryCode } from "@/features/country/cookie";
 
 const NAV_LINKS = [
   { href: "/track", label: "Track an order" },
@@ -13,7 +15,12 @@ const NAV_LINKS = [
  * 64px tall (56px on phones): logo left, country picker right. On phones "Track an order" and
  * "Partner with us" live in the footer bar so the header never crowds; from 768px they show here too.
  */
-export function SiteHeader() {
+export async function SiteHeader() {
+  // "Ready-made gifts" is a page of one country's catalog, so it shows once we know the visitor's country.
+  const country = validCountryCode((await cookies()).get(COUNTRY_COOKIE)?.value);
+  const links = country
+    ? [{ href: `/${country.toLowerCase()}/gifts`, label: "Ready-made gifts" }, ...NAV_LINKS]
+    : NAV_LINKS;
   return (
     <>
       {/* In flow above the sticky header: it pushes the page down and scrolls away with it. */}
@@ -25,7 +32,7 @@ export function SiteHeader() {
           <div className="flex min-w-0 items-center gap-1">
             <nav aria-label="Main" className="hidden md:block">
               <ul className="flex items-center gap-1 text-sm font-medium">
-                {NAV_LINKS.map((link) => (
+                {links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}

@@ -41,6 +41,10 @@ function template(country: string, over: Record<string, unknown> = {}): PublicTe
     },
     packaging: packagingJson(ID_A),
     items: [],
+    category: { slug: "birthday", name: "Birthday" },
+    featured: false,
+    priceMinor: 450000,
+    itemSummary: { names: [], moreCount: 0 },
     ...over,
   });
 }
