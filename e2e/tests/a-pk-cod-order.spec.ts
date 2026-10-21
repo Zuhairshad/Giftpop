@@ -23,7 +23,8 @@ test("a customer in Pakistan builds a gift and orders it with cash on delivery",
   await page.getByRole("link", { name: "Build your gift" }).click();
   await page.getByRole("link", { name: /Shop in Pakistan/ }).click();
   await expect(page).toHaveURL(/\/pk$/);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Pakistan");
+  // The home heading no longer names the country; the header's country button does.
+  await expect(page.getByRole("button", { name: /Country: Pakistan/ })).toBeVisible();
   await page.getByRole("link", { name: "Build your gift" }).click();
   await expect(page).toHaveURL(/\/pk\/build/);
 

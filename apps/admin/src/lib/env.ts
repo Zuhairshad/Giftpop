@@ -21,3 +21,18 @@ export function parseServerEnv(source: Record<string, string | undefined> = proc
 export function getApiUrl(source: Record<string, string | undefined> = process.env): string {
   return parseServerEnv(source).API_URL.replace(/\/+$/, "");
 }
+
+/**
+ * The public address of the shop, so staff can open it from the admin (for example to build a
+ * gift to feature). Blank means unset: the admin then shows the steps without a link. A value that
+ * is not an http(s) URL is a config error. Server-side only; the origin has no trailing slash.
+ */
+export function getWebOrigin(
+  source: Record<string, string | undefined> = process.env,
+): string | undefined {
+  const raw = source.WEB_ORIGIN?.trim();
+  if (!raw) return undefined;
+  const result = z.url({ protocol: /^https?$/ }).safeParse(raw);
+  if (!result.success) throw new Error("Invalid environment: WEB_ORIGIN must be an http(s) URL");
+  return new URL(result.data).origin;
+}

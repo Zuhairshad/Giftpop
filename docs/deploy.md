@@ -85,6 +85,7 @@ Parsed with zod in `apps/api/src/env.ts`; the process exits on bad config.
 | --------- | ------------------------------------------ | ------------------------ | ------- | -------------------------------------------------------------------- |
 | `API_URL` | Yes (the build fails without it; `http://localhost:4000` in development only) | `https://api.<tld>`      | No      | Same as web: build-time rewrite target and runtime server calls.     |
 | `PUBLIC_ASSET_BASE_URL` | Yes when items have images | `https://assets.<tld>` | No | Same as web. |
+| `WEB_ORIGIN` | No | `https://giftpop.<tld>` | No | The shop's address. When set, "Create from a gift I built in the builder" on the Templates page links to it. Blank hides the link. |
 
 ### Seed script (`pnpm seed`, run once from a trusted machine, not in the image)
 
@@ -248,3 +249,10 @@ Proofs uploaded before this change still have an old public URL and their object
 - Run one API instance. The login limiter and every other rate limiter keep counts in process memory, so a second instance doubles the limits and a restart resets them (decisions.md, phase 1 audit). Idempotency markers are in MongoDB and are safe across instances. The notification worker must run in exactly one instance. During a rolling deploy two instances overlap for a moment: choose "stop then start" on the host, or accept that a message can be sent twice (delivery is at least once).
 - One small container (0.5 to 1 GB memory; `sharp` image processing is the heaviest work, 50 megapixel uploads can need more), one Atlas M10, two Vercel projects (Pro if the team needs more than one seat), R2 (no egress fees, pay for storage and operations).
 - Before running more than one API instance: move the rate-limit stores to Mongo or Redis, and split the worker into its own process or service.
+
+## Ready-made gifts (phase 8)
+
+- The `featuredTemplates` collection gains a `{ active, category.slug }` index. It is built on boot (`model.init()`), so let the first boot of the new API image finish before judging it healthy.
+- Prices on `/<cc>/gifts` and the builder's strip come from the API's public list, cached up to 5 minutes in the API response and 5 minutes in the web app. The quote at checkout is always live and authoritative, so a price change can show up there first.
+- `pnpm seed` writes 16 demo ready-made gifts (fixed ids). Re-seeding refreshes their title, description, category, featured flag, countries and order, but keeps `active`, so a gift staff hid stays hidden. Seeding is for demo data and is refused in production without an override.
+

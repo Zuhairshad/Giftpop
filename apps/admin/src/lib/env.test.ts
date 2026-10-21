@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getApiUrl, parseServerEnv } from "./env";
+import { getApiUrl, getWebOrigin, parseServerEnv } from "./env";
 
 describe("server env", () => {
   it("defaults API_URL to localhost:4000", () => {
@@ -21,5 +21,24 @@ describe("server env", () => {
 
   it("refuses a value that is not a URL", () => {
     expect(() => parseServerEnv({ API_URL: "not a url" })).toThrow();
+  });
+});
+
+describe("web origin", () => {
+  it("is unset when WEB_ORIGIN is missing or blank", () => {
+    expect(getWebOrigin({})).toBeUndefined();
+    expect(getWebOrigin({ WEB_ORIGIN: "  " })).toBeUndefined();
+  });
+
+  it("returns the origin without a path or trailing slash", () => {
+    expect(getWebOrigin({ WEB_ORIGIN: "https://shop.example.com/" })).toBe(
+      "https://shop.example.com",
+    );
+    expect(getWebOrigin({ WEB_ORIGIN: " http://localhost:3000 " })).toBe("http://localhost:3000");
+  });
+
+  it("refuses a value that is not an http(s) URL", () => {
+    expect(() => getWebOrigin({ WEB_ORIGIN: "not a url" })).toThrow(/WEB_ORIGIN/);
+    expect(() => getWebOrigin({ WEB_ORIGIN: "ftp://example.com" })).toThrow(/WEB_ORIGIN/);
   });
 });

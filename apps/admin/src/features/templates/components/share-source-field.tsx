@@ -90,10 +90,10 @@ function BuilderGuide({ builderUrl }: { builderUrl: string | undefined }) {
               rel="noopener noreferrer"
               className="text-foreground underline underline-offset-4"
             >
-              Open the shop builder (opens in a new tab)
+              Open the shop (opens in a new tab)
             </a>
           ) : (
-            "Open the shop builder in a new tab: your shop address, a country, then /build."
+            "Open the shop in a new tab, pick a country and tap Build your gift."
           )}
         </li>
         <li>Choose a packaging and items, and arrange the gift the way you want it sold.</li>

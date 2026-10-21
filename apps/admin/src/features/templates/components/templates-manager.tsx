@@ -25,7 +25,8 @@ type Load =
   | { state: "error"; message: string }
   | { state: "ready"; templates: FeaturedTemplate[] };
 
-export function TemplatesManager() {
+/** `builderUrl` is the shop address (WEB_ORIGIN), when the deployment sets one. */
+export function TemplatesManager({ builderUrl }: { builderUrl?: string | undefined }) {
   const [load, setLoad] = useState<Load>({ state: "loading" });
   const [countries, setCountries] = useState<Country[]>([]);
   const [attempt, setAttempt] = useState(0);
@@ -187,6 +188,7 @@ export function TemplatesManager() {
       ) : null}
 
       <TemplateDialog
+        builderUrl={builderUrl}
         template={editing}
         source={source}
         templates={templates}
