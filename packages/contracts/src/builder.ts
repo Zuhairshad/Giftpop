@@ -49,6 +49,8 @@ export const SharedDesignViewSchema = z.object({
   packagingAvailable: z.boolean(),
   items: z.array(ItemSchema),
   unavailableItemIds: z.array(ObjectIdSchema),
+  /** Set when an active ready-made gift uses this share id: its public name and description. */
+  readyMade: z.object({ title: z.string(), description: z.string() }).nullable().default(null),
   createdAt: IsoDateTimeSchema,
 });
 export type SharedDesignView = z.infer<typeof SharedDesignViewSchema>;

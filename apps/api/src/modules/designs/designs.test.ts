@@ -15,6 +15,7 @@ import { makeCountry } from "../countries/fixtures";
 import { upsertCountry } from "../countries/service";
 import { initCatalogModels, itemPrice, makeDesign, seedWorld } from "../quotes/fixtures";
 import { createIpLimiter } from "../quotes/rate-limit";
+import { TemplateModel } from "../templates/model";
 
 import { DesignModel } from "./model";
 import { resetSaveRateLimit, resetViewRateLimit } from "./rate-limit";
@@ -363,5 +364,94 @@ describe("GET /v1/designs/:shareId?country=", () => {
   it("rejects a malformed country with 400", async () => {
     const { shareId } = await savedWorld();
     expect((await fetchShared(`${shareId}?country=nope`)).status).toBe(400);
+  });
+});
+
+describe("GET /v1/designs/:shareId for a ready-made gift", () => {
+  // A seeded gift has a share id of its own and no saved design behind it.
+  const SEEDED = "gift-seeded-one";
+
+  async function seededTemplate(over: Record<string, unknown> = {}) {
+    const world = await seedWorld();
+    const design = makeDesign(world.packaging, [
+      [world.bar, 2],
+      [world.soap, 1],
+    ]);
+    await TemplateModel.create({
+      title: "Seeded gift",
+      description: "Chocolate and soap",
+      shareId: SEEDED,
+      design,
+      countries: ["PK"],
+      active: true,
+      sortOrder: 0,
+      createdAt: new Date(),
+      ...over,
+    });
+    return { ...world, design };
+  }
+
+  it("opens from the template when no saved design has that share id, and names the gift", async () => {
+    const { design } = await seededTemplate();
+
+    const res = await fetchShared(SEEDED);
+
+    expect(res.status).toBe(200);
+    const view = SharedDesignViewSchema.parse(res.body);
+    expect(view.shareId).toBe(SEEDED);
+    expect(view.country).toBe("PK");
+    expect(view.design.items).toEqual(design.items);
+    expect(view.unavailableItemIds).toEqual([]);
+    expect(view.readyMade).toEqual({ title: "Seeded gift", description: "Chocolate and soap" });
+  });
+
+  it("judges availability for the country being viewed", async () => {
+    await seededTemplate({ countries: ["PK", "AE"] });
+    await upsertCountry(makeCountry({ code: "AE", name: "United Arab Emirates", currency: "AED" }));
+
+    const res = await fetchShared(`${SEEDED}?country=AE`);
+
+    expect(res.status).toBe(200);
+    expect(SharedDesignViewSchema.parse(res.body).country).toBe("AE");
+  });
+
+  it("stays 404 for a hidden template and for an unknown id", async () => {
+    await seededTemplate({ active: false });
+    expect((await fetchShared(SEEDED)).status).toBe(404);
+    expect((await fetchShared("gift-nothing")).status).toBe(404);
+  });
+
+  it("prefers a saved design that has the same share id", async () => {
+    const world = await seededTemplate();
+    const own = makeDesign(world.packaging, [[world.bar, 3]]);
+    await DesignModel.create({
+      shareId: SEEDED,
+      country: "PK",
+      design: own,
+      createdAt: new Date(),
+    });
+
+    const view = SharedDesignViewSchema.parse((await fetchShared(SEEDED)).body);
+
+    expect(view.design.items).toEqual(own.items);
+  });
+
+  it("marks a saved design that a template also uses as ready-made", async () => {
+    const world = await seededTemplate({ shareId: "ignored-one" });
+    const saved = await save({
+      country: "PK",
+      design: makeDesign(world.packaging, [[world.bar, 3]]),
+    });
+    const { shareId } = SaveDesignResponseSchema.parse(saved.body);
+    await TemplateModel.updateOne({ shareId: "ignored-one" }, { $set: { shareId } });
+
+    const view = SharedDesignViewSchema.parse((await fetchShared(shareId)).body);
+
+    expect(view.readyMade?.title).toBe("Seeded gift");
+  });
+
+  it("leaves readyMade null on an ordinary saved design", async () => {
+    const { shareId } = await savedWorld();
+    expect(SharedDesignViewSchema.parse((await fetchShared(shareId)).body).readyMade).toBeNull();
   });
 });

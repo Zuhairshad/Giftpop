@@ -4,6 +4,7 @@ import {
   CreateTemplateRequestSchema,
   FeaturedTemplateSchema,
   PublicTemplateSchema,
+  SharedDesignViewSchema,
   TemplateCategorySlugSchema,
   TemplateListQuerySchema,
   UpdateTemplateRequestSchema,
@@ -83,5 +84,18 @@ describe("TemplateListQuerySchema", () => {
     expect(TemplateListQuerySchema.parse({ country: "pk", category: "birthday" }).category).toBe(
       "birthday",
     );
+  });
+});
+
+describe("SharedDesignViewSchema.readyMade", () => {
+  const { readyMade } = SharedDesignViewSchema.shape;
+  it("is null when the API leaves it out, so an old response still reads", () => {
+    expect(readyMade.parse(undefined)).toBeNull();
+  });
+  it("carries the gift's title and description", () => {
+    expect(readyMade.parse({ title: "Birthday box", description: "" })).toEqual({
+      title: "Birthday box",
+      description: "",
+    });
   });
 });

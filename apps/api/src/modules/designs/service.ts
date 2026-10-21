@@ -13,6 +13,7 @@ import { toItem, toPackaging } from "../catalog/mappers";
 import { ItemModel, PackagingModel, type ItemDoc, type PackagingDoc } from "../catalog/model";
 import { getCountryCatalog } from "../catalog/public.service";
 import { loadValidatedDesign } from "../quotes/service";
+import { TemplateModel, type TemplateDoc } from "../templates/model";
 
 import { DesignModel, type DesignDoc } from "./model";
 
@@ -42,6 +43,18 @@ function toSavedDesign(doc: DesignDoc): SavedDesign {
   };
 }
 
+/** A template seen as a saved design, for a share id that has no saved design of its own. */
+function templateAsSavedDesign(template: TemplateDoc, viewingCountry?: CountryCode): SavedDesign {
+  const [first] = template.countries;
+  return {
+    id: template._id.toHexString(),
+    shareId: template.shareId,
+    country: viewingCountry ?? first ?? "",
+    design: parseStoredDesign(template.design),
+    createdAt: template.createdAt.toISOString(),
+  };
+}
+
 /** Validates the design for the country, then stores it under a fresh share id. */
 export async function saveDesign(country: CountryCode, design: Design): Promise<SavedDesign> {
   await loadValidatedDesign(country, design);
@@ -63,20 +76,38 @@ export async function saveDesign(country: CountryCode, design: Design): Promise<
   throw new AppError("INTERNAL", 500, "Could not create a share id");
 }
 
+/** The active ready-made gift that uses this share id, if any. */
+function findReadyMade(shareId: string): Promise<TemplateDoc | null> {
+  return TemplateModel.findOne({ shareId, active: true }).lean<TemplateDoc>();
+}
+
 /**
  * What the share page draws. Never fails because the catalog moved on: items
  * that are no longer sold in the country keep their documents in `items` (when
  * they still exist) and are all listed in `unavailableItemIds`. Availability is for
  * `viewingCountry` when given (a template opened from another country), else for the
  * country the gift was saved in.
+ *
+ * A ready-made gift opens from the design saved under its share id; when there is none (the
+ * seeded gifts never had one, and a template keeps its own copy of the design so it survives its
+ * saved design) it opens from the template itself. `readyMade` is set whenever an active template
+ * uses the share id.
  */
 export async function getSharedDesign(
   shareId: string,
   viewingCountry?: CountryCode,
 ): Promise<SharedDesignView> {
-  const doc = await DesignModel.findOne({ shareId }).lean<DesignDoc>();
-  if (!doc) throw new AppError("NOT_FOUND", 404, "No gift with that link");
-  const saved = toSavedDesign(doc);
+  const [doc, template] = await Promise.all([
+    DesignModel.findOne({ shareId }).lean<DesignDoc>(),
+    findReadyMade(shareId),
+  ]);
+  const source = doc
+    ? toSavedDesign(doc)
+    : template
+      ? templateAsSavedDesign(template, viewingCountry)
+      : null;
+  if (!source) throw new AppError("NOT_FOUND", 404, "No gift with that link");
+  const saved = source;
   const { design } = saved;
 
   const itemIds = design.items.map((line) => line.itemId);
@@ -102,6 +133,7 @@ export async function getSharedDesign(
       return item ? [item] : [];
     }),
     unavailableItemIds: itemIds.filter((id) => !sellable.has(id)),
+    readyMade: template ? { title: template.title, description: template.description } : null,
     createdAt: saved.createdAt,
   };
 }
