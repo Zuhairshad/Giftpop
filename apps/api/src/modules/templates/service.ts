@@ -5,7 +5,6 @@ import {
   type CreateTemplateRequest,
   type Design,
   type FeaturedTemplate,
-  type PublicTemplate,
   type TemplateStartResponse,
   type UpdateTemplateRequest,
 } from "@giftpop/contracts";
@@ -34,7 +33,7 @@ function toFeatured(doc: TemplateDoc): FeaturedTemplate {
   };
 }
 
-function isSellable(catalog: CatalogResponse, design: Design): boolean {
+export function isSellable(catalog: CatalogResponse, design: Design): boolean {
   return catalog.status === "live" && validateDesign(design, catalog).length === 0;
 }
 
@@ -135,53 +134,6 @@ export async function updateTemplate(
 export async function deleteTemplate(id: string): Promise<void> {
   const result = await TemplateModel.deleteOne({ _id: id });
   if (result.deletedCount === 0) throw new AppError("NOT_FOUND", 404, "No template with that id");
-}
-
-/** Active templates for one live country that can still be made there today. */
-export async function listPublicTemplates(country: CountryCode): Promise<PublicTemplate[]> {
-  const catalog = await getCountryCatalog(country);
-  if (catalog.status !== "live") return [];
-
-  const docs = await TemplateModel.find({ active: true, countries: country })
-    .sort({ sortOrder: 1, title: 1 })
-    .lean<TemplateDoc[]>();
-
-  const result: PublicTemplate[] = [];
-  for (const doc of docs) {
-    // One template that no longer parses must not take the whole list down.
-    let design: Design;
-    try {
-      design = parseStoredDesign(doc.design);
-    } catch {
-      continue;
-    }
-    if (!isSellable(catalog, design)) continue;
-    const packaging = catalog.packagings.find((p) => p.packaging.id === design.packagingId);
-    if (!packaging) continue;
-    const items = new Map(
-      design.items.flatMap((line) => {
-        const found = catalog.items.find((i) => i.item.id === line.itemId);
-        return found ? [[found.item.id, found.item] as const] : [];
-      }),
-    );
-    result.push({
-      id: doc._id.toHexString(),
-      title: doc.title,
-      description: doc.description,
-      shareId: doc.shareId,
-      country: catalog.country,
-      currency: catalog.currency,
-      design,
-      packaging: packaging.packaging,
-      items: [...items.values()],
-      category: doc.category ?? null,
-      featured: doc.featured ?? false,
-      // Step A stub: the api-templates agent computes the real price and summary.
-      priceMinor: 0,
-      itemSummary: { names: [], moreCount: 0 },
-    });
-  }
-  return result;
 }
 
 /**
