@@ -26,6 +26,7 @@ import { quotesRouter } from "../quotes/router";
 import { TemplateModel } from "./model";
 import { resetStartRateLimit } from "./rate-limit";
 import { templatesRouter } from "./router";
+import { upsertSeedTemplate } from "./service";
 
 vi.mock("../../middleware/require-staff", async () =>
   (await import("../countries/fixtures")).fakeRequireStaffModule(),
@@ -346,6 +347,21 @@ describe("staff create and update with category and featured", () => {
     expect(titles(await list("country=PK&category=get-well"))).toEqual([]);
   });
 
+  it("keeps the saved description and sortOrder when only one field is sent", async () => {
+    const { shareId } = await setup();
+    const t = await featured(shareId, { description: "Soft and floral", sortOrder: 7 });
+
+    const hidden = await patch(t.id, { active: false });
+    expect(hidden.status).toBe(200);
+    expect(hidden.body).toMatchObject({
+      active: false,
+      description: "Soft and floral",
+      sortOrder: 7,
+    });
+    const stored = await TemplateModel.findById(t.id).lean();
+    expect(stored).toMatchObject({ description: "Soft and floral", sortOrder: 7 });
+  });
+
   it("answers 401 to anonymous callers when creating or updating", async () => {
     const { shareId } = await setup();
     const body = { title: "x", shareId, countries: ["PK"], featured: true };
@@ -353,5 +369,33 @@ describe("staff create and update with category and featured", () => {
     const id = "a".repeat(24);
     const res = await request(app).patch(`/v1/templates/admin/${id}`).send({ featured: true });
     expect(res.status).toBe(401);
+  });
+});
+
+describe("upsertSeedTemplate", () => {
+  it("is idempotent: a second run refreshes content but keeps active and createdAt", async () => {
+    const { design } = await setup();
+    const id = new Types.ObjectId().toHexString();
+    const seed = {
+      id,
+      title: "Seeded gift",
+      description: "",
+      shareId: "gift-seeded-one",
+      design,
+      countries: ["PK"],
+      sortOrder: 10,
+      category: BIRTHDAY,
+      featured: true,
+    };
+    await upsertSeedTemplate(seed);
+    const first = await TemplateModel.findById(id).lean();
+    expect(first).toMatchObject({ active: true, title: "Seeded gift", featured: true });
+
+    await TemplateModel.updateOne({ _id: id }, { $set: { active: false } });
+    await upsertSeedTemplate({ ...seed, title: "Seeded gift, renamed" });
+    const second = await TemplateModel.findById(id).lean();
+    expect(second).toMatchObject({ active: false, title: "Seeded gift, renamed" });
+    expect(second?.createdAt).toEqual(first?.createdAt);
+    expect(await TemplateModel.countDocuments()).toBe(1);
   });
 });

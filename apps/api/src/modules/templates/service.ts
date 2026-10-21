@@ -131,6 +131,33 @@ export async function updateTemplate(
   return toFeatured(updated);
 }
 
+/**
+ * Writes one seed template by its fixed id, so a second seed run changes nothing it should not:
+ * the content is refreshed, while `active` and `createdAt` are set only when the document is new
+ * (a gift staff have hidden stays hidden). No sellability check: the seed's own tests prove it.
+ */
+export async function upsertSeedTemplate(
+  input: Pick<
+    FeaturedTemplate,
+    | "id"
+    | "title"
+    | "description"
+    | "shareId"
+    | "design"
+    | "countries"
+    | "sortOrder"
+    | "category"
+    | "featured"
+  >,
+): Promise<void> {
+  const { id, ...content } = input;
+  await TemplateModel.updateOne(
+    { _id: id },
+    { $set: content, $setOnInsert: { active: true, createdAt: new Date() } },
+    { upsert: true },
+  );
+}
+
 export async function deleteTemplate(id: string): Promise<void> {
   const result = await TemplateModel.deleteOne({ _id: id });
   if (result.deletedCount === 0) throw new AppError("NOT_FOUND", 404, "No template with that id");

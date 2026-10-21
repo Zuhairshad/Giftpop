@@ -9,8 +9,9 @@ import {
   upsertPrices,
 } from "../../apps/api/src/modules/catalog/service";
 import { upsertCountry } from "../../apps/api/src/modules/countries/service";
+import { upsertSeedTemplate } from "../../apps/api/src/modules/templates/service";
 
-import { COUNTRIES, ITEMS, PACKAGINGS, PRICES } from "./data";
+import { COUNTRIES, ITEMS, PACKAGINGS, PRICES, TEMPLATES } from "./data";
 import { assertSeedMayRun, parseSeedEnv } from "./env";
 
 const API_ENV_PATH = fileURLToPath(new URL("../../apps/api/.env", import.meta.url));
@@ -45,6 +46,7 @@ async function main(): Promise<void> {
     for (const packaging of PACKAGINGS) await upsertPackaging(packaging);
     for (const item of ITEMS) await upsertItem(item);
     await upsertPrices(PRICES);
+    for (const template of TEMPLATES) await upsertSeedTemplate(template);
 
     console.log("Seed complete (safe to run again).");
     console.log(`  owner:      ${owner.email}`);
@@ -52,6 +54,7 @@ async function main(): Promise<void> {
     console.log(`  packagings: ${PACKAGINGS.length} upserted`);
     console.log(`  items:      ${ITEMS.length} upserted`);
     console.log(`  prices:     ${PRICES.length} upserted`);
+    console.log(`  gifts:      ${TEMPLATES.length} ready-made gifts upserted`);
   } finally {
     await disconnectDb();
   }
