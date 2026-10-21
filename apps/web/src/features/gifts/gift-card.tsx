@@ -3,8 +3,8 @@ import { packagingSceneBounds } from "@giftpop/renderer";
 import type { ReactElement } from "react";
 
 import { moreItemsLabel, orderLabel, sceneWidthPercent } from "./gifts-model";
+import { OrderGiftLink } from "./order-gift-link";
 
-import { ButtonLink } from "@/components/ui";
 import { SafeScene } from "@/features/builder/questions/safe-scene";
 import { builderHref } from "@/features/builder/state";
 import { formatMoney } from "@/lib/format-money";
@@ -79,14 +79,11 @@ export function GiftCard({
           <p className="font-display text-2xl font-bold tracking-tight">
             {formatMoney(template.priceMinor, template.currency, "en")}
           </p>
-          <ButtonLink
+          <OrderGiftLink
+            country={country}
             href={builderHref(country, template.shareId)}
-            // Starts with the visible text so voice control matches it.
-            aria-label={orderLabel(template.title)}
-            block
-          >
-            Order this gift
-          </ButtonLink>
+            label={orderLabel(template.title)}
+          />
         </div>
       </div>
     </article>
