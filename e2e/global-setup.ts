@@ -4,6 +4,7 @@ import net from "node:net";
 import { STAFF_EMAIL, STAFF_PASSWORD } from "./support/env";
 import { ensureFeaturedTemplate } from "./support/featured-template";
 import { resetFixture } from "./support/fixture";
+import { ensureReadyMadeGifts } from "./support/ready-made-gifts";
 import { warmUpRoutes } from "./support/warm-up";
 
 function mongoIsUp(): Promise<boolean> {
@@ -36,5 +37,6 @@ export default async function globalSetup(): Promise<void> {
   });
   resetFixture();
   const staffCookie = await ensureFeaturedTemplate();
+  await ensureReadyMadeGifts(staffCookie);
   await warmUpRoutes(staffCookie);
 }

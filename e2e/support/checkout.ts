@@ -19,7 +19,7 @@ export async function checkoutAndPlace(
   mode: "Pay now" | "Cash on delivery",
 ): Promise<string> {
   await page
-    .getByRole("link", { name: /Continue to checkout/i })
+    .getByRole("link", { name: /Continue to checkout|Order this gift/i })
     .first()
     .click();
   await expect(page).toHaveURL(/\/checkout/);

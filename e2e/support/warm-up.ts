@@ -8,6 +8,7 @@ const WEB_ROUTES = [
   "/pk/checkout",
   "/us",
   "/us/build",
+  "/us/gifts",
   "/track",
   "/order/GP-PK-AAAAAA",
   "/partners",
