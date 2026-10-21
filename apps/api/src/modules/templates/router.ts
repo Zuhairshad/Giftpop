@@ -1,13 +1,13 @@
 import {
+  TemplateListQuerySchema,
   TemplateStartRequestSchema,
-  CountryParamSchema,
   CreateTemplateRequestSchema,
   UpdateTemplateRequestSchema,
   type CreateTemplateRequest,
   type UpdateTemplateRequest,
 } from "@giftpop/contracts";
 import { Router, type Request, type RequestHandler } from "express";
-import { z } from "zod";
+import type { z } from "zod";
 
 import {
   IdParamsSchema,
@@ -19,19 +19,17 @@ import {
 import { requireStaff } from "../../middleware/require-staff";
 import { createIpLimiter } from "../quotes/rate-limit";
 
+import { listPublicTemplates } from "./public.service";
 import { defaultStartStore, TEMPLATE_STARTS_PER_MINUTE } from "./rate-limit";
 import {
   createTemplate,
   deleteTemplate,
-  listPublicTemplates,
   listTemplates,
   startTemplate,
   updateTemplate,
 } from "./service";
 
 const PUBLIC_CACHE = "public, max-age=60, stale-while-revalidate=300";
-
-const ListQuerySchema = z.object({ country: CountryParamSchema });
 
 export interface TemplatesRouterOptions {
   /** Replace the start limiter, for example with a tighter or fresh one in tests. */
@@ -73,9 +71,10 @@ export function createTemplatesRouter({
   );
 
   // Public routes.
-  router.get("/", validateQuery(ListQuerySchema), async (req, res) => {
-    const { country } = req.query as z.infer<typeof ListQuerySchema>;
-    const templates = await listPublicTemplates(country);
+  router.get("/", validateQuery(TemplateListQuerySchema), async (req, res) => {
+    // Unknown query keys (for example a client-sent price) are stripped by the schema and never read.
+    const { country, category } = req.query as unknown as z.infer<typeof TemplateListQuerySchema>;
+    const templates = await listPublicTemplates(country, category);
     res.set("Cache-Control", PUBLIC_CACHE).json(templates);
   });
   router.post(
