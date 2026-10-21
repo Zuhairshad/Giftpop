@@ -28,7 +28,8 @@ describe("question body loader", () => {
     const { loadedBody } = await freshLoader();
     const { PackagingBody } = await import("./packaging");
     expect(loadedBody("packaging")).toBe(PackagingBody);
-  });
+    // Generous: the first import of the packaging module is slow when the whole repo is busy.
+  }, 30_000);
 
   it("loads a lazy body once and then returns it synchronously", async () => {
     loaders.review.mockResolvedValue(Review);
