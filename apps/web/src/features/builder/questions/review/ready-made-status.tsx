@@ -5,7 +5,7 @@ import type { ReactElement } from "react";
 import { useBuilder } from "../../state";
 import { findPricedItem } from "../../state/catalog-lookup";
 
-import { describeGiftChanges, giftChangeLines } from "./gift-changes";
+import { describeGiftChanges, giftChangeLines, splitUnsold, unsoldNote } from "./gift-changes";
 import { useReadyMadeOrigin } from "./use-ready-made-origin";
 
 /**
@@ -17,11 +17,16 @@ export function ReadyMadeStatus(): ReactElement | null {
   const origin = useReadyMadeOrigin(country);
   if (!design || !origin) return null;
 
-  const changes = describeGiftChanges(origin.design, design);
-  const lines = giftChangeLines(
-    changes,
-    (itemId) => findPricedItem(catalog, itemId)?.item.name ?? "An item that is no longer sold",
+  // An item the catalog no longer sells is left out by the builder, so it is not the customer's change.
+  const nameOf = (itemId: string): string =>
+    findPricedItem(catalog, itemId)?.item.name ?? "An item that is no longer sold";
+  const { sold, unsold } = splitUnsold(
+    origin.design,
+    (itemId) => findPricedItem(catalog, itemId) !== undefined,
   );
+  const changes = describeGiftChanges(sold, design);
+  const lines = giftChangeLines(changes, nameOf);
+  const leftOut = unsoldNote(unsold.length);
 
   return (
     <section
@@ -40,6 +45,13 @@ export function ReadyMadeStatus(): ReactElement | null {
               <li key={line}>{line}</li>
             ))}
           </ul>
+          {leftOut ? <p className="text-sm">{leftOut}</p> : null}
+          <p className="text-muted text-sm">The price may differ from the catalog card.</p>
+        </>
+      ) : leftOut ? (
+        <>
+          <p className="text-sm font-semibold">Ordered as is</p>
+          <p className="text-sm">{leftOut}</p>
           <p className="text-muted text-sm">The price may differ from the catalog card.</p>
         </>
       ) : (

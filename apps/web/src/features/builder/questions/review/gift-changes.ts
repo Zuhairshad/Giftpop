@@ -79,3 +79,28 @@ export function giftChangeLines(
   if (changes.ribbonChanged) lines.push("Different ribbon colour");
   return lines;
 }
+
+/**
+ * The design as the builder can load it: items the catalog no longer sells are left out (the
+ * builder drops them too), and listed separately. Compare the customer's design with `sold`, so an
+ * item that sold out is not counted as a change the customer made.
+ */
+export function splitUnsold(
+  original: Design,
+  isSold: (itemId: string) => boolean,
+): { sold: Design; unsold: string[] } {
+  const unsold = original.items.map((line) => line.itemId).filter((id) => !isSold(id));
+  if (unsold.length === 0) return { sold: original, unsold };
+  return {
+    sold: { ...original, items: original.items.filter((line) => isSold(line.itemId)) },
+    unsold,
+  };
+}
+
+/** The line for items the builder left out because they are no longer sold; null when there are none. */
+export function unsoldNote(count: number): string | null {
+  if (count <= 0) return null;
+  return count === 1
+    ? "1 item in this gift is no longer sold, so it was left out."
+    : `${count} items in this gift are no longer sold, so they were left out.`;
+}

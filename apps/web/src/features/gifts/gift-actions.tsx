@@ -28,29 +28,32 @@ export function GiftActions({
   description: string;
   shareId: string;
 }): ReactElement {
-  if (useGiftUnavailable(id)) {
-    return (
-      <div className="flex flex-col gap-2">
-        <p role="status" className="text-sm font-semibold">
-          This gift is not available right now. An item in it has run out.
-        </p>
-        <ButtonLink href={builderHref(country)} variant="tint" block>
-          Build your own gift
-        </ButtonLink>
-      </div>
-    );
-  }
+  const unavailable = useGiftUnavailable(id);
+  // One live region for both states, so a screen reader announces the swap when the page finds out.
   return (
-    <div className="flex flex-col gap-2">
-      <ButtonLink
-        href={builderHref(country, shareId)}
-        // Starts with the visible text so voice control matches it.
-        aria-label={orderLabel(title)}
-        block
-      >
-        Order this gift
-      </ButtonLink>
-      <ShareGiftButton title={title} description={description} shareId={shareId} />
+    <div aria-live="polite" className="flex flex-col gap-2">
+      {unavailable ? (
+        <>
+          <p className="text-sm font-semibold">
+            This gift is not available right now. You can still build your own.
+          </p>
+          <ButtonLink href={builderHref(country)} variant="tint" block>
+            Build your own gift
+          </ButtonLink>
+        </>
+      ) : (
+        <>
+          <ButtonLink
+            href={builderHref(country, shareId)}
+            // Starts with the visible text so voice control matches it.
+            aria-label={orderLabel(title)}
+            block
+          >
+            Order this gift
+          </ButtonLink>
+          <ShareGiftButton title={title} description={description} shareId={shareId} />
+        </>
+      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { useArrivalFocus } from "./use-arrival-focus";
 import { useCountry } from "./use-country";
 
 import { ButtonLink } from "@/components/ui";
+import { clearReadyMadeStart } from "@/features/builder/questions/packaging/ready-made-origin";
 import { builderHref, useBuilder, useCheckoutGuard } from "@/features/builder/state";
 import { useBuilderStore } from "@/features/builder/state/context";
 import { PageHeading } from "@/features/order/page-heading";
@@ -72,16 +73,18 @@ function CheckoutContent({ onPlaced }: { onPlaced: (number: OrderNumber) => void
 /** Checkout: gift summary, contact, address, payment and "Place order". */
 export function CheckoutScreen(): ReactElement {
   const router = useRouter();
-  const { reset } = useBuilder();
+  const { reset, country } = useBuilder();
   const [placed, setPlaced] = useState<OrderNumber | null>(null);
 
   const handlePlaced = useCallback(
     (number: OrderNumber) => {
       setPlaced(number);
+      // The next gift is a new one, so forget which ready-made gift this one began as.
+      clearReadyMadeStart(country);
       reset();
       router.push(`/order/${number}`);
     },
-    [reset, router],
+    [country, reset, router],
   );
 
   if (placed) {

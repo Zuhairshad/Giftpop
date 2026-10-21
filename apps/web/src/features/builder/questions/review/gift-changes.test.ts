@@ -1,7 +1,7 @@
 import type { Design } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
-import { describeGiftChanges, giftChangeLines } from "./gift-changes";
+import { describeGiftChanges, giftChangeLines, splitUnsold, unsoldNote } from "./gift-changes";
 
 const PACK = "aaaaaaaaaaaaaaaaaaaaaaaa";
 const A = "bbbbbbbbbbbbbbbbbbbbbbbb";
@@ -139,5 +139,35 @@ describe("giftChangeLines", () => {
     expect(giftChangeLines(describeGiftChanges(design(), current), nameOf)).toContain(
       "Added: An item that is no longer sold",
     );
+  });
+});
+
+describe("splitUnsold", () => {
+  it("keeps the whole design when every item is still sold", () => {
+    const { sold, unsold } = splitUnsold(design(), () => true);
+    expect(sold).toEqual(design());
+    expect(unsold).toEqual([]);
+  });
+
+  it("takes out items that are no longer sold and lists them", () => {
+    const { sold, unsold } = splitUnsold(design(), (id) => id !== B);
+    expect(sold.items).toEqual([{ itemId: A, qty: 2, slot: 0 }]);
+    expect(unsold).toEqual([B]);
+  });
+
+  it("is what the builder loads, so an untouched gift is not 'changed' when an item sold out", () => {
+    const loaded = design({ items: [{ itemId: A, qty: 2, slot: 0 }] });
+    const { sold } = splitUnsold(design(), (id) => id !== B);
+    expect(describeGiftChanges(sold, loaded).changed).toBe(false);
+  });
+});
+
+describe("unsoldNote", () => {
+  it("says nothing when no item was left out", () => {
+    expect(unsoldNote(0)).toBeNull();
+  });
+  it("counts the items that were left out", () => {
+    expect(unsoldNote(1)).toBe("1 item in this gift is no longer sold, so it was left out.");
+    expect(unsoldNote(3)).toBe("3 items in this gift are no longer sold, so they were left out.");
   });
 });
