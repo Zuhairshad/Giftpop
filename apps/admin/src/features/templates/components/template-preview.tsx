@@ -1,10 +1,11 @@
 "use client";
 
 import type { FeaturedTemplate, SharedDesignView } from "@giftpop/contracts";
-import { GiftScene, isKnownLayoutType } from "@giftpop/renderer";
 import { useEffect, useState } from "react";
 
 import { loadSharedDesign } from "../api/client";
+
+import { SharedDesignScene } from "./shared-design-scene";
 
 import {
   Dialog,
@@ -67,20 +68,7 @@ function PreviewBody({ template }: { template: FeaturedTemplate }) {
         </p>
       ) : null}
       {load.state === "ready" ? (
-        <div className="bg-muted/40 overflow-hidden rounded-lg border">
-          {isKnownLayoutType(load.view.packaging.layoutType) ? (
-            <GiftScene
-              design={template.design}
-              packaging={load.view.packaging}
-              items={load.view.items}
-            />
-          ) : (
-            <p className="text-muted-foreground p-6 text-center text-sm">
-              There is no layout called &ldquo;{load.view.packaging.layoutType}&rdquo;, so there is
-              nothing to preview.
-            </p>
-          )}
-        </div>
+        <SharedDesignScene view={{ ...load.view, design: template.design }} />
       ) : null}
     </>
   );

@@ -1,11 +1,14 @@
 import {
   CountryCodeSchema,
   CreateTemplateRequestSchema,
+  TemplateCategorySchema,
+  TemplateCategorySlugSchema,
   UpdateTemplateRequestSchema,
 } from "@giftpop/contracts";
 import type {
   CreateTemplateRequest,
   FeaturedTemplate,
+  TemplateCategory,
   UpdateTemplateRequest,
 } from "@giftpop/contracts";
 import { z } from "zod";
@@ -13,6 +16,17 @@ import { z } from "zod";
 import { extractShareId } from "./share-link";
 
 const shape = CreateTemplateRequestSchema.shape;
+
+/** The category as the form holds it: an empty slug means the typed name had nothing a slug can use. */
+const CategoryFieldSchema = z
+  .object({
+    slug: z
+      .string()
+      .min(1, "Use at least one letter or number in the category name")
+      .pipe(TemplateCategorySlugSchema),
+    name: TemplateCategorySchema.shape.name,
+  })
+  .nullable();
 
 /** What the dialog edits: the contract's fields, with the share link as typed and no defaults. */
 export const TemplateFormSchema = z.object({
@@ -22,6 +36,8 @@ export const TemplateFormSchema = z.object({
   countries: z.array(CountryCodeSchema).min(1, "Choose at least one country"),
   sortOrder: z.number("Enter a whole number").int("Enter a whole number"),
   active: z.boolean(),
+  category: CategoryFieldSchema,
+  featured: z.boolean(),
 });
 export type TemplateFormValues = z.infer<typeof TemplateFormSchema>;
 
@@ -35,7 +51,16 @@ export const CreateTemplateFormSchema = TemplateFormSchema.refine(
 );
 
 export function emptyTemplateValues(): TemplateFormValues {
-  return { shareLink: "", title: "", description: "", countries: [], sortOrder: 0, active: true };
+  return {
+    shareLink: "",
+    title: "",
+    description: "",
+    countries: [],
+    sortOrder: 0,
+    active: true,
+    category: null,
+    featured: false,
+  };
 }
 
 export function templateToValues(template: FeaturedTemplate): TemplateFormValues {
@@ -46,6 +71,8 @@ export function templateToValues(template: FeaturedTemplate): TemplateFormValues
     countries: template.countries,
     sortOrder: template.sortOrder,
     active: template.active,
+    category: template.category,
+    featured: template.featured,
   };
 }
 
@@ -57,6 +84,8 @@ export function toCreateRequest(values: TemplateFormValues): CreateTemplateReque
     shareId: extractShareId(values.shareLink),
     countries: values.countries,
     sortOrder: values.sortOrder,
+    category: values.category,
+    featured: values.featured,
   });
 }
 
@@ -67,12 +96,24 @@ export function toUpdateRequest(values: TemplateFormValues): UpdateTemplateReque
     countries: values.countries,
     sortOrder: values.sortOrder,
     active: values.active,
+    category: values.category,
+    featured: values.featured,
   });
+}
+
+/** Only the sort order, for the move buttons. Hand-built for the same reason as `toActiveRequest`. */
+export function toSortOrderRequest(sortOrder: number): UpdateTemplateRequest {
+  return { sortOrder };
+}
+
+/** Only the category, for changing it from the list. Null clears it. */
+export function toCategoryRequest(category: TemplateCategory | null): UpdateTemplateRequest {
+  return { category };
 }
 
 /**
  * Only the active flag, for the switch in the list. Built by hand, not parsed: the contract's
- * defaults (`description`, `sortOrder`) would otherwise be added and overwrite the saved values.
+ * defaults (`description`, `sortOrder`, and `category`/`featured`) would otherwise be added and overwrite the saved values.
  */
 export function toActiveRequest(active: boolean): UpdateTemplateRequest {
   return { active };
