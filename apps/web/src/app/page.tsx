@@ -7,10 +7,6 @@ export const metadata: Metadata = homeMetadata();
 /** `/` with no country chosen. Returning visitors are redirected to `/<cc>` by `proxy.ts`. */
 export default function Home() {
   return (
-    <HomeScreen
-      ticks={homeTicks(null)}
-      buildHref="/countries"
-      chooseCountryHref="/countries"
-    />
+    <HomeScreen ticks={homeTicks(null)} buildHref="/countries" chooseCountryHref="/countries" />
   );
 }

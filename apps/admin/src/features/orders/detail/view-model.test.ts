@@ -242,7 +242,12 @@ describe("items and personalisation", () => {
   });
   it("skips empty texts", () => {
     const order = makeOrder();
-    order.design.personalisation = { cardMessage: " ", recipientName: "", customRequest: "  ", itemNames: {} };
+    order.design.personalisation = {
+      cardMessage: " ",
+      recipientName: "",
+      customRequest: "  ",
+      itemNames: {},
+    };
     expect(personalisationTexts(order)).toEqual([]);
   });
 });

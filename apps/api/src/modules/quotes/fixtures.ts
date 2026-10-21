@@ -82,7 +82,12 @@ export function makeDesign(
     wrapperColor: "#c9a977",
     ribbonColor: "#c0392b",
     arrangementSeed: 7,
-    personalisation: { cardMessage: "Happy birthday", recipientName: "Sara", customRequest: "", itemNames: {} },
+    personalisation: {
+      cardMessage: "Happy birthday",
+      recipientName: "Sara",
+      customRequest: "",
+      itemNames: {},
+    },
     ...overrides,
   };
 }

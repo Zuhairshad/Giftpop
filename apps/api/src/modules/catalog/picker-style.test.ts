@@ -162,7 +162,16 @@ describe("item picker style", () => {
 });
 
 describe("item shapes", () => {
-  const NEW_SHAPES = ["perfume", "candle", "jewellery", "necklace", "bracelet", "cosmetic", "cupcake", "frame"] as const;
+  const NEW_SHAPES = [
+    "perfume",
+    "candle",
+    "jewellery",
+    "necklace",
+    "bracelet",
+    "cosmetic",
+    "cupcake",
+    "frame",
+  ] as const;
 
   it("lists the new shapes in the contract", () => {
     for (const shape of NEW_SHAPES) expect(ITEM_SHAPES).toContain(shape);

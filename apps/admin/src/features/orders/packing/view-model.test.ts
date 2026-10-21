@@ -24,7 +24,12 @@ const order = {
       { itemId: A, qty: 3, slot: 1 },
       { itemId: B, qty: 1, slot: 0 },
     ],
-    personalisation: { cardMessage: " hi ", recipientName: "", customRequest: "", itemNames: { [B]: " Sam " } },
+    personalisation: {
+      cardMessage: " hi ",
+      recipientName: "",
+      customRequest: "",
+      itemNames: { [B]: " Sam " },
+    },
   },
 } as unknown as Parameters<typeof buildChecklist>[0];
 
@@ -73,7 +78,14 @@ describe("helpers", () => {
     expect(hasPersonalisation(order)).toBe(true);
     expect(
       hasPersonalisation({
-        design: { personalisation: { cardMessage: " ", recipientName: "", customRequest: " ", itemNames: {} } },
+        design: {
+          personalisation: {
+            cardMessage: " ",
+            recipientName: "",
+            customRequest: " ",
+            itemNames: {},
+          },
+        },
       } as unknown as Parameters<typeof hasPersonalisation>[0]),
     ).toBe(false);
   });

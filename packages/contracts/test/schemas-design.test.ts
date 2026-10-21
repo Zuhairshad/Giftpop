@@ -100,7 +100,13 @@ describe("DesignSchema", () => {
   it("enforces the personalisation limits (200, 40, 40)", () => {
     const personalisation = (p: Record<string, unknown>) =>
       designInput({
-        personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {}, ...p },
+        personalisation: {
+          cardMessage: "",
+          recipientName: "",
+          customRequest: "",
+          itemNames: {},
+          ...p,
+        },
       });
     expect(DesignSchema.safeParse(personalisation({ cardMessage: "a".repeat(200) })).success).toBe(
       true,

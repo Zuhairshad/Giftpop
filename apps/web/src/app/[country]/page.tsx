@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import {
-  HomeScreen,
-  countryDisplayName,
-  homeMetadata,
-  homeTicks,
-} from "@/features/home";
+import { HomeScreen, countryDisplayName, homeMetadata, homeTicks } from "@/features/home";
 import { fetchCountry } from "@/features/home/fetch-home-data";
 import { countryPath } from "@/features/home/view-models";
 import { parseCountryParam } from "@/lib/country-param";
@@ -27,10 +22,5 @@ export default async function CountryHome({ params }: CountryHomeProps) {
   const code = parseCountryParam((await params).country);
   if (!code) notFound();
   const country = await fetchCountry(code);
-  return (
-    <HomeScreen
-      ticks={homeTicks(country)}
-      buildHref={`${countryPath(code)}/build`}
-    />
-  );
+  return <HomeScreen ticks={homeTicks(country)} buildHref={`${countryPath(code)}/build`} />;
 }

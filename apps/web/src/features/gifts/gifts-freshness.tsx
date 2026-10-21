@@ -46,10 +46,14 @@ export function GiftsFreshness({
           const parsed = PublicTemplateSchema.safeParse(entry);
           return parsed.success ? [parsed.data] : [];
         });
-        setUnavailable(new Set(unavailableIds(
-            shownKey.split(",").map((id) => ({ id })),
-            fresh,
-          )));
+        setUnavailable(
+          new Set(
+            unavailableIds(
+              shownKey.split(",").map((id) => ({ id })),
+              fresh,
+            ),
+          ),
+        );
       })
       .catch(() => {
         // Keep the cards as drawn.
