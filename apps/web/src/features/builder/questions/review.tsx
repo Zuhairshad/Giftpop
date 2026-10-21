@@ -4,12 +4,12 @@ import type { ReactElement } from "react";
 
 import { useBuilder } from "../state";
 
-
 import { missingDetailsReason } from "./continue-reason";
 import { CardPanel } from "./review/card-panel";
 import { cardSummary } from "./review/card-summary";
 import { REVIEW_BLOCKED_HINT_ID, REVIEW_PROBLEMS_ID } from "./review/checkout-action";
 import { PriceSection } from "./review/price-section";
+import { ReadyMadeStatus } from "./review/ready-made-status";
 import { SharePanel } from "./review/share-panel";
 
 import { Button } from "@/components/ui";
@@ -32,6 +32,8 @@ export function ReviewBody(): ReactElement {
 
   return (
     <div className="space-y-5">
+      <ReadyMadeStatus />
+
       {blocked ? (
         <div className="space-y-2">
           <div

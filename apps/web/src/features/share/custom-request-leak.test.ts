@@ -22,6 +22,14 @@ describe("a custom request on a shared design", () => {
     expect(JSON.stringify(buildShareMetadata(viewWithRequest()))).not.toContain(SECRET);
   });
 
+  it("never reaches the metadata of a ready-made gift either", () => {
+    const view = {
+      ...viewWithRequest(),
+      readyMade: { title: "Birthday box", description: "Sweet" },
+    };
+    expect(JSON.stringify(buildShareMetadata(view))).not.toContain(SECRET);
+  });
+
   it("never reaches the item rows the share page draws", () => {
     expect(JSON.stringify(buildSharedItemRows(viewWithRequest()))).not.toContain(SECRET);
   });

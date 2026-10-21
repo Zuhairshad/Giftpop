@@ -2,11 +2,11 @@ import type { CountryCode, PublicTemplate } from "@giftpop/contracts";
 import { packagingSceneBounds } from "@giftpop/renderer";
 import type { ReactElement } from "react";
 
-import { moreItemsLabel, orderLabel, sceneWidthPercent } from "./gifts-model";
-import { OrderGiftLink } from "./order-gift-link";
+import { GiftActions } from "./gift-actions";
+import { GiftUnavailableOverlay } from "./gift-unavailable";
+import { moreItemsLabel, sceneWidthPercent } from "./gifts-model";
 
 import { SafeScene } from "@/features/builder/questions/safe-scene";
-import { builderHref } from "@/features/builder/state";
 import { formatMoney } from "@/lib/format-money";
 
 /**
@@ -44,6 +44,7 @@ export function GiftCard({
             fallbackClassName="size-full"
           />
         </div>
+        <GiftUnavailableOverlay id={template.id} />
         {template.featured ? (
           <span className="bg-primary-tint text-primary-pressed absolute start-3 top-3 rounded-full px-3 py-1 text-xs font-bold">
             Featured
@@ -79,10 +80,12 @@ export function GiftCard({
           <p className="font-display text-2xl font-bold tracking-tight">
             {formatMoney(template.priceMinor, template.currency, "en")}
           </p>
-          <OrderGiftLink
+          <GiftActions
             country={country}
-            href={builderHref(country, template.shareId)}
-            label={orderLabel(template.title)}
+            id={template.id}
+            title={template.title}
+            description={template.description}
+            shareId={template.shareId}
           />
         </div>
       </div>

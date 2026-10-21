@@ -2,9 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   clearReadyMadeStart,
-  markReadyMadeStart,
+  parseReadyMadeOrigin,
+  readyMadeOrigin,
+  rememberReadyMade,
   reviewActionLabel,
-  startedFromReadyMade,
+  type ReadyMadeOrigin,
 } from "./ready-made-origin";
 
 function memoryStore(): Pick<Storage, "getItem" | "setItem" | "removeItem"> {
@@ -28,39 +30,60 @@ const THROWING = {
   },
 };
 
+const ORIGIN: ReadyMadeOrigin = {
+  shareId: "gift-bday-choc-bouquet",
+  title: "Birthday chocolate bouquet",
+  design: {
+    packagingId: "aaaaaaaaaaaaaaaaaaaaaaaa",
+    items: [{ itemId: "bbbbbbbbbbbbbbbbbbbbbbbb", qty: 2, slot: 0 }],
+    wrapperColor: "#ffd3e0",
+    ribbonColor: "#e8336d",
+    arrangementSeed: 1,
+    personalisation: { cardMessage: "", recipientName: "", customRequest: "", itemNames: {} },
+  },
+};
+
 describe("ready-made origin", () => {
-  it("is false until a ready-made gift is started", () => {
-    expect(startedFromReadyMade("PK", memoryStore())).toBe(false);
+  it("is null until a ready-made gift is loaded", () => {
+    expect(readyMadeOrigin("PK", memoryStore())).toBeNull();
   });
 
-  it("remembers a start per country", () => {
+  it("remembers the gift's name and design, per country", () => {
     const store = memoryStore();
-    markReadyMadeStart("PK", store);
-    expect(startedFromReadyMade("PK", store)).toBe(true);
-    expect(startedFromReadyMade("US", store)).toBe(false);
+    rememberReadyMade("PK", ORIGIN, store);
+    expect(readyMadeOrigin("PK", store)).toEqual(ORIGIN);
+    expect(readyMadeOrigin("US", store)).toBeNull();
   });
 
-  it("forgets it when the customer starts over", () => {
+  it("is forgotten once cleared", () => {
     const store = memoryStore();
-    markReadyMadeStart("PK", store);
+    rememberReadyMade("PK", ORIGIN, store);
     clearReadyMadeStart("PK", store);
-    expect(startedFromReadyMade("PK", store)).toBe(false);
+    expect(readyMadeOrigin("PK", store)).toBeNull();
   });
 
-  it("falls back quietly when storage is blocked or missing", () => {
-    expect(() => markReadyMadeStart("PK", THROWING)).not.toThrow();
+  it("reads anything that is not a valid origin as none (the old flag, junk, a bad design)", () => {
+    expect(parseReadyMadeOrigin("1")).toBeNull();
+    expect(parseReadyMadeOrigin("{not json")).toBeNull();
+    expect(
+      parseReadyMadeOrigin(JSON.stringify({ ...ORIGIN, design: { packagingId: 1 } })),
+    ).toBeNull();
+    expect(parseReadyMadeOrigin(null)).toBeNull();
+  });
+
+  it("never throws when storage is blocked", () => {
+    expect(() => rememberReadyMade("PK", ORIGIN, THROWING)).not.toThrow();
     expect(() => clearReadyMadeStart("PK", THROWING)).not.toThrow();
-    expect(startedFromReadyMade("PK", THROWING)).toBe(false);
-    expect(startedFromReadyMade("PK", null)).toBe(false);
+    expect(readyMadeOrigin("PK", THROWING)).toBeNull();
+    expect(readyMadeOrigin("PK", null)).toBeNull();
   });
 });
 
 describe("reviewActionLabel", () => {
-  it("says what the button does for a ready-made gift", () => {
+  it("says Order this gift for a ready-made start", () => {
     expect(reviewActionLabel(true)).toBe("Order this gift");
   });
-
-  it("keeps the usual label otherwise", () => {
+  it("keeps Continue to checkout otherwise", () => {
     expect(reviewActionLabel(false)).toBe("Continue to checkout");
   });
 });

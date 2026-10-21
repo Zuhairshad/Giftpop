@@ -1,15 +1,12 @@
-"use client";
-
 import type { CountryCode } from "@giftpop/contracts";
 import Link from "next/link";
 import type { ReactElement } from "react";
 
-import { markReadyMadeStart } from "./ready-made-origin";
 import { templateLinkLabel, templateStartHref } from "./template-href";
 
 /**
- * "Start from this" for one template. Leaves a note that the gift began ready-made (the review
- * step then says "Order this gift") and opens the builder pre-filled.
+ * "Start from this" for one template: opens the builder pre-filled. The builder notes that the gift
+ * began ready-made when it loads it (see `ready-made-origin`).
  */
 export function TemplateStartLink({
   country,
@@ -23,7 +20,6 @@ export function TemplateStartLink({
   return (
     <Link
       href={templateStartHref(country, cardHref)}
-      onClick={() => markReadyMadeStart(country)}
       // Starts with the visible text so voice control matches it; an sr-only span would
       // make Chrome add a space ("Start from this : ...").
       aria-label={templateLinkLabel(title)}

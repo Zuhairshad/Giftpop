@@ -26,10 +26,22 @@ export function shareDescription(cardMessage: string): string {
   return message || FALLBACK_DESCRIPTION;
 }
 
-/** Title and description for `/g/<shareId>`; the Open Graph and Twitter cards repeat them. */
-export function buildShareMetadata(view: Pick<SharedDesignView, "design">): Metadata {
-  const title = shareTitle(view.design.personalisation.recipientName);
-  const description = shareDescription(view.design.personalisation.cardMessage);
+const READY_MADE_FALLBACK_DESCRIPTION =
+  "A ready-made gift from The Giftpop, made and packed by hand. See what is inside, then order it.";
+
+/**
+ * Title and description for `/g/<shareId>`; the Open Graph and Twitter cards repeat them. A
+ * ready-made gift uses its own name and description. Anything else uses the recipient and card
+ * message. The customer's private request is never read.
+ */
+export function buildShareMetadata(view: Pick<SharedDesignView, "design" | "readyMade">): Metadata {
+  const title = view.readyMade
+    ? truncateText(view.readyMade.title, 80)
+    : shareTitle(view.design.personalisation.recipientName);
+  const description = view.readyMade
+    ? truncateText(view.readyMade.description, DESCRIPTION_MAX_LENGTH) ||
+      READY_MADE_FALLBACK_DESCRIPTION
+    : shareDescription(view.design.personalisation.cardMessage);
   const cardTitle = `${title} | The Giftpop`;
   return {
     title,

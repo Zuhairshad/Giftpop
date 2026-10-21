@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent, useState } from "react";
 import type { ReactElement } from "react";
 
+import {
+  clearReadyMadeStart,
+  rememberReadyMade,
+} from "../../questions/packaging/ready-made-origin";
 import { builderHref, useBuilder } from "../../state";
 
 import { describeFromError, unavailableItemNames } from "./from-param";
@@ -39,6 +43,17 @@ export function FromLoader({
   // An effect event always sees the latest store and callback without re-running the fetch.
   const onFetched = useEffectEvent((view: SharedDesignView) => {
     loadDesign(view.design);
+    // Leave a note of which ready-made gift this is, so the review step can name it and tell the
+    // customer whether they changed it. Any other shared design clears an older note.
+    if (view.readyMade) {
+      rememberReadyMade(country, {
+        shareId: view.shareId,
+        title: view.readyMade.title,
+        design: view.design,
+      });
+    } else {
+      clearReadyMadeStart(country);
+    }
     onLoaded(unavailableItemNames(view));
     router.replace(builderHref(country));
   });

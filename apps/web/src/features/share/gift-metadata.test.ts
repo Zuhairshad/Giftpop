@@ -83,3 +83,50 @@ describe("buildShareMetadata", () => {
     expect(meta.description).toMatch(/Someone made this gift/);
   });
 });
+
+describe("buildShareMetadata for a ready-made gift", () => {
+  const readyMade = { title: "Birthday chocolate bouquet", description: "Six kinds of chocolate." };
+
+  it("uses the gift's own name and description, not the recipient or card", () => {
+    const base = makeSharedView();
+    const meta = buildShareMetadata({
+      ...base,
+      readyMade,
+      design: {
+        ...base.design,
+        personalisation: { ...base.design.personalisation, recipientName: "Sara" },
+      },
+    });
+    expect(meta.title).toBe("Birthday chocolate bouquet");
+    expect(meta.description).toBe("Six kinds of chocolate.");
+    expect(meta.openGraph).toMatchObject({
+      title: "Birthday chocolate bouquet | The Giftpop",
+      description: "Six kinds of chocolate.",
+    });
+    expect(meta.twitter).toMatchObject({ title: "Birthday chocolate bouquet | The Giftpop" });
+  });
+
+  it("writes a sentence of its own when the gift has no description", () => {
+    const meta = buildShareMetadata({
+      ...makeSharedView(),
+      readyMade: { title: "Box", description: "" },
+    });
+    expect(meta.description).toMatch(/ready-made gift/i);
+  });
+
+  it("cuts a very long title and description", () => {
+    const meta = buildShareMetadata({
+      ...makeSharedView(),
+      readyMade: { title: "t".repeat(300), description: "d".repeat(400) },
+    });
+    expect(Array.from(String(meta.title)).length).toBeLessThanOrEqual(80);
+    expect(Array.from(String(meta.description)).length).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
+  });
+
+  it("keeps an ordinary shared gift on the recipient title", () => {
+    const view = makeSharedView();
+    expect(buildShareMetadata(view).title).toBe(
+      shareTitle(view.design.personalisation.recipientName),
+    );
+  });
+});

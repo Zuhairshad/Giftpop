@@ -7,7 +7,7 @@ import { reviewReady } from "../can-continue";
 import { missingDetailsReason } from "../continue-reason";
 import { reviewActionLabel } from "../packaging/ready-made-origin";
 
-import { useStartedFromReadyMade } from "./use-started-from-ready-made";
+import { useReadyMadeOrigin } from "./use-ready-made-origin";
 
 import { Button, ButtonLink } from "@/components/ui";
 import { checkoutHref } from "@/features/share/links";
@@ -30,7 +30,7 @@ export function ReviewCheckoutAction({
   reasonId?: string;
 }): ReactElement {
   const builder = useBuilder();
-  const label = reviewActionLabel(useStartedFromReadyMade(builder.country));
+  const label = reviewActionLabel(useReadyMadeOrigin(builder.country) !== null);
   if (reviewReady(builder) && missingDetailsReason(builder) !== null) {
     return (
       <Button size="md" className={className} onClick={() => builder.goToQuestion("personalise")}>

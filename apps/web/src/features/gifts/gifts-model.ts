@@ -66,3 +66,21 @@ export function sceneWidthPercent(bounds: { width: number; height: number }): nu
 export function giftCountLabel(count: number): string {
   return count === 1 ? "1 gift" : `${count} gifts`;
 }
+
+/**
+ * Ids of the gifts on the page (built from a list cached for up to 5 minutes) that a fresh list no
+ * longer has: an item sold out, lost its price, or staff hid the gift. The order API stays the
+ * final authority; this only keeps a card from promising a gift that can no longer be made.
+ */
+export function unavailableIds(
+  shown: readonly { id: string }[],
+  fresh: readonly { id: string }[],
+): string[] {
+  const available = new Set(fresh.map((template) => template.id));
+  return shown.filter((template) => !available.has(template.id)).map((template) => template.id);
+}
+
+/** The share button's accessible name begins with its visible text ("Share"). */
+export function shareLabel(title: string): string {
+  return `Share: ${title}`;
+}

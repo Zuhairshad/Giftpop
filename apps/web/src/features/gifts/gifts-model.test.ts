@@ -2,6 +2,8 @@ import { PublicTemplateSchema, type PublicTemplate } from "@giftpop/contracts";
 import { describe, expect, it } from "vitest";
 
 import {
+  shareLabel,
+  unavailableIds,
   categoryChips,
   categoryParam,
   filterByCategory,
@@ -166,5 +168,32 @@ describe("price display", () => {
   it("shows priceMinor in the country currency using ISO minor digits", () => {
     expect(formatMoney(450000, "PKR", "en")).toMatch(/4,500$/);
     expect(formatMoney(1250, "GBP", "en")).toBe("£12.50");
+  });
+});
+
+describe("unavailableIds", () => {
+  const ids = (...list: string[]) => list.map((id) => ({ id }));
+
+  it("is empty when the fresh list still has every gift", () => {
+    expect(unavailableIds(ids("a", "b"), ids("b", "a"))).toEqual([]);
+  });
+
+  it("lists the gifts the fresh list dropped, in page order", () => {
+    expect(unavailableIds(ids("a", "b", "c"), ids("b"))).toEqual(["a", "c"]);
+  });
+
+  it("ignores gifts that are only in the fresh list", () => {
+    expect(unavailableIds(ids("a"), ids("a", "new"))).toEqual([]);
+  });
+
+  it("marks everything when the fresh list is empty", () => {
+    expect(unavailableIds(ids("a", "b"), [])).toEqual(["a", "b"]);
+  });
+});
+
+describe("shareLabel", () => {
+  it("begins with the visible text", () => {
+    expect(shareLabel("Birthday box")).toBe("Share: Birthday box");
+    expect(shareLabel("x").startsWith("Share")).toBe(true);
   });
 });

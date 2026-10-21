@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { CategoryChips } from "./category-chips";
 import { fetchGifts } from "./fetch-gifts";
 import { GiftCard } from "./gift-card";
+import { GiftsFreshness } from "./gifts-freshness";
 import {
   categoryChips,
   categoryParam,
@@ -73,17 +74,19 @@ export async function GiftsScreen({
             {giftCountLabel(shown.length)}
             {chosen ? ` for ${chosen.name}` : ""}
           </p>
-          <ul className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-2 min-[900px]:grid-cols-3 sm:gap-6">
-            {shown.map((template) => (
-              <li key={template.id} className="min-w-0">
-                <GiftCard
-                  country={country}
-                  template={template}
-                  headingId={`gift-${template.id}-title`}
-                />
-              </li>
-            ))}
-          </ul>
+          <GiftsFreshness country={country} shown={shown}>
+            <ul className="grid grid-cols-1 gap-4 min-[560px]:grid-cols-2 min-[900px]:grid-cols-3 sm:gap-6">
+              {shown.map((template) => (
+                <li key={template.id} className="min-w-0">
+                  <GiftCard
+                    country={country}
+                    template={template}
+                    headingId={`gift-${template.id}-title`}
+                  />
+                </li>
+              ))}
+            </ul>
+          </GiftsFreshness>
         </section>
       )}
     </div>
