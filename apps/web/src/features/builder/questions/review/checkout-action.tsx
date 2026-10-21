@@ -5,6 +5,9 @@ import type { ReactElement } from "react";
 import { useBuilder } from "../../state";
 import { reviewReady } from "../can-continue";
 import { missingDetailsReason } from "../continue-reason";
+import { reviewActionLabel } from "../packaging/ready-made-origin";
+
+import { useStartedFromReadyMade } from "./use-started-from-ready-made";
 
 import { Button, ButtonLink } from "@/components/ui";
 import { checkoutHref } from "@/features/share/links";
@@ -16,6 +19,8 @@ export const REVIEW_BLOCKED_HINT_ID = "review-blocked-hint";
 /**
  * The review question's primary action, drawn in the shell footer so it is always on screen:
  * a link to checkout, or (while the gift has problems) a button that says why it is blocked.
+ * It reads "Order this gift" when the customer began from a ready-made gift, otherwise "Continue to
+ * checkout"; the behaviour is the same either way.
  */
 export function ReviewCheckoutAction({
   className,
@@ -25,6 +30,7 @@ export function ReviewCheckoutAction({
   reasonId?: string;
 }): ReactElement {
   const builder = useBuilder();
+  const label = reviewActionLabel(useStartedFromReadyMade(builder.country));
   if (reviewReady(builder) && missingDetailsReason(builder) !== null) {
     return (
       <Button size="md" className={className} onClick={() => builder.goToQuestion("personalise")}>
@@ -35,7 +41,7 @@ export function ReviewCheckoutAction({
   if (reviewReady(builder)) {
     return (
       <ButtonLink href={checkoutHref(builder.country)} size="md" className={className}>
-        Continue to checkout
+        {label}
       </ButtonLink>
     );
   }
@@ -49,7 +55,7 @@ export function ReviewCheckoutAction({
       aria-describedby={describedByText === "" ? undefined : describedByText}
       className={className}
     >
-      Continue to checkout
+      {label}
     </Button>
   );
 }

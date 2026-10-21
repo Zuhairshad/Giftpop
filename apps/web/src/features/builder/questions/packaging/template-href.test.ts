@@ -22,5 +22,6 @@ describe("templateStartHref", () => {
 describe("templateLinkLabel", () => {
   it("begins with the visible link text", () => {
     expect(templateLinkLabel("Birthday box")).toBe("Start from this: Birthday box");
+    expect(templateLinkLabel("Birthday box").startsWith("Start from this")).toBe(true);
   });
 });

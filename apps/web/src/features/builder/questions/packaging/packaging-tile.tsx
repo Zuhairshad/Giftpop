@@ -4,10 +4,12 @@ import type { CatalogResponse, PricedPackaging } from "@giftpop/contracts";
 import { useId, useMemo } from "react";
 import type { ReactElement } from "react";
 
+import { useBuilder } from "../../state";
 import { priceLabel } from "../price-label";
 import { SafeScene } from "../safe-scene";
 
 import { packagingAvailability, pickRangeCopy } from "./format-copy";
+import { clearReadyMadeStart } from "./ready-made-origin";
 import { buildSampleDesign } from "./sample-design";
 
 interface PackagingTileProps {
@@ -29,6 +31,7 @@ export function PackagingTile({
   onChoose,
 }: PackagingTileProps): ReactElement {
   const { packaging } = priced;
+  const { country } = useBuilder();
   const noteId = useId();
   const availability = packagingAvailability(priced);
   const design = useMemo(() => buildSampleDesign(packaging, catalog.items), [packaging, catalog]);
@@ -42,7 +45,10 @@ export function PackagingTile({
         aria-pressed={selected}
         aria-describedby={availability.reason ? noteId : undefined}
         onClick={() => {
-          if (availability.available) onChoose(priced);
+          if (!availability.available) return;
+          // Picking a format by hand is starting over, not ordering a ready-made gift.
+          clearReadyMadeStart(country);
+          onChoose(priced);
         }}
         className={`bg-surface rounded-md flex w-full flex-col gap-1 p-2 text-center transition-shadow motion-reduce:transition-none ${
           selected ? "ring-pink shadow-hairline ring-2" : "shadow-hairline hover:shadow-lift"
