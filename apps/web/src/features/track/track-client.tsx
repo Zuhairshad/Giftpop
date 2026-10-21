@@ -8,6 +8,7 @@ import type { ReactElement } from "react";
 import { TrackResult } from "./track-result";
 
 import { Button } from "@/components/ui";
+import { ForgotOrder } from "@/features/order/forgot-order";
 import { LookupForm } from "@/features/order/lookup-form";
 import { PageHeading } from "@/features/order/page-heading";
 import { SECONDARY } from "@/features/order/ui";
@@ -41,6 +42,7 @@ export function TrackClient(): ReactElement {
             submitLabel="Track order"
             onFound={(found) => setView(found)}
           />
+          <ForgotOrder />
         </div>
       )}
     </section>

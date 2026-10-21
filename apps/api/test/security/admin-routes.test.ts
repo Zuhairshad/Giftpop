@@ -40,6 +40,8 @@ const PUBLIC_ROUTES: Record<string, string> = {
   "GET /v1/designs/:shareId": "shared gift link (unguessable share id)",
   "POST /v1/quotes": "price quote for a design (rate limited)",
   "POST /v1/orders": "customer places an order (rate limited, idempotency key)",
+  "POST /v1/orders/lookup":
+    "customer asks for an email listing their order numbers (rate limited, same answer always)",
   "POST /v1/orders/track": "customer looks up an order with number plus contact (rate limited)",
   "POST /v1/orders/:number/payment-proof": "customer uploads a receipt (needs order contact)",
   "POST /v1/partner-requests": "brand partnership form (rate limited, honeypot)",

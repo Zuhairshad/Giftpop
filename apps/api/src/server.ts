@@ -5,6 +5,8 @@ import { connectDb, disconnectDb } from "./db";
 import { EnvError, parseEnv } from "./env";
 import { flushObservability, initObservability } from "./lib/observability/sentry";
 import { createLogger } from "./logger";
+import { createResendProvider } from "./modules/notifications/resend";
+import { registerEmailTransport } from "./modules/notifications/transports";
 import {
   shouldRunWorker,
   startNotificationsWorker,
@@ -43,6 +45,15 @@ async function main(): Promise<void> {
   const server = app.listen(env.PORT, () => {
     logger.info({ port: env.PORT }, "API listening");
   });
+
+  if (env.RESEND_API_KEY && env.EMAIL_FROM) {
+    registerEmailTransport(
+      createResendProvider({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM }),
+    );
+    logger.info("Customer email is on (Resend)");
+  } else {
+    logger.warn("RESEND_API_KEY / EMAIL_FROM not set: customer emails are logged, not sent");
+  }
 
   const workerWarning = workerOffWarning(env);
   if (workerWarning) logger.warn(workerWarning);

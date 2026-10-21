@@ -141,4 +141,17 @@ describe("observability env", () => {
   it("rejects a DSN that is not a URL", () => {
     expect(() => parseEnv({ ...valid, SENTRY_DSN: "not a url" })).toThrow(/SENTRY_DSN/);
   });
+
+  it("treats blank email settings as unset and accepts both together", () => {
+    const blank = parseEnv({ ...valid, RESEND_API_KEY: "", EMAIL_FROM: " " });
+    expect(blank.RESEND_API_KEY).toBeUndefined();
+    expect(blank.EMAIL_FROM).toBeUndefined();
+    const both = parseEnv({ ...valid, RESEND_API_KEY: "re_x", EMAIL_FROM: "Shop <a@b.com>" });
+    expect(both.EMAIL_FROM).toBe("Shop <a@b.com>");
+  });
+
+  it("rejects an API key without a sender, and the reverse", () => {
+    expect(() => parseEnv({ ...valid, RESEND_API_KEY: "re_x" })).toThrow(/EMAIL_FROM/);
+    expect(() => parseEnv({ ...valid, EMAIL_FROM: "a@b.com" })).toThrow(/RESEND_API_KEY/);
+  });
 });

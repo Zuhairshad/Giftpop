@@ -11,7 +11,12 @@ import { createLogger } from "../../logger";
 import { OrderModel, type OrderDoc } from "../orders/model";
 
 import { OutboxModel, type OutboxDoc } from "./model";
-import { renderNotification, type TemplateOptions, type TemplateOrder } from "./templates";
+import {
+  renderNotification,
+  renderOrderLookup,
+  type TemplateOptions,
+  type TemplateOrder,
+} from "./templates";
 import {
   createConsoleTransport,
   hasTransport,
@@ -85,6 +90,34 @@ export async function enqueueStaffAlert(
   });
 }
 
+const OrderLookupPayloadSchema = z.object({
+  email: z.string().min(3),
+  numbers: z.array(z.string().min(1)).min(1).max(10),
+});
+
+/** Same email asked again within this window is ignored, so the form cannot be used to flood an inbox. */
+export const LOOKUP_COOLDOWN_MS = 10 * 60_000;
+
+/**
+ * Queues the "forgot your order number" email. Email channel only (the console log would print
+ * the address), and nothing at all when no email provider is registered. Returns whether it queued.
+ */
+export async function enqueueOrderLookup(
+  input: { email: string; numbers: string[] },
+  now: Date = new Date(),
+): Promise<boolean> {
+  if (!hasTransport("email")) return false;
+  const payload = OrderLookupPayloadSchema.parse(input);
+  const recent = await OutboxModel.exists({
+    type: "order_lookup",
+    "payload.email": payload.email,
+    createdAt: { $gte: new Date(now.getTime() - LOOKUP_COOLDOWN_MS) },
+  });
+  if (recent) return false;
+  await OutboxModel.create({ type: "order_lookup", channel: "email", payload });
+  return true;
+}
+
 export interface ProcessOptions {
   now?: Date;
   batchSize?: number;
@@ -135,6 +168,18 @@ async function deliver(
       to: { email: "", phone: "" },
       subject: alert.subject,
       text: alert.text,
+    });
+    return;
+  }
+  if (entry.type === "order_lookup") {
+    const payload = OrderLookupPayloadSchema.parse(entry.payload);
+    const { subject, text } = renderOrderLookup(payload.numbers, template);
+    await transport.send({
+      type: entry.type,
+      orderNumber: "",
+      to: { email: payload.email, phone: "" },
+      subject,
+      text,
     });
     return;
   }

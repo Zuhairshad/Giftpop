@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { NOT_FOUND_MESSAGE, describeLookupError, parseLookupInput } from "./lookup";
+import {
+  NOT_FOUND_MESSAGE,
+  describeLookupError,
+  parseLookupInput,
+  parseForgotInput,
+  FORGOT_CONTACT_ERROR,
+} from "./lookup";
 
 import { ApiError, ApiNetworkError } from "@/lib/api";
 
@@ -31,5 +37,19 @@ describe("describeLookupError", () => {
   it("handles network and unknown errors", () => {
     expect(describeLookupError(new ApiNetworkError("offline")).kind).toBe("network");
     expect(describeLookupError(new Error("boom")).kind).toBe("other");
+  });
+});
+
+describe("parseForgotInput", () => {
+  it("accepts an email or phone and trims it", () => {
+    expect(parseForgotInput("  sara@example.com ")).toEqual({
+      ok: true,
+      value: { contact: "sara@example.com" },
+    });
+  });
+
+  it("asks for the phone or email when it is empty or too short", () => {
+    expect(parseForgotInput("")).toEqual({ ok: false, error: FORGOT_CONTACT_ERROR });
+    expect(parseForgotInput("ab")).toEqual({ ok: false, error: FORGOT_CONTACT_ERROR });
   });
 });

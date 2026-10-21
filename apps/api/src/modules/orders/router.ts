@@ -1,7 +1,9 @@
 import {
   CreateOrderRequestSchema,
+  LookupOrdersRequestSchema,
   TrackOrderRequestSchema,
   type CreateOrderRequest,
+  type LookupOrdersRequest,
   type TrackOrderRequest,
 } from "@giftpop/contracts";
 import { Router, type RequestHandler } from "express";
@@ -11,9 +13,12 @@ import { validateBody } from "../../lib/validate";
 import { idempotency } from "../../middleware/idempotency";
 import { createIpLimiter } from "../quotes/rate-limit";
 
+import { requestOrderLinks } from "./lookup";
 import {
+  defaultLookupStore,
   defaultOrderStore,
   defaultTrackStore,
+  LOOKUPS_PER_MINUTE,
   ORDERS_PER_MINUTE,
   TRACKS_PER_MINUTE,
 } from "./rate-limit";
@@ -27,6 +32,9 @@ export interface OrdersRouterOptions {
   /** Limits how many orders one IP can place; replaceable in tests. */
   orderLimiter?: RequestHandler;
   orderStore?: Store;
+  /** Limits "forgot your order number" requests, which send email. */
+  lookupLimiter?: RequestHandler;
+  lookupStore?: Store;
 }
 
 /** Customers type numbers in any case; the contract only accepts upper case. */
@@ -52,6 +60,12 @@ export function createOrdersRouter({
     store: orderStore,
     message: "Too many orders. Try again in a minute.",
   }),
+  lookupStore = new MemoryStore(),
+  lookupLimiter = createIpLimiter({
+    limit: LOOKUPS_PER_MINUTE,
+    store: lookupStore,
+    message: "Too many requests. Try again in a minute.",
+  }),
 }: OrdersRouterOptions = {}): Router {
   const router = Router();
 
@@ -76,10 +90,22 @@ export function createOrdersRouter({
     },
   );
 
+  // Always the same answer, whether or not orders exist, so it cannot be used to probe contacts.
+  router.post(
+    "/lookup",
+    lookupLimiter,
+    validateBody(LookupOrdersRequestSchema),
+    async (req, res) => {
+      await requestOrderLinks(req.body as LookupOrdersRequest);
+      res.json({ ok: true });
+    },
+  );
+
   return router;
 }
 
 export const ordersRouter: Router = createOrdersRouter({
   store: defaultTrackStore,
   orderStore: defaultOrderStore,
+  lookupStore: defaultLookupStore,
 });

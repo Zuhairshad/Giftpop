@@ -43,6 +43,12 @@ const cases: Case[] = [
     inside: 400,
   },
   {
+    name: "POST /v1/orders/lookup",
+    limit: 3,
+    send: () => request(app).post("/v1/orders/lookup").send({}),
+    inside: 400,
+  },
+  {
     name: "POST /v1/quotes",
     limit: 60,
     send: () => request(app).post("/v1/quotes").send({}),

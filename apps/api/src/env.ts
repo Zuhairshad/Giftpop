@@ -14,6 +14,12 @@ const csv = z
 
 const url = (name: string) => z.url(`${name} must be a full URL such as http://localhost:3001`);
 
+/** Blank values in example files count as unset. */
+const optionalText = z.preprocess(
+  (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+  z.string().trim().min(1).optional(),
+);
+
 const EnvObjectSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65535).default(4000),
@@ -44,6 +50,10 @@ const EnvObjectSchema = z.object({
   ),
   /** `on` runs the notification outbox worker in this process; keep it on in exactly one instance. */
   NOTIFICATIONS_WORKER: z.enum(["on", "off"]).default("off"),
+  /** Resend API key for customer emails. Server only; with EMAIL_FROM unset or blank, no email is sent. */
+  RESEND_API_KEY: optionalText,
+  /** Sender shown on customer emails, for example `The Giftpop <orders@yourdomain.com>`. */
+  EMAIL_FROM: optionalText,
   /** How many reverse proxies sit in front of the API (0 when none). Rate limits key on the real client IP. */
   TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
   /** Where the admin app and the store are served from (used for CORS and links). */
@@ -69,6 +79,13 @@ const DEV_SESSION_SECRET = "dev-only-session-secret-change-me-0123456789";
 const R2_KEYS = ["R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET"] as const;
 
 const EnvSchema = EnvObjectSchema.superRefine((env, ctx) => {
+  if (Boolean(env.RESEND_API_KEY) !== Boolean(env.EMAIL_FROM)) {
+    ctx.addIssue({
+      code: "custom",
+      path: [env.RESEND_API_KEY ? "EMAIL_FROM" : "RESEND_API_KEY"],
+      message: "RESEND_API_KEY and EMAIL_FROM must be set together",
+    });
+  }
   if (env.NODE_ENV === "production" && !env.SESSION_SECRET) {
     ctx.addIssue({
       code: "custom",
