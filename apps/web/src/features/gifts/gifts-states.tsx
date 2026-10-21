@@ -4,16 +4,18 @@ import type { ReactElement, ReactNode } from "react";
 import { StatePanel } from "@/components/placeholder-page";
 import { ButtonLink } from "@/components/ui";
 
-/** Nothing to show: a calm panel with one way forward (passed in as `children`'s button). */
+/** Nothing to show: a calm panel with one way forward (`actions`). */
 export function GiftsEmpty({
   title,
   children,
+  actions,
 }: {
   title: string;
   children: ReactNode;
+  actions?: ReactNode;
 }): ReactElement {
   return (
-    <StatePanel headingId="gifts-empty-heading" title={title} role="status">
+    <StatePanel headingId="gifts-empty-heading" title={title} role="status" actions={actions}>
       {children}
     </StatePanel>
   );

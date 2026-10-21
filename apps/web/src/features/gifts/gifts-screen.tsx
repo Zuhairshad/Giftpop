@@ -38,10 +38,9 @@ export async function GiftsScreen({
 
   if (result.templates.length === 0) {
     return (
-      <GiftsEmpty title="No ready-made gifts here yet">
+      <GiftsEmpty title="No ready-made gifts here yet" actions={<BuildLink country={country} />}>
         We have not listed any finished gifts for this country yet. You can still build your own,
         piece by piece.
-        <BuildLink country={country} />
       </GiftsEmpty>
     );
   }
@@ -91,9 +90,5 @@ export async function GiftsScreen({
 }
 
 function BuildLink({ country }: { country: CountryCode }): ReactElement {
-  return (
-    <ButtonLink href={`/${country.toLowerCase()}/build`} className="mt-4">
-      Build your gift
-    </ButtonLink>
-  );
+  return <ButtonLink href={`/${country.toLowerCase()}/build`}>Build your gift</ButtonLink>;
 }
