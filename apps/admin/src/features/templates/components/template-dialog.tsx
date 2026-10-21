@@ -219,7 +219,7 @@ function TemplateForm({
       <Field
         label="Sort order"
         error={errors.sortOrder?.message}
-        hint="Lower numbers show first. You can also move templates up and down in the list."
+        hint="Lower numbers show first."
         className="sm:w-40"
       >
         {(control) => (

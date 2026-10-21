@@ -109,7 +109,7 @@ export function TemplatesManager() {
   async function setActive(template: FeaturedTemplate, active: boolean) {
     markBusy([template.id], true);
     try {
-      replace(await updateTemplate(template.id, toActiveRequest(active)));
+      replace(await updateTemplate(template.id, toActiveRequest(active, template)));
       setPriceVersion((n) => n + 1);
     } catch (error) {
       toast.error(readApiError(error).message);
@@ -121,7 +121,7 @@ export function TemplatesManager() {
   async function setCategory(template: FeaturedTemplate, category: TemplateCategory | null) {
     markBusy([template.id], true);
     try {
-      replace(await updateTemplate(template.id, toCategoryRequest(category)));
+      replace(await updateTemplate(template.id, toCategoryRequest(category, template)));
     } catch (error) {
       toast.error(readApiError(error).message);
     } finally {
@@ -135,7 +135,10 @@ export function TemplatesManager() {
     const ids = updates.map((update) => update.id);
     markBusy(ids, true);
     const results = await Promise.allSettled(
-      updates.map((update) => updateTemplate(update.id, toSortOrderRequest(update.sortOrder))),
+      updates.map((update) => {
+        const saved = templates.find((item) => item.id === update.id) ?? template;
+        return updateTemplate(update.id, toSortOrderRequest(update.sortOrder, saved));
+      }),
     );
     for (const result of results) {
       if (result.status === "fulfilled") replace(result.value);

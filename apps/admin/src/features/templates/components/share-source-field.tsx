@@ -151,7 +151,9 @@ function SharePreview({ shareId }: { shareId: string }) {
   const { view } = load;
   return (
     <div className="grid grid-cols-1 gap-2">
-      <SharedDesignScene view={view} />
+      <div className="mx-auto w-full max-w-xs">
+        <SharedDesignScene view={view} />
+      </div>
       <p className="text-muted-foreground text-xs">
         Built for {view.country}.
         {view.packagingAvailable ? "" : " Its packaging is not for sale there today."}
