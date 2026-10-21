@@ -11,7 +11,7 @@ import { z } from "zod";
  */
 const KEY_PREFIX = "giftpop:ready-made-start:";
 
-export const ReadyMadeOriginSchema = z.object({
+const ReadyMadeOriginSchema = z.object({
   shareId: ShareIdSchema,
   title: z.string(),
   design: DesignSchema,

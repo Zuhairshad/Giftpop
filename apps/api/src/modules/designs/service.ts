@@ -43,13 +43,20 @@ function toSavedDesign(doc: DesignDoc): SavedDesign {
   };
 }
 
-/** A template seen as a saved design, for a share id that has no saved design of its own. */
-function templateAsSavedDesign(template: TemplateDoc, viewingCountry?: CountryCode): SavedDesign {
-  const [first] = template.countries;
+/**
+ * A template seen as a saved design, for a share id that has no saved design of its own. Null when
+ * there is no country to look it up in (not viewed from one, and sold in none).
+ */
+function templateAsSavedDesign(
+  template: TemplateDoc,
+  viewingCountry?: CountryCode,
+): SavedDesign | null {
+  const country = viewingCountry ?? template.countries[0];
+  if (!country) return null;
   return {
     id: template._id.toHexString(),
     shareId: template.shareId,
-    country: viewingCountry ?? first ?? "",
+    country,
     design: parseStoredDesign(template.design),
     createdAt: template.createdAt.toISOString(),
   };
@@ -101,13 +108,12 @@ export async function getSharedDesign(
     DesignModel.findOne({ shareId }).lean<DesignDoc>(),
     findReadyMade(shareId),
   ]);
-  const source = doc
+  const saved = doc
     ? toSavedDesign(doc)
     : template
       ? templateAsSavedDesign(template, viewingCountry)
       : null;
-  if (!source) throw new AppError("NOT_FOUND", 404, "No gift with that link");
-  const saved = source;
+  if (!saved) throw new AppError("NOT_FOUND", 404, "No gift with that link");
   const { design } = saved;
 
   const itemIds = design.items.map((line) => line.itemId);

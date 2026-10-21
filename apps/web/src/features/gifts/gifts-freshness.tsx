@@ -31,6 +31,8 @@ export function GiftsFreshness({
   children: ReactNode;
 }): ReactElement {
   const [unavailable, setUnavailable] = useState<ReadonlySet<string>>(NONE);
+  // A string, so the effect re-runs when the gifts on the page change, not on every new array.
+  const shownKey = shown.map((template) => template.id).join(",");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -44,13 +46,16 @@ export function GiftsFreshness({
           const parsed = PublicTemplateSchema.safeParse(entry);
           return parsed.success ? [parsed.data] : [];
         });
-        setUnavailable(new Set(unavailableIds(shown, fresh)));
+        setUnavailable(new Set(unavailableIds(
+            shownKey.split(",").map((id) => ({ id })),
+            fresh,
+          )));
       })
       .catch(() => {
         // Keep the cards as drawn.
       });
     return () => controller.abort();
-  }, [country, shown]);
+  }, [country, shownKey]);
 
   return <Unavailable value={unavailable}>{children}</Unavailable>;
 }

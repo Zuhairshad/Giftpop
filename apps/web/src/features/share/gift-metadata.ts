@@ -2,6 +2,7 @@ import type { SharedDesignView } from "@giftpop/contracts";
 import type { Metadata } from "next";
 
 export const DESCRIPTION_MAX_LENGTH = 150;
+const TITLE_MAX_LENGTH = 80;
 const FALLBACK_DESCRIPTION =
   "Someone made this gift on The Giftpop. See it, then order the same gift or make your own.";
 
@@ -36,7 +37,7 @@ const READY_MADE_FALLBACK_DESCRIPTION =
  */
 export function buildShareMetadata(view: Pick<SharedDesignView, "design" | "readyMade">): Metadata {
   const title = view.readyMade
-    ? truncateText(view.readyMade.title, 80)
+    ? truncateText(view.readyMade.title, TITLE_MAX_LENGTH)
     : shareTitle(view.design.personalisation.recipientName);
   const description = view.readyMade
     ? truncateText(view.readyMade.description, DESCRIPTION_MAX_LENGTH) ||
