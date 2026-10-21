@@ -1,5 +1,7 @@
 import type { CountryCode, PublicTemplate, TemplateItemSummary } from "@giftpop/contracts";
 
+import { giftsPath } from "@/features/home/view-models";
+
 export type CategoryChip = { slug: string; name: string; count: number };
 
 /**
@@ -37,7 +39,7 @@ export function filterByCategory(
 
 /** The shareable address of the page, optionally narrowed to one category. */
 export function giftsHref(country: CountryCode, category?: string | null): string {
-  const base = `/${country.toLowerCase()}/gifts`;
+  const base = giftsPath(country);
   return category ? `${base}?category=${encodeURIComponent(category)}` : base;
 }
 

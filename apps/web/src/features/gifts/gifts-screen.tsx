@@ -14,6 +14,7 @@ import {
 import { GiftsEmpty, GiftsUnavailable, NoGiftsInCategory } from "./gifts-states";
 
 import { ButtonLink } from "@/components/ui";
+import { builderHref } from "@/features/builder/state";
 
 /**
  * `/<cc>/gifts`: the country's ready-made gifts. The whole list is fetched once; the chips come
@@ -90,5 +91,5 @@ export async function GiftsScreen({
 }
 
 function BuildLink({ country }: { country: CountryCode }): ReactElement {
-  return <ButtonLink href={`/${country.toLowerCase()}/build`}>Build your gift</ButtonLink>;
+  return <ButtonLink href={builderHref(country)}>Build your gift</ButtonLink>;
 }

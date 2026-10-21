@@ -101,38 +101,17 @@ export function toUpdateRequest(values: TemplateFormValues): UpdateTemplateReque
   });
 }
 
-type SavedFields = Pick<FeaturedTemplate, "description" | "sortOrder">;
-
-/**
- * The server parses every update with `UpdateTemplateRequestSchema`, whose `.partial()` keeps the
- * inner defaults (zod 4): a body without `description` or `sortOrder` gets `""` and `0` and
- * overwrites the saved values. The one-field requests below therefore restate the saved ones.
- * Remove this when the contract drops those defaults for updates.
- */
-function savedFields(template: SavedFields): SavedFields {
-  return { description: template.description, sortOrder: template.sortOrder };
-}
-
-/** Only the sort order, for the move buttons. Hand-built, not parsed, so no other default is added. */
-export function toSortOrderRequest(
-  sortOrder: number,
-  template: SavedFields,
-): UpdateTemplateRequest {
-  return { ...savedFields(template), sortOrder };
+/** Only the sort order, for the move buttons. */
+export function toSortOrderRequest(sortOrder: number): UpdateTemplateRequest {
+  return { sortOrder };
 }
 
 /** Only the category, for changing it from the list. Null clears it. */
-export function toCategoryRequest(
-  category: TemplateCategory | null,
-  template: SavedFields,
-): UpdateTemplateRequest {
-  return { ...savedFields(template), category };
+export function toCategoryRequest(category: TemplateCategory | null): UpdateTemplateRequest {
+  return { category };
 }
 
-/**
- * Only the active flag, for the switch in the list. Built by hand, not parsed: the contract's
- * defaults would otherwise add `category: null` and `featured: false` and overwrite the saved values.
- */
-export function toActiveRequest(active: boolean, template: SavedFields): UpdateTemplateRequest {
-  return { ...savedFields(template), active };
+/** Only the active flag, for the switch in the list. */
+export function toActiveRequest(active: boolean): UpdateTemplateRequest {
+  return { active };
 }

@@ -1,15 +1,12 @@
 "use client";
 
-import type { Country, FeaturedTemplate, TemplateCategory } from "@giftpop/contracts";
+import type { Country, FeaturedTemplate } from "@giftpop/contracts";
 import { PlusIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 
-import { listCountries, listTemplates, updateTemplate } from "../api/client";
+import { listCountries, listTemplates } from "../api/client";
 import { categoryOptions } from "../lib/category";
-import { compareTemplates, planMove } from "../lib/reorder";
-import type { MoveDirection } from "../lib/reorder";
-import { toActiveRequest, toCategoryRequest, toSortOrderRequest } from "../lib/template-form";
+import { compareTemplates } from "../lib/reorder";
 
 import { DeleteTemplateDialog } from "./delete-template-dialog";
 import type { CreateSource } from "./share-source-field";
@@ -17,6 +14,7 @@ import { TemplateDialog } from "./template-dialog";
 import { TemplatePreview } from "./template-preview";
 import { TemplateRow } from "./template-row";
 import { useCountryPrices } from "./use-country-prices";
+import { useTemplateActions } from "./use-template-actions";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,7 +36,6 @@ export function TemplatesManager() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [previewing, setPreviewing] = useState<FeaturedTemplate | null>(null);
   const [removing, setRemoving] = useState<FeaturedTemplate | null>(null);
-  const [busyIds, setBusyIds] = useState<ReadonlySet<string>>(new Set());
 
   useEffect(() => {
     const controller = new AbortController();
@@ -87,69 +84,19 @@ export function TemplatesManager() {
     );
   }, []);
 
+  const { busyIds, setActive, setCategory, move } = useTemplateActions({
+    templates,
+    replace,
+    reload: () => setAttempt((n) => n + 1),
+    onVisibilityChange: () => setPriceVersion((n) => n + 1),
+  });
+
   function remove(id: string) {
     setLoad((current) =>
       current.state === "ready"
         ? { state: "ready", templates: current.templates.filter((item) => item.id !== id) }
         : current,
     );
-  }
-
-  function markBusy(ids: readonly string[], busy: boolean) {
-    setBusyIds((current) => {
-      const next = new Set(current);
-      for (const id of ids) {
-        if (busy) next.add(id);
-        else next.delete(id);
-      }
-      return next;
-    });
-  }
-
-  async function setActive(template: FeaturedTemplate, active: boolean) {
-    markBusy([template.id], true);
-    try {
-      replace(await updateTemplate(template.id, toActiveRequest(active, template)));
-      setPriceVersion((n) => n + 1);
-    } catch (error) {
-      toast.error(readApiError(error).message);
-    } finally {
-      markBusy([template.id], false);
-    }
-  }
-
-  async function setCategory(template: FeaturedTemplate, category: TemplateCategory | null) {
-    markBusy([template.id], true);
-    try {
-      replace(await updateTemplate(template.id, toCategoryRequest(category, template)));
-    } catch (error) {
-      toast.error(readApiError(error).message);
-    } finally {
-      markBusy([template.id], false);
-    }
-  }
-
-  async function move(template: FeaturedTemplate, direction: MoveDirection) {
-    const updates = planMove(templates, template.id, direction);
-    if (updates.length === 0) return;
-    const ids = updates.map((update) => update.id);
-    markBusy(ids, true);
-    const results = await Promise.allSettled(
-      updates.map((update) => {
-        const saved = templates.find((item) => item.id === update.id) ?? template;
-        return updateTemplate(update.id, toSortOrderRequest(update.sortOrder, saved));
-      }),
-    );
-    for (const result of results) {
-      if (result.status === "fulfilled") replace(result.value);
-    }
-    const failed = results.find((result) => result.status === "rejected");
-    if (failed) {
-      toast.error(`Could not save the new order. ${readApiError(failed.reason).message}`);
-      // Some updates may have landed: load the list again so it shows what is saved.
-      setAttempt((n) => n + 1);
-    }
-    markBusy(ids, false);
   }
 
   function openDialog(template: FeaturedTemplate | null, nextSource: CreateSource = "link") {
@@ -216,7 +163,7 @@ export function TemplatesManager() {
       {load.state === "ready" && templates.length > 0 ? (
         <ul
           className="grid grid-cols-1 gap-3"
-          aria-label="Templates, in the order customers see them"
+          aria-label="Templates, ordered by position. Featured gifts are shown first to customers"
         >
           {templates.map((template, index) => (
             <TemplateRow

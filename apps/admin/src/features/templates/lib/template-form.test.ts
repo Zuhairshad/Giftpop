@@ -48,18 +48,13 @@ describe("template form mapping", () => {
       featured: false,
     });
   });
-  it("one-field requests restate the saved description and sort order and add nothing else", () => {
-    const saved = { description: "Soft and floral", sortOrder: 7 };
-    expect(toActiveRequest(true, saved)).toEqual({ ...saved, active: true });
-    expect(toSortOrderRequest(3, saved)).toEqual({ description: "Soft and floral", sortOrder: 3 });
-    expect(toCategoryRequest(null, saved)).toEqual({ ...saved, category: null });
-    expect(toCategoryRequest({ slug: "get-well", name: "Get well" }, saved)).toEqual({
-      ...saved,
+  it("one-field requests carry only that field", () => {
+    expect(toActiveRequest(true)).toEqual({ active: true });
+    expect(toSortOrderRequest(3)).toEqual({ sortOrder: 3 });
+    expect(toCategoryRequest(null)).toEqual({ category: null });
+    expect(toCategoryRequest({ slug: "get-well", name: "Get well" })).toEqual({
       category: { slug: "get-well", name: "Get well" },
     });
-    // Never category or featured unless asked: those would overwrite the saved values.
-    expect(toActiveRequest(false, saved)).not.toHaveProperty("category");
-    expect(toActiveRequest(false, saved)).not.toHaveProperty("featured");
   });
   it("sends the chosen category and featured flag", () => {
     const category = { slug: "get-well", name: "Get well" };
