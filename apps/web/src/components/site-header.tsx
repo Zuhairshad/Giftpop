@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 
 import { Logo } from "@/components/logo";
+import { PartnerBanner } from "@/components/partner-banner";
 import { HeaderCountryPicker, HeaderCountrySuggestion } from "@/features/country";
 import { COUNTRY_COOKIE, validCountryCode } from "@/features/country/cookie";
 
@@ -23,6 +24,7 @@ export async function SiteHeader() {
     : NAV_LINKS;
   return (
     <>
+      <PartnerBanner />
       {/* In flow above the sticky header: it pushes the page down and scrolls away with it. */}
       <HeaderCountrySuggestion />
       <header className="gp-header bg-canvas/90 sticky top-0 z-40 shadow-[0_1px_0_var(--gp-border)] backdrop-blur">

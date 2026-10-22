@@ -7,6 +7,7 @@ import { useState } from "react";
 import { flagEmoji, PAYMENT_MODE_OPTIONS } from "../lib/country-form";
 
 import { CountryDialog } from "./country-dialog";
+import { CountryLockButton } from "./visibility-buttons";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,14 +96,17 @@ export function CountriesTable({ countries }: { countries: readonly Country[] })
                   {country.shipping.deliveryDays.min}&ndash;{country.shipping.deliveryDays.max} days
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openFor(country)}
-                    aria-label={`Edit ${country.name}`}
-                  >
-                    Edit
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openFor(country)}
+                      aria-label={`Edit ${country.name}`}
+                    >
+                      Edit
+                    </Button>
+                    <CountryLockButton country={country} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

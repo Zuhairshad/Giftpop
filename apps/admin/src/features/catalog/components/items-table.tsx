@@ -6,6 +6,7 @@ import { itemsQueryString, pageCount } from "../lib/items-query";
 import type { ItemsUrlState } from "../lib/items-query";
 
 import { Thumb } from "./thumb";
+import { ItemVisibilityButton } from "./visibility-buttons";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -73,13 +74,16 @@ export function ItemsTable({ items, page, pageSize, total, filters }: ItemsTable
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Link
-                    href={`/catalog/items/${item.id}`}
-                    aria-label={`Edit ${item.name}`}
-                    className={buttonVariants({ variant: "outline", size: "sm" })}
-                  >
-                    Edit
-                  </Link>
+                  <div className="flex justify-end gap-2">
+                    <Link
+                      href={`/catalog/items/${item.id}`}
+                      aria-label={`Edit ${item.name}`}
+                      className={buttonVariants({ variant: "outline", size: "sm" })}
+                    >
+                      Edit
+                    </Link>
+                    <ItemVisibilityButton item={item} />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

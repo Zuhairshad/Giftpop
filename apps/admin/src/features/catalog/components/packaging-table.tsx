@@ -2,6 +2,7 @@ import type { Packaging } from "@giftpop/contracts";
 import Link from "next/link";
 
 import { Thumb } from "./thumb";
+import { PackagingVisibilityButton } from "./visibility-buttons";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -61,13 +62,16 @@ export function PackagingTable({ packagings }: { packagings: readonly Packaging[
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                <Link
-                  href={`/catalog/packaging/${packaging.id}`}
-                  aria-label={`Edit ${packaging.name}`}
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
-                >
-                  Edit
-                </Link>
+                <div className="flex justify-end gap-2">
+                  <Link
+                    href={`/catalog/packaging/${packaging.id}`}
+                    aria-label={`Edit ${packaging.name}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                  >
+                    Edit
+                  </Link>
+                  <PackagingVisibilityButton packaging={packaging} />
+                </div>
               </TableCell>
             </TableRow>
           ))}
